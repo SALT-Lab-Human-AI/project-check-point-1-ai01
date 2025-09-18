@@ -66,7 +66,7 @@ Idea for our project:
 ## Paper 3 — Placeholder
 Full citation + link:  
 
-Summary (4–6 sentences):  
+Summary:  
 - Sentence 1: problem addressed.  
 - Sentence 2: method/approach.  
 - Sentence 3: main findings.  

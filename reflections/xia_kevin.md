@@ -14,7 +14,7 @@ Table of contents
 
 Alsaif, S., Hidri, M. S., Ferjani, I., Eleraky, H. A., & Hidri, A. (2022). NLP-Based Bi-Directional Recommendation System: Towards Recommending Jobs to Job Seekers and Resumes to Recruiters. Big Data Cogn. Comput., 6, 147. Retrieved from https://api.semanticscholar.org/CorpusId:254198842
 
-### Summary (4–6 sentences):  
+### Summary:  
 - The paper proposes an NLP-based bi-directional recommender system designed to match job seekers with relevant job postings and simultaneously suggest suitable candidates to recruiters. Unlike traditional keyword or information retrieval approaches, the system uses advanced text preprocessing, word embeddings, and similarity scoring to improve matching accuracy between resumes and job descriptions. Data was collected through web scraping of job postings in Saudi Arabia and annotated resumes, then processed using spaCy for named entity recognition (NER) to extract skills, education, and location. Evaluation results showed strong accuracy and precision across most job categories, with an overall accuracy of 80%.
 
 Insights:
