@@ -92,29 +92,51 @@ Recruit AI leverages advanced natural language processing and machine learning t
 
 ## Milestones & Roles
 
-### Phase 1: Foundation & Research (Weeks 1-4)
-- **Research Lead**: Conduct comprehensive literature review on NLP in recruitment
-- **Technical Lead**: Set up development environment and initial architecture
-- **Product Lead**: Define detailed user requirements and system specifications
-- **Deliverable**: Technical architecture document and user requirement specifications
+Below is a breakdown of project milestones, tasks, and team member roles. Each checkpoint includes specific deliverables and responsibilities to ensure successful project completion.
 
-### Phase 2: Core Development (Weeks 5-12)
-- **Technical Lead**: Develop NLP models for resume and job description analysis
-- **Research Lead**: Implement bias detection algorithms and fairness metrics
-- **Product Lead**: Design user interface and user experience flows
-- **Deliverable**: MVP with basic compatibility scoring functionality
+### Team Members
+- Kevin Xia ([@HerobrineXia](https://github.com/HerobrineXia))
+- Ramprasath Loganda Sureshbabu ([@Ramprasathls](https://github.com/Ramprasathls))
+- Changho Jung ([@ChanghoJ](https://github.com/ChanghoJ))
+- Ashwin Shanmugam ([@ash-win19](https://github.com/ash-win19))
 
-### Phase 3: Advanced Features (Weeks 13-20)
-- **Technical Lead**: Implement advanced matching algorithms and ATS integration
-- **Research Lead**: Develop analytics and reporting features
-- **Product Lead**: Conduct user testing and feedback integration
-- **Deliverable**: Full-featured platform with analytics dashboard
 
-### Phase 4: Testing & Deployment (Weeks 21-24)
-- **Technical Lead**: Performance optimization and security implementation
-- **Research Lead**: Validation studies and bias testing
-- **Product Lead**: User acceptance testing and documentation
-- **Deliverable**: Production-ready platform with comprehensive documentation
+### Checkpoint 1 — GitHub Kickoff & Proposal & Literature (Weeks 1–2)
+Tasks:
+- Set up repo folders and files (README, /literature/, /reflections/, /proposal/). [@Kevin Xia](https://github.com/HerobrineXia)
+- Collect and upload ≥8 papers; add PDFs and BibTeX entries. [@All](#team-members)
+- Draft and iterate PROPOSAL.md. [@Ashwin Shanmugam](https://github.com/ash-win19)
+- Draft and iterate README.md. [@Ramprasath Loganda Sureshbabu](https://github.com/Ramprasathls)
+- Open issues for each task and milestone for tracking. [@Kevin Xia](https://github.com/HerobrineXia) 
+
+### Checkpoint 2 — Prompt-Based Validation & Concept Feedback (Weeks 3–5)
+Tasks:
+- Draft a prompting protocol covering typical, edge, and failure cases.
+- Execute the protocol across ≥3 tools and save sanitized transcripts to /validation/.
+- Clean and organize transcripts for analysis.
+- Write a gap analysis identifying failures and UX friction.
+- Produce opportunity framing listing product requirements.
+- Create DESIGN_SPEC.md (user journeys, task flows, key screens).
+- Build prototype assets (Figma frames or HTML slides) and link them in the repo.
+- Collect peer/class feedback and summarize takeaways.
+
+### Checkpoint 3 — Working Implementation & Live Demo (Weeks 6–10)
+Tasks:
+- Implement feature tickets (parsing, matching, scoring, UI flows).
+- Integrate model APIs and store prompts under /prompts/.
+- Write minimal tests for critical paths and CI scripts (if applicable).
+- Prepare .env.example and INSTALL.md with run instructions.
+- Create architecture docs and diagram under /docs/.
+- Prepare deployment/runbook and reproducible demo instructions.
+- Write Observability plan (metrics, logs, traces).
+- Provide safety review & privacy checklist.
+### Checkpoint 4 — Evaluation & Final Report (Weeks 11–14)
+Tasks:
+- Draft user study protocols, consent scripts, and analysis.
+- Run user studies and collect data. (Task success, SUS, qualitative feedback, etc.)
+- Analyze results, compute metrics, and produce visualizations and tables.
+- Write FINAL_REPORT.md in /docs/ with methods, results, discussion, and appendices.
+- Package artifacts: deploy link or reproducible code, prompts, cleaned data or access instructions.
 
 ## References
 
