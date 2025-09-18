@@ -15,7 +15,8 @@ The recruitment process is time-consuming, costly, and often subjective. Recruit
 Legacy ATS (Applicant Tracking Systems) and most current recruitment AI solutions rely heavily on keyword-based filtering, which fails to account for context, skill relevance, and semantic similarity. Studies such as "Contextual Skill Matching Beyond Keyword Detection in Resume Screening" (Kumar et al., 2023) point out the limitations of classic matching systems. Platforms like HireVue and Pymetrics introduce AI in resume screening and video interviews but are still grappling with bias, lack of transparency, and limited integration of contextual NLP models. Moreover, fairness, privacy, and explainability remain persistent gaps. Industry reports (Deloitte, 2023; LinkedIn Talent Solutions, 2024) further highlight shortcomings in bias detection, diversity outcomes, and recruiter trust in fully automated shortlisting solutions.
 
 ## Proposed Approach
-Recruit AI will leverage advanced NLP models (e.g., BERT, GPT-4, spaCy) to deeply analyze both resumes and job descriptions, extracting and ranking candidates on actual skill, contextual fit, and growth potential. The core innovation involves:
+Recruit AI will leverage advanced NLP models (e.g., BERT, GPT-4, spaCy) to deeply analyze both resumes and job descriptions, extracting and ranking candidates on actual skill, contextual fit, and growth potential. We will combine NER-driven preprocessing to extract structured entities (skills, roles, education, years), and optionally apply a lightweight multi-agent debate (MAD) stage to surface diverse reasoning for ambiguous matches.
+The core innovation of Recruit AI includes:
 
 - Semantic skill extraction and contextual candidate-job matching (beyond keyword logic).
 
@@ -38,6 +39,8 @@ At Checkpoint 2, we will validate Recruit AI by assembling a test suite of anony
 
 - Requesting bias and fairness reports for the candidate pool and cross-examining disparate impact metrics.
 
+- Evaluating NER extraction quality on labeled samples and running small-scale multi-agent debate (MAD) trials to measure recommendation improvements and compute trade-offs.
+
 Feedback from HR professionals and users will be gathered via survey prompts to gauge trust, perceived fairness, and usability.
 
 ## Initial Risks & Mitigation
@@ -50,6 +53,8 @@ Feedback from HR professionals and users will be gathered via survey prompts to 
 **Reliability:** Continuous monitoring, fallback to manual review for edge cases or low-confidence matches.
 
 **Regulatory Compliance:** System log auditability and explicit candidate consent for AI evaluation.
+
+**Computational Cost (MAD-specific):** Multi-agent debate can increase compute and token usage; mitigate by running debate selectively for ambiguous or high-value roles, limiting agent count, and applying adaptive stopping criteria.
 
 ## References
 - TODO: List cited works from `/literature/references.bib` (use consistent citation format).

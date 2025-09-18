@@ -92,7 +92,7 @@ Recruit AI leverages advanced natural language processing and machine learning t
 
 ## Milestones & Roles
 
-Below is a breakdown of project milestones, tasks, and team member roles. Each checkpoint includes specific deliverables and responsibilities to ensure successful project completion.
+Below is a breakdown of project milestones, tasks, and team member roles. Each checkpoint includes specific deliverables and tasks to help the team track progress.
 
 ### Team Members
 - Kevin Xia ([@HerobrineXia](https://github.com/HerobrineXia))
