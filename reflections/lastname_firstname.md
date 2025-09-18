@@ -11,6 +11,7 @@ Note: Clone this file, rename it to `lastname_firstname.md`, then replace each p
 - TODO: Change the section titles to the actual paper titles. And alter the table of contents accordingly.
 
 <a id="paper-1"></a>
+
 ## Paper 1 — Placeholder
 Full citation + link:  
 
@@ -36,6 +37,7 @@ Idea for our project:
 ---
 
 <a id="paper-2"></a>
+
 ## Paper 2 — Placeholder
 Full citation + link:  
 
@@ -60,6 +62,7 @@ Idea for our project:
 ---
 
 <a id="paper-3"></a>
+
 ## Paper 3 — Placeholder
 Full citation + link:  
 
