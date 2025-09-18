@@ -103,11 +103,11 @@ Below is a breakdown of project milestones, tasks, and team member roles. Each c
 
 ### Checkpoint 1 — GitHub Kickoff & Proposal & Literature (Weeks 1–2)
 Tasks:
-- Set up repo folders and files (README, /literature/, /reflections/, /proposal/). [@Kevin Xia](https://github.com/HerobrineXia)
-- Collect and upload ≥8 papers; add PDFs and BibTeX entries. [@All](#team-members)
-- Draft and iterate PROPOSAL.md. [@Ashwin Shanmugam](https://github.com/ash-win19)
-- Draft and iterate README.md. [@Ramprasath Loganda Sureshbabu](https://github.com/Ramprasathls)
-- Open issues for each task and milestone for tracking. [@Kevin Xia](https://github.com/HerobrineXia) 
+- Set up repo folders and files (README, /literature/, /reflections/, /proposal/).
+- Collect and upload ≥8 papers; add PDFs and BibTeX entries.
+- Draft and iterate PROPOSAL.md.
+- Draft and iterate README.md.
+- Open issues for each task and milestone for tracking.
 
 ### Checkpoint 2 — Prompt-Based Validation & Concept Feedback (Weeks 3–5)
 Tasks:
