@@ -36,21 +36,17 @@ Idea for our project:
 Fragiadakis, G., Diou, C., Kousiouris, G., & Nikolaidou, M. (2025). Evaluating Human-AI Collaboration: A Review and Methodological Framework (No. arXiv:2407.19098). arXiv. https://doi.org/10.48550/arXiv.2407.19098
 
 Summary (4–6 sentences):  
-- Sentence 1: problem addressed.  
-- Sentence 2: method/approach.  
-- Sentence 3: main findings.  
-- Sentence 4: significance/implication.  
+- Evaluating Human and AI Collaboration (HAIC) is challenging as it depends on not only the performance of the system but quality of human-AI interaction, trust, and adaptability. The paper reviewed multiple literatures that tried to evaluate HAIC. Then the authors created a tree model that diverge by whether HAIC focuses on AI-centric, Human-centric, or Symbiotic. Lastly, they provide metrics for Goal (whether both human and AI efforts are aligned toward shared outcome), Interaction (whether human and AI exchange, feedback, and communicate information), and Task allocation (whether distribute tasks on human and AI effectively by their strength).
 
 Insights:
-- Insight 1:
-- Insight 2:
-- Insight 3:
+-	When evaluating human and AI interaction products, we need to consider not just the performance of the product but also the effectiveness of task distribution.
+-	HAIC products can be classified into AI-centric (AI system leads decision-making processes and operates with minimal human intervention), Human-centric (humans retain the primary decision-making authority, utilizing AI as an augmentative tool), or Symbiotic (balanced partnership where humans and AI systems collaborate closely, mutually enhancing each other's capabilities) depending on the balance of task assign between human and AI.
+-	There is quantitative metrics exists for each of the aspects of HAIC (Goal, Interaction, and Task allocation).
 
 Limitations / Risks:
-- Limitation / Risk 1:
-- Limitation / Risk 2:
+-	According to the limitation part of the research, their work excluded behavioral factors like psychology, sociology, or cognitive science. This might need future search on trusts and collaborative goal evaluations on HAIC.
+-	The research finished in the theoretical part; there is no working demo or software that actually runs the evaluation of HAIC on a service or task.
 
 Idea for our project:
-- One concrete, actionable idea (1–2 sentences).
-
+-	Since our project is highly involving with user but also relying on AI's result, I expect our product to be Symbiotic. Maybe making it symbiotic would be good to go, since giving an evaluation on a resume for job searching need user's interaction for a detailed evaluation. This means there are metrics our team may use for our products' performance.
 ---
