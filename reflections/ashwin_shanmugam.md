@@ -57,3 +57,6 @@ Limitations / Risks:
 
 Idea for our project:
 - Our project could focus on developing an AI-driven interview feedback system designed to enhance transparency and address the "lack of human nuance" concern by providing applicants with clear, anonymized feedback on how their responses were processed by the AI, and allowing them to flag perceived AI misinterpretations or biases for human review. This system would also gather applicant satisfaction scores specifically on the AI's ability to understand complex answers and its perceived fairness, directly informing AI algorithm improvements for a more trusted and effective candidate experience.
+
+## Acknowledgements
+This reflection was developed with the assistance of generative AI tools, specifically utilizing Ai2 Asta for article searching and ChatGPT-5 for key information extraction. All content has been thoroughly reviewed, rephrased, and validated by the author to ensure accuracy and maintain authenticity of the analysis.
