@@ -157,6 +157,8 @@ Tasks:
 - Chen, L. & Rodriguez, M. (2022). "Bias Detection in AI-Powered Hiring Systems: Methods and Metrics." *Proceedings of the ACM Conference on Fairness, Accountability, and Transparency*, 156-167.
 - Kumar, A. et al. (2023). "Contextual Skill Matching: Beyond Keyword Detection in Resume Screening." *IEEE Transactions on Knowledge and Data Engineering*, 35(8), 4123-4135.
 - Thompson, R. & Lee, S. (2022). "The Impact of AI on Recruitment Efficiency: A Longitudinal Study." *Human Resource Development Quarterly*, 33(4), 445-462.
+- Ghaffarzadeh-Esfahani, M., et al. (2024). Large Language Models versus Classical Machine Learning: Performance in COVID-19 Mortality Prediction Using High-Dimensional Tabular Data (No. arXiv:2409.02136). arXiv. https://doi.org/10.48550/arXiv.2409.02136
+- Fragiadakis, et al. (2025). Evaluating Human-AI Collaboration: A Review and Methodological Framework (No. arXiv:2407.19098). arXiv. https://doi.org/10.48550/arXiv.2407.19098
 
 ### Industry Reports
 - Deloitte (2023). "Global Human Capital Trends: The Future of Work and AI in Recruitment."
