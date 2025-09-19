@@ -51,3 +51,6 @@ Limitations / Risks:
 
 Idea for our project:
 - We could apply a multi-agent debate framework to job–resume matching. Different AI agents will be asked to argue for a candidate’s fit based on skills, experiences, and job requirements. A moderator AI would then be used to summarize the debate into a balanced recommendation. This can help recruiters identify strong candidate–job matches while reducing bias from single-model judgments.
+
+## Acknowledgements
+I acknowledge the use of generative AI as a supporting tool for article searching (Ai2 Asta) and key information extraction (ChatGPT-5). All results are reviewed and rephrased by myself to ensure accuracy and authenticity.

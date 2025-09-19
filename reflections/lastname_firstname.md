@@ -87,3 +87,6 @@ Idea for our project:
 ---
 
 Filename convention: `lastname_firstname.md` (lowercase; underscores optional). Add one filled block per assigned paper below these placeholders.
+
+## Acknowledgements
+The authors acknowledge the use of generative AI as a supporting tool for writing template creation (ChatGPT-5). All results are reviewed and edited by the authors to ensure accuracy.
