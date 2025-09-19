@@ -17,7 +17,7 @@ Alsaif, S.A., Hidri, M.S., Ferjani, I., Eleraky, H.A., & Hidri, A. (2022). NLP-B
 - This paper proposes a bidirectional recommendation system based on natural language processing, designed to match job seekers with relevant positions while recommending suitable candidates to employers. Unlike traditional keyword search or information retrieval methods, this system employs advanced text preprocessing, word vector technology, and similarity scoring mechanisms to significantly enhance the matching accuracy between resumes and job descriptions. Data was obtained through web scraping of Saudi Arabian job listings and annotated resumes. spaCy performed named entity recognition (NER) to extract skills, educational background, and geographic information. Evaluation results demonstrate high precision across most job categories, achieving an overall accuracy rate of 80%.
 
 Insights:
--  Extensive Pre-Processing Pipeline: The study emphasized cleaning raw job/resume data (removing HTML tags, special characters, stop words, lemmatization). This shows that a robust preprocessing pipeline is essential before entity extraction.
+-  Extensive Pre-Processing Pipeline: The study emphasized  the importance of cleaning raw job/resume data (removing HTML tags, special characters, stop words, lemmatization). This shows that a robust preprocessing pipeline is essential before entity extraction.
 
 - NER and embeddings: Using NER (spaCy) and word embeddings (Word2Vec + cosine similarity) effectively captures structured entities like skills and education, enabling more accurate matching.
 
