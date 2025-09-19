@@ -55,6 +55,3 @@ Feedback from HR professionals and users will be gathered via survey prompts to 
 **Regulatory Compliance:** System log auditability and explicit candidate consent for AI evaluation.
 
 **Computational Cost (MAD-specific):** Multi-agent debate can increase compute and token usage; mitigate by running debate selectively for ambiguous or high-value roles, limiting agent count, and applying adaptive stopping criteria.
-
-## References
-- TODO: List cited works from `/literature/references.bib` (use consistent citation format).
