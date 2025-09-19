@@ -19,7 +19,7 @@ Alsaif, S.A., Hidri, M.S., Ferjani, I., Eleraky, H.A., & Hidri, A. (2022). NLP-B
 Insights:
 -  Extensive Pre-Processing Pipeline: The study emphasized  the importance of cleaning raw job/resume data (removing HTML tags, special characters, stop words, lemmatization). This shows that a robust preprocessing pipeline is essential before entity extraction.
 
-- NER and embeddings: Using NER (spaCy) and word embeddings (Word2Vec + cosine similarity) effectively captures structured entities like skills and education, enabling more accurate matching.
+- NER (Named Entity Recognition) and embeddings: Using NER (spaCy) and word embeddings (Word2Vec + cosine similarity) effectively captures structured entities like skills and education, enabling more accurate matching.
 
 - Real-world applicability: The approach showed high performance even with overlapping skills between roles (e.g., Data Scientist vs. Data Engineer), demonstrating practical value for complex labor markets.
 
