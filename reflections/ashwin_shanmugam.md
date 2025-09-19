@@ -1,4 +1,4 @@
-# Reflection Template (clone → rename to `lastname_firstname.md`)
+# Shanmugam's Reflection
 
 Table of contents
 - [Paper 1 — Collaboration among recruiters and artificial intelligence: removing human prejudices in employment](#paper-1)
@@ -11,7 +11,7 @@ Table of contents
 ## Paper 1 — Collaboration among recruiters and artificial intelligence: removing human prejudices in employment
 Chen Z. (2023). Collaboration among recruiters and artificial intelligence: removing human prejudices in employment. Cognition, technology & work (Online), 25(1), 135–149. https://doi.org/10.1007/s10111-022-00716-0
 
-Summary (4–6 sentences):  
+Summary:  
 - This study addresses the problem that traditional recruiting methods are failing to cope with the global competition for talent, are often inefficient, and are susceptible to human prejudices in employment decisions.
 - It explores the transition of talent acquisition from Digital 1.0 to 3.0 (AI-enabled), analyzes the significant role of AI in various recruitment stages, and investigates stakeholder (recruiters, managers, and applicants) perceptions through semi-structured interviews.
 - The main findings indicate that AI greatly enhances recruitment efficiency, helps in screening and assessment, and can reduce human cognitive workload, leading to improved candidate-job and candidate-organization fit.
@@ -38,7 +38,7 @@ Idea for our project:
 ## Paper 2 — Applicants' perception of artificial intelligence in the recruitment process
 Horodyski, P. (2023). Applicants’ perception of artificial intelligence in the recruitment process. Computers in Human Behavior Reports, 11, 100303. doi:10.1016/j.chbr.2023.100303
 
-Summary (4–6 sentences):  
+Summary:  
 - This paper addresses the problem of limited literature coverage on applicants' perceptions and experiences of AI technology in hiring processes, as most existing studies focus on the benefits for recruiters and employers.
 - It explores these perceptions by conducting a study where 552 job seekers from various nationalities and industries completed an online questionnaire about their experiences with AI tools in recruitment, with the results analyzed using the Technology Acceptance Model (TAM).
 - The main findings indicate that applicants generally perceive AI technology positively, viewing it as useful and easy to use, with reduced response time being the most significant advantage.
