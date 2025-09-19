@@ -6,9 +6,6 @@ Table of contents
 
 ---
 
-Note: Clone this file, rename it to `lastname_firstname.md`, then replace each placeholder block with your filled reflection (one block per paper).
-- TODO: Change the section titles to the actual paper titles. And alter the table of contents accordingly.
-
 <a id="paper-1"></a>
 
 ## Paper 1 — Collaboration among recruiters and artificial intelligence: removing human prejudices in employment
@@ -65,7 +62,6 @@ Idea for our project:
 
 ---
 
-Filename convention: `lastname_firstname.md` (lowercase; underscores optional). Add one filled block per assigned paper below these placeholders.
 
 ## Acknowledgements
 This reflection was developed with the assistance of generative AI tools, specifically utilizing Ai2 Asta for article searching and ChatGPT-5 for key information extraction. All content has been thoroughly reviewed, rephrased, and validated by the author to ensure accuracy and maintain authenticity of the analysis.
