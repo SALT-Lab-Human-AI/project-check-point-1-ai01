@@ -9,8 +9,7 @@ Table of contents
 <a id="paper-1"></a>
 
 ## Paper 1 — Collaboration among recruiters and artificial intelligence: removing human prejudices in employment
-Full citation + link:  
-Chen, Z. (2022). Collaboration among recruiters and artificial intelligence: removing human prejudices in employment. Cognition, Technology & Work, 25(1), 135–149. https://pmc.ncbi.nlm.nih.gov/articles/PMC9516509/
+Chen Z. (2023). Collaboration among recruiters and artificial intelligence: removing human prejudices in employment. Cognition, technology & work (Online), 25(1), 135–149. https://doi.org/10.1007/s10111-022-00716-0
 
 Summary (4–6 sentences):  
 - This study addresses the problem that traditional recruiting methods are failing to cope with the global competition for talent, are often inefficient, and are susceptible to human prejudices in employment decisions.
@@ -37,8 +36,7 @@ Idea for our project:
 <a id="paper-2"></a>
 
 ## Paper 2 — Applicants' perception of artificial intelligence in the recruitment process
-Full citation + link:  
-Horodyski, P. (XXXX). Applicants' perception of artificial intelligence in the recruitment process. Computers in Human Behavior Reports, XX, XXXX. https://doi.org/10.1016/j.chbr.0000.000000 (Note: The volume, year, and page numbers are listed as placeholders in the provided source).
+Horodyski, P. (2023). Applicants’ perception of artificial intelligence in the recruitment process. Computers in Human Behavior Reports, 11, 100303. doi:10.1016/j.chbr.2023.100303
 
 Summary (4–6 sentences):  
 - This paper addresses the problem of limited literature coverage on applicants' perceptions and experiences of AI technology in hiring processes, as most existing studies focus on the benefits for recruiters and employers.
@@ -59,9 +57,6 @@ Limitations / Risks:
 
 Idea for our project:
 - Our project could focus on developing an AI-driven interview feedback system designed to enhance transparency and address the "lack of human nuance" concern by providing applicants with clear, anonymized feedback on how their responses were processed by the AI, and allowing them to flag perceived AI misinterpretations or biases for human review. This system would also gather applicant satisfaction scores specifically on the AI's ability to understand complex answers and its perceived fairness, directly informing AI algorithm improvements for a more trusted and effective candidate experience.
-
----
-
 
 ## Acknowledgements
 This reflection was developed with the assistance of generative AI tools, specifically utilizing Ai2 Asta for article searching and ChatGPT-5 for key information extraction. All content has been thoroughly reviewed, rephrased, and validated by the author to ensure accuracy and maintain authenticity of the analysis.
