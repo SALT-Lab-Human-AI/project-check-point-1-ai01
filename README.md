@@ -11,6 +11,7 @@ Recruit AI is an intelligent, AI-powered platform designed to revolutionize the 
 - [📚 References](#references)
 
 <a id="problem-statement"></a>
+
 ## 🔍 Problem Statement
 
 The recruitment process is fundamentally broken. Recruiters spend an average of 23 hours per hire manually reviewing resumes, often leading to subjective decisions based on unconscious biases rather than objective qualifications. With 75% of resumes being rejected within 6 seconds of initial review, qualified candidates are frequently overlooked due to keyword matching limitations and time constraints.
@@ -20,6 +21,7 @@ Current recruitment tools rely heavily on simple keyword matching, which fails t
 The problem affects multiple stakeholders: recruiters who are overwhelmed with manual work, hiring managers who receive poorly filtered candidates, and job seekers who face an increasingly opaque and biased selection process. With the global talent shortage expected to reach 85.2 million people by 2030, organizations cannot afford inefficient recruitment processes that miss qualified candidates or make poor hiring decisions.
 
 <a id="target-users-and-core-tasks"></a>
+
 ## 👥 Target Users and Core Tasks
 
 ###  Primary Target Users:
@@ -49,6 +51,7 @@ The problem affects multiple stakeholders: recruiters who are overwhelmed with m
 - Collaborate with recruiters on candidate selection
 
 <a id="competitive-landscape"></a>
+
 ## 🏆 Competitive Landscape
 
 **1. Workday Recruiting**
@@ -79,6 +82,7 @@ The problem affects multiple stakeholders: recruiters who are overwhelmed with m
 **Key Differentiators**: Recruit AI addresses the fundamental gap in contextual understanding of candidate qualifications, providing objective compatibility scoring that goes beyond keyword matching while actively reducing bias in the selection process.
 
 <a id="initial-concept-and-value-proposition"></a>
+
 ## 💡 Initial Concept and Value Proposition
 
 Recruit AI leverages advanced natural language processing and machine learning to analyze resumes and job descriptions, generating intelligent compatibility scores that understand context, skill relevance, and experience depth. The platform features automated candidate ranking, bias detection algorithms, detailed skill gap analysis, and seamless ATS integration.
@@ -95,6 +99,7 @@ Recruit AI leverages advanced natural language processing and machine learning t
 💎 **Value Proposition**: Recruit AI transforms recruitment from a time-intensive, subjective process into an efficient, data-driven system that identifies the most qualified candidates while ensuring fair and unbiased evaluation, reducing time-to-hire by 60% and improving candidate quality by 40%.
 
 <a id="milestones--roles"></a>
+
 ## 🗓️ Milestones & Roles
 
 Below is a breakdown of project milestones, tasks, and team member roles. Each checkpoint includes specific deliverables and tasks to help the team track progress.
@@ -144,6 +149,7 @@ Tasks:
 - Package artifacts: deploy link or reproducible code, prompts, cleaned data or access instructions.
 
 <a id="references"></a>
+
 ## 📚 References
 
 ### Academic Papers
