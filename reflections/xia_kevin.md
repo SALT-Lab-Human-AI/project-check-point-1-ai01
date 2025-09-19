@@ -1,8 +1,7 @@
 # Kevin's Reflection
 
 Table of contents
-- [NLP-Based Bi-Directional Recommendation System: Towards
- Recommending Jobs to Job Seekers and Resumes to Recruiters](#paper-1)
+- [NLP-Based Bi-Directional Recommendation System: Towards Recommending Jobs to Job Seekers and Resumes to Recruiters](#paper-1)
 - [Encouraging Divergent Thinking in Large Language Models through Multi-Agent Debate](#paper-2)
 
 ---
