@@ -159,6 +159,8 @@ Tasks:
 - Thompson, R. & Lee, S. (2022). "The Impact of AI on Recruitment Efficiency: A Longitudinal Study." *Human Resource Development Quarterly*, 33(4), 445-462.
 - Ghaffarzadeh-Esfahani, M., et al. (2024). Large Language Models versus Classical Machine Learning: Performance in COVID-19 Mortality Prediction Using High-Dimensional Tabular Data (No. arXiv:2409.02136). arXiv. https://doi.org/10.48550/arXiv.2409.02136
 - Fragiadakis, et al. (2025). Evaluating Human-AI Collaboration: A Review and Methodological Framework (No. arXiv:2407.19098). arXiv. https://doi.org/10.48550/arXiv.2407.19098
+- Chen, Z. (2022). "Collaboration among recruiters and artificial intelligence: removing human prejudices in employment." *Cognition, Technology & Work*, 25(1), 135–149. https://pmc.ncbi.nlm.nih.gov/articles/PMC9516509/
+- Horodyski, P. (XXXX). "Applicants' perception of artificial intelligence in the recruitment process." *Computers in Human Behavior Reports*, XX, XXXX. https://doi.org/10.1016/j.chbr.0000.000000
 
 ### Industry Reports
 - Deloitte (2023). "Global Human Capital Trends: The Future of Work and AI in Recruitment."
