@@ -20,12 +20,16 @@
 
 ## Prompts used in the protocol
 ### LLM-Extract
+- For LLM-Extract, use the following prompt and Resume used in the protocol by typical, edge, and failure cases.
+- For example, in typical case, we use the following prompt + typical case resume.
+- For edge case, we use the following prompt + edge case resume.
 ```
 Extract attributes roles, skills, years, seniority, growth stage, spans, and confidences in following format. Role= , years= , seniority= .
 Resume to extract:
 ```
 
 ### LLM-Score
+- For LLM-Score, use the following prompt right after getting the result from LLM-Extract.
 ```
 Match with the job descriptions and provide match score that how the resume is closer to the job. Job descriptions: Developer, Data Integration. University of Illinois Foundation (https://www.linkedin.com/jobs/view/4269267569) 
 Duties: Work with different customer relationship management systems to design and implement data solutions and support the ongoing management of data quality and data integrity for the Foundation. Work with supervisor to create and enhance Blackbaud CRM functionality or data solutions to allow mass updates through batches and audits for data integrity initiatives. Coordinate with business analysts, application developers, and external vendors to gather data management requirements and construct solutions for customer needs. Develop and maintain documentation of technical specifications, functional specifications and business processes that define how requirements will be technically established. Work with Blackbaud SDK, using XML specifications, SSIS packaging solutions, version control tools, VB .Net programming language, MS SQL, MS Visual Studio and other PC based applications to build and document data integration processes. Validate new and existing data integration processes by developing and implementing test plans, test scripts and scenarios for data design, tool design, data extracts, annual software service packs and quarterly release of software changes. Use Blackbuad CRM adhoc query tool and API tools to create automated export processes for data syncs with external data vendors. Perform analytical programming using SQL, writing audit reports using SSRS, and working with large data sets. Apply principles and techniques of computer science and related areas to develop complex data analysis code using SQL and .Net programming languages to create data solutions or data fixes through scripts, global changes or storage procedures.
@@ -34,6 +38,7 @@ Experience Required: 2 years of work experience as a data management analyst, da
 Special Skills Required: Must have work experience in each of the following: 1) Working with Blackbaud SDK, using XML specifications, SSIS packaging solutions, version control tools, VB .Net programming language, MS SQL, MS Visual Studio and other PC based applications to build and document data integration processes; 2) Using Blackbuad CRM adhoc query tool and API tools to create automated export processes for data syncs with external data vendors; and 3) Performing analytical programming using SQL, writing audit reports using SSRS, and working with large data sets.
 ```
 ### LLM-Explain
+- For LLM-Explain, use the following prompt right after getting the result from LLM-Score.
 ```
 Based on the match score provided, provide summary of the result with suggestive language.
 ```
