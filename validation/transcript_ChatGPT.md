@@ -304,32 +304,135 @@ Would you like me to generate a **short summary paragraph (recruiter-style)** su
 - **LLM-Explain**
 Prompt:
 ```
+Based on the match score provided, provide summary of the result with suggestive language.
 ```
 Output:
 ```
+**Summary of Match Result (64% Match)**
+
+Jeo Kim’s background demonstrates a **solid academic foundation in data and information sciences** and **hands-on experience in data analysis, visualization, and process documentation**. His experience managing large datasets, conducting statistical analysis in Python and SPSS, and collaborating across multiple university organizations reflects strong analytical and teamwork capabilities — both valuable for data management roles.
+
+However, the match is **moderate (64%)** because the role places heavy emphasis on **technical tools and platforms** such as SQL, SSIS, .NET, Visual Studio, and particularly **Blackbaud CRM**, which are not currently reflected in Jeo’s experience. Strengthening proficiency in these enterprise data integration tools and emphasizing familiarity with **CRM systems, SQL-based workflows, or data pipeline development** would substantially improve alignment.
+
+In summary, Jeo appears **well-prepared for entry-level or trainee data management roles** and could become a stronger candidate for this position with **targeted upskilling in CRM data systems, SQL programming, and data integration frameworks**.
+
 ```
 
 ## Failure case:
 - **LLM-Extract**
 Prompt:
 ```
+Extract attributes roles, skills, years, seniority, growth stage, spans, and confidences in following format. Role= , years= , seniority= . 
+Resume to extract: 
+Hi! I’m a data scientist with a passion for uncovering insights hidden in data and turning them into meaningful stories. I love exploring datasets, finding patterns, and building models that help make better decisions. My work often involves using tools like Python, SQL, and visualization libraries to clean, analyze, and communicate complex information in a clear, impactful way.
+I’m especially interested in how data can bridge the gap between intuition and evidence — whether it’s optimizing a process, predicting trends, or understanding user behavior. I enjoy collaborating with people from different backgrounds, learning new techniques, and constantly improving how I approach problems through data.
 ```
 Output:
 ```
+Here’s the extracted information in the requested format:
+
+**Role:** Data Scientist
+**Years:** Not explicitly stated (likely early-career or <3 years based on narrative tone)
+**Seniority:** Junior / Early-career
+**Skills:** Python, SQL, data visualization, data cleaning, data analysis, pattern recognition, predictive modeling, storytelling with data, collaboration
+**Growth Stage:** Individual contributor, learning-focused stage
+**Spans:** Data exploration → modeling → communication (end-to-end analytical workflow)
+**Confidences:**
+
+* Role: 0.95
+* Years: 0.6
+* Seniority: 0.8
+* Skills: 0.9
+* Growth stage: 0.85
+* Spans: 0.9
 ```
 
 - **LLM-Score**
 Prompt:
 ```
+Match with the job descriptions and provide match score that how the resume is closer to the job. Job descriptions: Developer, Data Integration. University of Illinois Foundation (https://www.linkedin.com/jobs/view/4269267569) 
+Duties: Work with different customer relationship management systems to design and implement data solutions and support the ongoing management of data quality and data integrity for the Foundation. Work with supervisor to create and enhance Blackbaud CRM functionality or data solutions to allow mass updates through batches and audits for data integrity initiatives. Coordinate with business analysts, application developers, and external vendors to gather data management requirements and construct solutions for customer needs. Develop and maintain documentation of technical specifications, functional specifications and business processes that define how requirements will be technically established. Work with Blackbaud SDK, using XML specifications, SSIS packaging solutions, version control tools, VB .Net programming language, MS SQL, MS Visual Studio and other PC based applications to build and document data integration processes. Validate new and existing data integration processes by developing and implementing test plans, test scripts and scenarios for data design, tool design, data extracts, annual software service packs and quarterly release of software changes. Use Blackbuad CRM adhoc query tool and API tools to create automated export processes for data syncs with external data vendors. Perform analytical programming using SQL, writing audit reports using SSRS, and working with large data sets. Apply principles and techniques of computer science and related areas to develop complex data analysis code using SQL and .Net programming languages to create data solutions or data fixes through scripts, global changes or storage procedures.
+Education Required: Bachelor’s degree in computer science or information management
+Experience Required: 2 years of work experience as a data management analyst, data analyst or related
+Special Skills Required: Must have work experience in each of the following: 1) Working with Blackbaud SDK, using XML specifications, SSIS packaging solutions, version control tools, VB .Net programming language, MS SQL, MS Visual Studio and other PC based applications to build and document data integration processes; 2) Using Blackbuad CRM adhoc query tool and API tools to create automated export processes for data syncs with external data vendors; and 3) Performing analytical programming using SQL, writing audit reports using SSRS, and working with large data sets.
 ```
 Output:
 ```
+Here’s the **resume–job match analysis** for the given profile:
+
+---
+
+### 🔍 **Resume Extracted Attributes**
+
+**Role:** Data Scientist
+**Years:** <3 (early-career, not specified)
+**Seniority:** Junior / Early-career
+**Skills:** Python, SQL, data visualization, data cleaning, data analysis, predictive modeling, data storytelling, collaboration
+**Growth Stage:** Learning-focused individual contributor
+**Spans:** Data exploration → modeling → communication
+
+---
+
+### 🧩 **Job Description Key Attributes (Developer, Data Integration)**
+
+**Role:** Data Integration Developer / Data Engineer
+**Years:** 2+ years required
+**Seniority:** Mid-level
+**Skills Required:**
+
+* **Technical:** Blackbaud SDK, XML, SSIS, VB .Net, MS SQL, MS Visual Studio, API tools, SSRS
+* **Analytical:** SQL programming, data auditing, large datasets, documentation
+* **Soft Skills:** Collaboration with analysts, developers, vendors; data integrity focus
+  **Growth Stage:** Implementation and maintenance of enterprise-level data systems
+  **Spans:** Design → implementation → testing → documentation
+
+---
+
+### 📊 **Attribute-by-Attribute Match**
+
+| Attribute             | Match            | Comments                                                                                                           |
+| --------------------- | ---------------- | ------------------------------------------------------------------------------------------------------------------ |
+| **Role**              | 🔸 0.4           | Resume focuses on data science (analysis/modeling), while job focuses on integration and engineering.              |
+| **Years**             | 🔸 0.5           | No stated experience, but tone suggests less than 2 years.                                                         |
+| **Seniority**         | 🔸 0.4           | Job is mid-level; resume is early-career.                                                                          |
+| **Skills**            | 🔸 0.5           | Overlap only in SQL and general data handling; lacks .Net, SSIS, CRM, Visual Studio.                               |
+| **Growth Stage**      | 🔹 0.6           | Both involve learning and problem-solving; resume less technical-system focused.                                   |
+| **Spans**             | 🔹 0.6           | Resume covers analysis workflow; job requires integration workflow (design → testing).                             |
+| **Overall Alignment** | ⚪ **0.50 (50%)** | Partial match — resume fits analytical/data handling aspects but lacks technical stack and integration experience. |
+
+---
+
+### 🧠 **Summary**
+
+The **resume shows a solid foundation in data analysis and storytelling**, which partially aligns with the data quality and SQL aspects of the role. However, **it lacks experience with integration tools (Blackbaud, SSIS, VB .Net, APIs)** and enterprise-level CRM systems that are central to this position.
+
+If this candidate were to apply, they might highlight their **SQL proficiency and data cleaning/quality focus**, while emphasizing a **willingness to learn system integration and CRM data workflows** to strengthen their fit.
+
+---
+
+**✅ Match Score: 50% (Moderate alignment)**
+**🗣 Suggestion:** The candidate could move closer to this role by gaining exposure to **data integration frameworks, ETL pipelines, and CRM tools** like Blackbaud or similar systems.
 ```
 
 - **LLM-Explain**
 Prompt:
 ```
+Based on the match score provided, provide summary of the result with suggestive language.
 ```
 Output:
 ```
+**Match Score: 50% — Moderate Alignment**
+
+**Summary:**
+The resume demonstrates a strong analytical foundation and familiarity with data handling using tools like Python and SQL, which are valuable for data-driven roles. However, this position emphasizes **data integration, system-level development, and CRM data management**—areas where the candidate’s experience is limited. The resume aligns well with the analytical mindset and problem-solving aspects of the role but lacks direct exposure to **integration technologies (SSIS, VB .Net, APIs, and Blackbaud CRM)** that are central to this position.
+
+**Suggestion:**
+To strengthen alignment, the candidate could:
+
+* Gain hands-on experience with **ETL or data integration tools** (e.g., SSIS, Talend, or Informatica).
+* Explore **CRM systems** like Blackbaud or Salesforce to understand data quality and integration workflows.
+* Build familiarity with **.Net or Visual Studio environments** for implementing and maintaining integration processes.
+* Highlight any experience with **data validation, documentation, or collaboration across teams**, which directly supports the job’s data quality and coordination aspects.
+
+With these skill enhancements, the candidate could move from a moderate to a **high match** for data integration or data management-focused developer roles.
 ```
