@@ -321,3 +321,132 @@ Jeo Kim's resume achieves a match score of 70/100 for the Data Management Analys
 
 **Suggestions**: To enhance his fit for this role, Jeo should seek opportunities to gain hands-on experience with Blackbaud CRM, VB .Net, SSRS, and MS SQL through internships, freelance projects, or online certifications. Building expertise in version control tools and SSIS packaging solutions would further strengthen his profile. Additionally, pursuing roles or projects that extend his data management experience to meet the 2-year requirement and documenting technical specifications could close the gap, making him a highly competitive candidate for similar positions.
 ```
+## Failure Case
+- **LLM-Extract**
+Prompt:
+```
+Extract attributes from the resume, including roles, skills, years of experience, seniority, growth stage, spans, and confidence levels, in the following format. 
+Role=
+years=
+seniority=
+growth stage=
+spans=
+confidences=
+
+Resume to extract: 
+Hi! I’m a data scientist with a passion for uncovering insights hidden in data and turning them into meaningful stories. I love exploring datasets, finding patterns, and building models that help make better decisions. My work often involves using tools like Python, SQL, and visualization libraries to clean, analyze, and communicate complex information in a clear, impactful way.
+I’m especially interested in how data can bridge the gap between intuition and evidence — whether it’s optimizing a process, predicting trends, or understanding user behavior. I enjoy collaborating with people from different backgrounds, learning new techniques, and constantly improving how I approach problems through data.
+```
+Output:
+```
+Role=Data Scientist  
+years=Not specified (insufficient data to determine exact years of experience)  
+seniority=Not specified (cannot determine without specific experience details)  
+growth stage=Not specified (likely early to mid-career based on described passion and focus on learning, but no explicit timeline provided)  
+spans=Data Science (data analysis, model building, process optimization, trend prediction, user behavior analysis), Visualization (communicating complex information), Collaboration (working with diverse teams)  
+confidences=Python: High (inferred from mention as a key tool), SQL: High (inferred from mention as a key tool), Data Visualization Libraries: High (inferred from emphasis on visualization), Data Analysis: High (core focus on uncovering insights and patterns), Model Building: High (mentioned as part of work), Communication: High (emphasis on turning data into meaningful stories), Collaboration: Moderate (interest in working with diverse backgrounds)
+```
+- **LLM-Score**
+Prompt:
+```
+Match with the below job descriptions and provide match score that how the resume is closer to the job. 
+
+Job descriptions: Developer, Data Integration. University of Illinois Foundation (https://www.linkedin.com/jobs/view/4269267569) 
+Duties: Work with different customer relationship management systems to design and implement data solutions and support the ongoing management of data quality and data integrity for the Foundation. Work with supervisor to create and enhance Blackbaud CRM functionality or data solutions to allow mass updates through batches and audits for data integrity initiatives. Coordinate with business analysts, application developers, and external vendors to gather data management requirements and construct solutions for customer needs. Develop and maintain documentation of technical specifications, functional specifications and business processes that define how requirements will be technically established. Work with Blackbaud SDK, using XML specifications, SSIS packaging solutions, version control tools, VB .Net programming language, MS SQL, MS Visual Studio and other PC based applications to build and document data integration processes. Validate new and existing data integration processes by developing and implementing test plans, test scripts and scenarios for data design, tool design, data extracts, annual software service packs and quarterly release of software changes. Use Blackbuad CRM adhoc query tool and API tools to create automated export processes for data syncs with external data vendors. Perform analytical programming using SQL, writing audit reports using SSRS, and working with large data sets. Apply principles and techniques of computer science and related areas to develop complex data analysis code using SQL and .Net programming languages to create data solutions or data fixes through scripts, global changes or storage procedures.
+Education Required: Bachelor’s degree in computer science or information management
+Experience Required: 2 years of work experience as a data management analyst, data analyst or related
+Special Skills Required: Must have work experience in each of the following: 1) Working with Blackbaud SDK, using XML specifications, SSIS packaging solutions, version control tools, VB .Net programming language, MS SQL, MS Visual Studio and other PC based applications to build and document data integration processes; 2) Using Blackbuad CRM adhoc query tool and API tools to create automated export processes for data syncs with external data vendors; and 3) Performing analytical programming using SQL, writing audit reports using SSRS, and working with large data sets.
+```
+Output:
+```
+To evaluate how closely the provided resume matches the job description for the Developer, Data Integration role at the University of Illinois Foundation, I’ll assess the candidate’s qualifications against the job’s requirements in terms of education, experience, roles, skills, and duties. A match score out of 100 will be assigned based on the alignment. Since the resume is brief and lacks specific details like years of experience and education, assumptions will be made where necessary, and the score will reflect the limited information provided.
+
+### Job Description Requirements
+- **Education**: Bachelor’s degree in Computer Science or Information Management.
+- **Experience**: 2 years of work experience as a data management analyst, data analyst, or related role.
+- **Special Skills**:
+  1. Experience with Blackbaud SDK, XML specifications, SSIS packaging solutions, version control tools, VB .Net, MS SQL, MS Visual Studio, and PC-based applications for data integration processes.
+  2. Using Blackbaud CRM ad hoc query tool and API tools for automated export processes for data syncs with external vendors.
+  3. Analytical programming using SQL, writing audit reports using SSRS, and working with large data sets.
+- **Duties**: Designing and implementing data solutions, managing data quality/integrity, enhancing Blackbaud CRM functionality, coordinating with stakeholders, developing documentation, validating data integration processes, and performing analytical programming.
+
+### Resume Analysis
+**Education**:
+- The resume does not explicitly state the candidate’s educational background.
+- Given the role of Data Scientist and proficiency in Python, SQL, and data visualization, it’s reasonable to assume the candidate likely holds a Bachelor’s degree in a relevant field like Computer Science, Data Science, or Information Management, as these are common for data science roles.
+- **Assumption**: Candidate has a Bachelor’s degree in Computer Science or Information Management to align with the job requirement.
+- **Match**: Assumed to fully meet the education requirement (pending confirmation of degree).
+
+**Experience**:
+- **Role**: Data Scientist (years of experience not specified).
+- **Relevance**: The Data Scientist role involves analyzing datasets, building models, and communicating insights, which aligns closely with data analyst or data management responsibilities. Specific tasks like process optimization, trend prediction, and user behavior analysis suggest experience with data solutions.
+- **Duration**: No specific years of experience are provided, making it impossible to confirm the required 2 years in a data management analyst, data analyst, or related role. The resume’s focus on data science tasks implies some professional experience, but without a timeline, I’ll assume minimal experience (e.g., 1 year) for scoring purposes.
+- **Match**: Low to moderate, as the role is relevant, but the lack of specified experience duration and no direct mention of data management analyst duties limits alignment.
+
+**Skills**:
+- **Listed Skills**: Python (High), SQL (High), Data Visualization Libraries (High).
+- **Inferred Skills** (from resume description):
+  - Data Analysis: High (core focus on uncovering insights and patterns).
+  - Model Building: High (building models mentioned).
+  - Communication: High (turning data into meaningful stories).
+  - Collaboration: Moderate (interest in working with diverse teams).
+- **Job-Specific Skills**:
+  1. **Blackbaud SDK, XML, SSIS, VB .Net, MS SQL, MS Visual Studio, Version Control**: No mention of Blackbaud SDK, XML, SSIS, VB .Net, MS Visual Studio, or version control tools. MS SQL is not explicitly listed, but SQL proficiency is noted, which may include MS SQL.
+  2. **Blackbaud CRM Ad Hoc Query Tool and API Tools**: No specific experience with Blackbaud CRM or its tools, but general API familiarity can be inferred from data science work (e.g., extracting data for analysis).
+  3. **SQL, SSRS, Large Data Sets**: Strong SQL proficiency is stated, and working with large datasets is implied by the focus on data analysis and model building. No experience with SSRS is mentioned.
+- **Other Relevant Skills**:
+  - Python and visualization libraries (e.g., Matplotlib, Seaborn) align with analytical programming and data communication.
+  - Collaboration skills support stakeholder coordination.
+- **Match**: Strong in SQL and large dataset handling, moderate in API-related tasks, weak in Blackbaud-specific tools, VB .Net, and SSRS.
+
+**Duties Alignment**:
+- **Data Solutions and Data Quality**: The resume emphasizes analyzing datasets, finding patterns, and building models, which aligns with designing data solutions. Data quality/integrity is implied through cleaning and analyzing complex information.
+- **Blackbaud CRM Functionality**: No direct experience with Blackbaud CRM or its tools.
+- **Coordination with Stakeholders**: Collaboration with diverse teams suggests stakeholder coordination capability.
+- **Documentation**: No explicit mention of developing technical or functional specifications, but communicating insights in a clear way implies some documentation skills.
+- **Validation and Testing**: Model building and data cleaning suggest attention to data integrity, but no specific experience with test plans or scripts.
+- **Analytical Programming**: Strong alignment with SQL and Python-based data analysis; no mention of SSRS or VB .Net.
+- **Match**: Strong in data analysis, visualization, and collaboration; weak in Blackbaud-specific tasks, documentation, and validation processes.
+
+### Match Score Calculation
+- **Education (20%)**: Assumed to meet the requirement (Bachelor’s in Computer Science or Information Management). **Score: 20/20**.
+- **Experience (30%)**: Relevant Data Scientist role, but no specified duration (assumed ~1 year vs. 2 years required). **Score: 12/30** (partial credit for relevant role but insufficient duration).
+- **Skills (30%)**: Strong in SQL and large datasets, moderate in API usage, lacks Blackbaud tools, VB .Net, SSRS. **Score: 18/30** (credit for SQL, Python, and data handling).
+- **Duties (20%)**: Aligns well in data analysis, visualization, and collaboration; lacks Blackbaud-specific and documentation experience. **Score: 14/20**.
+- **Total Score**: (20 + 12 + 18 + 14) / 100 = **64/100**.
+
+### Comparison with Previous Candidates
+- **Mary Smith**: Match score of 38/100, due to limited technical experience (0.25 years as IT Intern) and lack of specific tools like Blackbaud SDK and SSRS.
+- **Jeo Kim**: Match score of 70/100, with stronger data analysis experience (0.49 years) and relevant skills in Python, SQL, and large datasets.
+- **Current Candidate**: Match score of 64/100, slightly lower than Jeo due to unspecified experience duration, but higher than Mary due to stronger alignment with data science tasks and SQL proficiency.
+
+### Final Answer
+**Match Score: 64/100**
+
+**Explanation**: The candidate’s resume, identifying them as a Data Scientist, shows strong potential for the Developer, Data Integration role due to proficiency in SQL, Python, and data analysis, which align with duties like designing data solutions and working with large datasets. The assumed Bachelor’s degree in a relevant field meets the education requirement. However, the lack of specified experience duration (assumed ~1 year vs. 2 years required) and absence of expertise in Blackbaud SDK, VB .Net, SSRS, and Blackbaud CRM tools reduces the match. The candidate’s skills in visualization and collaboration are strengths, but limited details on documentation and validation processes further constrain the score. Compared to Mary Smith (38/100) and Jeo Kim (70/100), this candidate’s score of 64/100 reflects a moderate fit, with potential but needing more specific experience and tools expertise.
+
+<xaiArtifact artifact_id="7d6d611d-3498-422d-96e5-4b954acf4e01" artifact_version_id="1ceec634-463b-476d-a53f-e117501b45ca" title="Match_Score_Summary.md" contentType="text/markdown">
+
+# Match Score Summary for Developer, Data Integration Role
+
+**Match Score: 64/100**
+
+The candidate’s resume, identifying them as a Data Scientist, achieves a match score of 64/100 for the Developer, Data Integration role at the University of Illinois Foundation. Their proficiency in SQL, Python, and data visualization aligns well with duties such as designing data solutions, analyzing large datasets, and communicating insights. The assumed Bachelor’s degree in Computer Science or Information Management meets the educational requirement. However, the resume lacks specific details on years of experience, making it difficult to confirm the required 2 years in a data management or analyst role. Additionally, there is no demonstrated experience with critical tools like Blackbaud SDK, VB .Net, SSRS, or Blackbaud CRM, which are essential for the position. Strengths in collaboration and data analysis suggest potential, but the absence of specialized tools and formal documentation/validation experience limits the fit. Compared to previous candidates, this score (64/100) is higher than Mary Smith’s (38/100) due to stronger data science alignment but lower than Jeo Kim’s (70/100) due to unspecified experience duration.
+
+**Suggestions**: To improve their fit for this role, the candidate should clarify their years of experience and seek opportunities to gain hands-on experience with Blackbaud CRM, VB .Net, SSRS, and MS SQL through projects, internships, or certifications. Developing skills in version control and SSIS packaging solutions, as well as documenting technical specifications, would further enhance their candidacy. Pursuing additional data management or integration projects could help meet the 2-year experience requirement and strengthen their alignment with the role’s technical demands.
+
+</xaiArtifact>
+```
+- **LLM-Explain**
+Prompt:
+```
+Based on the match score provided, provide summary of the result with suggestive language.
+```
+Output:
+```
+**Summary of Resume Match for Developer, Data Integration Role**
+
+The candidate’s resume, identifying them as a Data Scientist, earns a match score of 64/100 for the Developer, Data Integration role at the University of Illinois Foundation. Their strong proficiency in SQL, Python, and data visualization aligns well with key duties such as designing data solutions, analyzing large datasets, and communicating insights effectively. The assumed Bachelor’s degree in Computer Science or Information Management meets the educational requirement, and their collaborative skills support the role’s stakeholder coordination needs. However, the lack of specified years of experience (assumed ~1 year vs. the required 2 years) and absence of expertise in critical tools like Blackbaud SDK, VB .Net, SSRS, and Blackbaud CRM significantly limits the match. Compared to Mary Smith (38/100), the candidate shows a stronger fit due to relevant data science skills, but they fall slightly below Jeo Kim (70/100) due to unclear experience duration and less specific data management experience.
+
+**Suggestions**: To enhance their suitability for this role, the candidate should clearly document their years of professional experience to confirm meeting the 2-year requirement. Gaining hands-on experience with Blackbaud CRM, VB .Net, SSRS, and MS SQL through targeted projects, internships, or online certifications would be critical. Additionally, developing familiarity with version control tools and SSIS packaging solutions, as well as practicing the creation of technical and functional documentation, would strengthen their profile. Engaging in data integration or management-focused projects could further bridge the gap, positioning them as a more competitive candidate for this and similar roles.
+```
