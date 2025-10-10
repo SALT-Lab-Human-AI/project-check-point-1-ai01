@@ -1,6 +1,13 @@
 # HireSpark — Design Specification
 
-## 1. Overview
+## Table of contents
+- [Overview](#overview)
+- [Primary Actors / Personas](#primary-actors--personas)
+- [Candidate User Journeys](#candidate-user-journeys)
+- [Task Flows](#task-flows)
+- [Key Screens & Interactions (candidate-first)](#key-screens--interactions-candidate-first)
+
+## Overview
 Goal: Help job seekers match resumes to job descriptions and receive prioritized, actionable feedback. The LLM performs both extraction and scoring. A separate explanation pass produces human-facing recommendations and phrasing.
 
 Core pipeline:
@@ -9,11 +16,11 @@ Core pipeline:
 3. LLM-Score: compute normalized match metrics (overall % and axis breakdown) using low-temperature, schema-enforced prompts and a scoring rubric.  
 4. LLM-Explain: generate prioritized edits, suggested phrasing, and mapped evidence.
 
-## 2. Primary Actors / Personas
+## Primary Actors / Personas
 - Candidate / Job Seeker (primary): uploads/pastes resume, selects job(s), receives match metrics and prioritized edits, can accept edits and export tailored resume/cover letter.
 
 
-## 3. Candidate User Journeys
+## Candidate User Journeys
 
 1) Single Job Match & Optimize
 - Candidate uploads/pastes resume and inputs/selects a job description or URL.
@@ -27,7 +34,7 @@ Core pipeline:
 3) Resume Improvement & Career Guidance
 - Candidate picks a goal; LLM analyzes resume + goal and returns rewrites, reframed achievements, role growth guidance, and interview prep.
 
-## 4. Task Flows
+## Task Flows
 
 Flow A — Single Resume → Single Job
 1. Input: Resume (PDF/DOC/TXT/pasted text) + Job Description/URL.
@@ -45,7 +52,7 @@ Flow A — Single Resume → Single Job
 Flow B — Multi-Job Scan
 - Parallelize Flow A for each job with queuing and rate controls.
 
-## 5. Key Screens & Interactions (candidate-first)
+## Key Screens & Interactions
 
 1. Landing Page
    - Title: "Match My Resume"; guest mode or sign-in.
