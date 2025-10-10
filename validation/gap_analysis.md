@@ -18,3 +18,23 @@ Latency: ChatGPT starts generating the responses immediately as the prompts are 
 
 #### Overall for ChatGPT:
 - We need to adjust the prompt to get a more detailed or accurate answer. Also, it is crucial to gain an understanding of metrics and scoring.
+
+## Gemini (Gemini 2.5 Pro)
+#### Accuracy:
+- Strengths: correctly extracts explicit roles and many obvious skills from resumes.
+- Errors: incorrect time calculations (e.g., "Greek Recruitment Counselor" labeled "<1 year" despite "August 2019–Present"); using of different language in extraction leds to inconsistent results.
+
+#### Reliability:
+- Issues: no per-attribute confidence values; inconsistent scoring scales and formats across examples; occasional extraction errors in edge/failure cases.
+
+#### UX friction:
+- No significant UX friction noted; Gemini interface is straightforward and responsive.
+
+#### Safety:
+- Risks: Personally Identifiable Information exposure (full names, emails, phone numbers) in transcripts, as it does not redact PII by default. Users must manually redact sensitive information before inputting resumes.
+
+#### Cost implications:
+- Cost is pretty low for Gemini 2.5 Pro, since there is no charge for webpage usage. There will be some cost if using Gemini 2.5 Pro via API, while it also does not cost much since token use is low for resume analysis.
+
+## Overall for Gemini:
+- Gemini shows promise in resume analysis but needs improvements in extraction accuracy, consistency, and safety measures. Further refinement of prompts and handling of PII is essential.
