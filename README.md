@@ -1,5 +1,9 @@
-# HireSpark 🚀
 
+<div align="center">
+  <h1><img src="img/logo.png" alt="HireSpark logo" width="320"/><br/><br/>🚀 HireSpark</h1>
+</div>
+
+## Introduction
 HireSpark is an intelligent, AI-powered platform designed to revolutionize the recruitment process by providing a precise, data-driven approach to shortlisting candidates. By analyzing resumes and job descriptions, the app generates a compatibility score, helping recruiters quickly identify the most qualified applicants while ensuring objective and fair assessment of all candidates.
 
 ## Table of contents
