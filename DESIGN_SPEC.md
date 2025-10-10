@@ -1,4 +1,4 @@
-# Recruit AI — Design Specification
+# HireSpark — Design Specification
 
 ## 1. Overview
 Goal: Help job seekers match resumes to job descriptions and receive prioritized, actionable feedback. The LLM performs both extraction and scoring. A separate explanation pass produces human-facing recommendations and phrasing.

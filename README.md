@@ -1,6 +1,6 @@
-# Recruit AI 🚀
+# HireSpark 🚀
 
-Recruit AI is an intelligent, AI-powered platform designed to revolutionize the recruitment process by providing a precise, data-driven approach to shortlisting candidates. By analyzing resumes and job descriptions, the app generates a compatibility score, helping recruiters quickly identify the most qualified applicants while ensuring objective and fair assessment of all candidates.
+HireSpark is an intelligent, AI-powered platform designed to revolutionize the recruitment process by providing a precise, data-driven approach to shortlisting candidates. By analyzing resumes and job descriptions, the app generates a compatibility score, helping recruiters quickly identify the most qualified applicants while ensuring objective and fair assessment of all candidates.
 
 ## Table of contents
 - [🔍 Problem Statement](#problem-statement)
@@ -79,13 +79,13 @@ The problem affects multiple stakeholders: recruiters who are overwhelmed with m
 - *Cons*: Limited to specific roles, expensive, no resume analysis integration
 - *Gap*: No comprehensive resume-to-job matching or compatibility scoring
 
-**Key Differentiators**: Recruit AI addresses the fundamental gap in contextual understanding of candidate qualifications, providing objective compatibility scoring that goes beyond keyword matching while actively reducing bias in the selection process.
+**Key Differentiators**: HireSpark addresses the fundamental gap in contextual understanding of candidate qualifications, providing objective compatibility scoring that goes beyond keyword matching while actively reducing bias in the selection process.
 
 <a id="initial-concept-and-value-proposition"></a>
 
 ## 💡 Initial Concept and Value Proposition
 
-Recruit AI leverages advanced natural language processing and machine learning to analyze resumes and job descriptions, generating intelligent compatibility scores that understand context, skill relevance, and experience depth. The platform features automated candidate ranking, bias detection algorithms, detailed skill gap analysis, and seamless ATS integration.
+HireSpark leverages advanced natural language processing and machine learning to analyze resumes and job descriptions, generating intelligent compatibility scores that understand context, skill relevance, and experience depth. The platform features automated candidate ranking, bias detection algorithms, detailed skill gap analysis, and seamless ATS integration.
 
 ✨ **Key Features:**
 - Advanced NLP-powered resume and job description analysis
@@ -96,7 +96,7 @@ Recruit AI leverages advanced natural language processing and machine learning t
 - Integration with popular ATS systems
 - Real-time recruitment analytics and reporting
 
-💎 **Value Proposition**: Recruit AI transforms recruitment from a time-intensive, subjective process into an efficient, data-driven system that identifies the most qualified candidates while ensuring fair and unbiased evaluation, reducing time-to-hire by 60% and improving candidate quality by 40%.
+💎 **Value Proposition**: HireSpark transforms recruitment from a time-intensive, subjective process into an efficient, data-driven system that identifies the most qualified candidates while ensuring fair and unbiased evaluation, reducing time-to-hire by 60% and improving candidate quality by 40%.
 
 <a id="milestones--roles"></a>
 
