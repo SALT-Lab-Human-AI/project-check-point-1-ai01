@@ -84,13 +84,12 @@ Flow B — Multi-Job Scan
      - Top-3 prioritized edits: one-click apply (invokes LLM-Edit).
      - Suggested headline, 3 rephrased bullets, sample cover letter paragraph.
      - Actions: download tailored resume, copy cover letter, save job.
-   ![Match Results](img/Match Results.jpeg)
-
-5. Multi-Job Dashboard
-   - Ranked jobs table with match score, required edits count, and per-job customize action.
 
    ![View Matches](img/View_Matches.jpeg)
    ![No Matches](img/No_Matches.jpeg)
+
+5. Multi-Job Dashboard
+   - Ranked jobs table with match score, required edits count, and per-job customize action.
 
 6. Resume Editor Mode
    - Live preview; accept/reject suggestions inline; re-run scoring instantly.
