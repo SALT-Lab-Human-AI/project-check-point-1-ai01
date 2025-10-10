@@ -56,7 +56,7 @@ Latency: ChatGPT starts generating the responses immediately as the prompts are 
 ### **UX Friction**
 
 * Responses were fast and concise, though sometimes too brief for analysis.
-* Lacked clear sectioning or formatting, making it less readable compared to ChatGPT.
+* Lacked clear sectioning or formatting, making it less readable compared to other tools.
 
 ### **Safety**
 
