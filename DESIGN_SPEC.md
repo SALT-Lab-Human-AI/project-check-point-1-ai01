@@ -1,5 +1,7 @@
 # HireShark — Design Specification
 
+![Logo](img/logo.png)
+
 ## Table of contents
 - [Overview](#overview)
 - [Primary Actors / Personas](#primary-actors--personas)
@@ -57,13 +59,22 @@ Flow B — Multi-Job Scan
 1. Landing Page
    - Title: "Match My Resume"; guest mode or sign-in.
 
+   ![Landing Page](img/Landing_Page.jpeg)
+
+
 2. Upload / Paste Screen
    - Drag/drop, paste, file picker; job input (paste/select/URL).
    - Parsing progress indicator, consent.
 
+   ![Upload Screen](img/Resume_Upload.jpeg)
+
 3. Extraction Review Inline
    - Shows extracted roles and top skills with confidence bars and linked resume highlights.
    - Interactions: tap-to-edit, mark primary role, add missing skills.
+
+   ![Extraction Review](img/Review.jpeg)
+
+   ![Skills](img/Skills.jpeg)
 
 4. Match Results
    - Header: overall match % + LLM confidence badge.
@@ -73,9 +84,13 @@ Flow B — Multi-Job Scan
      - Top-3 prioritized edits: one-click apply (invokes LLM-Edit).
      - Suggested headline, 3 rephrased bullets, sample cover letter paragraph.
      - Actions: download tailored resume, copy cover letter, save job.
+   ![Match Results](img/Match Results.jpeg)
 
 5. Multi-Job Dashboard
    - Ranked jobs table with match score, required edits count, and per-job customize action.
+
+   ![View Matches](img/View_Matches.jpeg)
+   ![No Matches](img/No_Matches.jpeg)
 
 6. Resume Editor Mode
    - Live preview; accept/reject suggestions inline; re-run scoring instantly.
