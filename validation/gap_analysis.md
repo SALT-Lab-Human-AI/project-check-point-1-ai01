@@ -39,7 +39,7 @@ Latency: ChatGPT starts generating the responses immediately as the prompts are 
 ## Overall for Gemini:
 - Gemini shows promise in resume analysis but needs improvements in extraction accuracy, consistency, and safety measures. Further refinement of prompts and handling of PII is essential.
 
-## **Grok**
+## **Grok (Model not explicitly disclosed)**
 
 ### **Accuracy**
 
@@ -65,15 +65,14 @@ Latency: ChatGPT starts generating the responses immediately as the prompts are 
 
 ### **Costs**
 
-* No clear cost per request shared publicly; usage through Grok web interface was free during testing.
-* Enterprise API pricing remains unspecified compared to ChatGPT’s transparent token rates.
+* This testing uses the free tier. There are Supergrok and Heavy models available based on subscription which might perform better
 
 ### **Overall for Grok**
 
 * Delivers quick, surface-level results but lacks structure and interpretability.
 * Suitable for initial resume-job screening, not for detailed attribute extraction or score reasoning.
 
-## **Claude**
+## **Claude (Sonnet 4.5)**
 
 ### **Accuracy**
 
@@ -102,7 +101,7 @@ Latency: ChatGPT starts generating the responses immediately as the prompts are 
 ### **Costs**
 
 * Claude’s web version responses were free during evaluation; API pricing varies by tier.
-* Token usage and limits are stricter than ChatGPT for continuous iterations.
+* There are Pro and Max version available for different pricing ranges that would perform better
 
 ### **Overall for Claude**
 
