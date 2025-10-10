@@ -1,6 +1,6 @@
 
 <div align="center">
-  <h1><img src="img/logo.png" alt="HireSpark logo" width="320"/><br/><br/>🚀 HireSpark</h1>
+  <h1><img src="img/logo.png" alt="HireSpark logo" width="240"/><br/><br/>🚀 HireSpark</h1>
 </div>
 
 ## Introduction
