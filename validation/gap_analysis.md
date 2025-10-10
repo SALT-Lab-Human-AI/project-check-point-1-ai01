@@ -38,3 +38,73 @@ Latency: ChatGPT starts generating the responses immediately as the prompts are 
 
 ## Overall for Gemini:
 - Gemini shows promise in resume analysis but needs improvements in extraction accuracy, consistency, and safety measures. Further refinement of prompts and handling of PII is essential.
+
+## **Grok**
+
+### **Accuracy**
+
+* Extracted attributes such as roles and skills correctly for most resumes but occasionally merged unrelated information (e.g., combining academic projects into roles).
+* Scoring outputs were general, lacking clarity in how match percentages were computed.
+* Explanations were short and less structured, missing detailed reasoning or category-wise breakdowns.
+
+### **Reliability**
+
+* Attribute extraction was inconsistent — skipped values like “growth stage” or “spans.”
+* Did not provide normalized scoring logic or confidence measures.
+* Resume coverage was shallow, summarizing profiles rather than analyzing role-by-role details.
+
+### **UX Friction**
+
+* Responses were fast and concise, though sometimes too brief for analysis.
+* Lacked clear sectioning or formatting, making it less readable compared to ChatGPT.
+
+### **Safety**
+
+* No major data concerns noted; still advisable to anonymize resumes before upload.
+* Occasionally paraphrased identifiable information instead of fully redacting it.
+
+### **Costs**
+
+* No clear cost per request shared publicly; usage through Grok web interface was free during testing.
+* Enterprise API pricing remains unspecified compared to ChatGPT’s transparent token rates.
+
+### **Overall for Grok**
+
+* Delivers quick, surface-level results but lacks structure and interpretability.
+* Suitable for initial resume-job screening, not for detailed attribute extraction or score reasoning.
+
+## **Claude**
+
+### **Accuracy**
+
+* Extracted roles, skills, and education with high precision and clear formatting.
+* Scoring aligned closely with job requirements, with logical and consistent match reasoning.
+* Provided structured explanations but occasionally over-generalized technical matches (e.g., mapping unrelated tools under same skill category).
+
+### **Reliability**
+
+* Maintained consistent format across all resumes and prompts.
+* Match scores were stable and reproducible.
+* Occasionally verbose, but reasoning followed a coherent analytical structure.
+
+### **UX Friction**
+
+* Smooth and human-readable responses; explanations were naturally phrased.
+* Slight latency observed for longer prompts, but overall user experience remained positive.
+* Markdown structure was clear with headings and lists, improving readability.
+
+### **Safety**
+
+* Displayed strong privacy adherence — no personal identifiers surfaced.
+* Did not rephrase or expose identifiable details from resumes.
+* Safe for testing with anonymized data.
+
+### **Costs**
+
+* Claude’s web version responses were free during evaluation; API pricing varies by tier.
+* Token usage and limits are stricter than ChatGPT for continuous iterations.
+
+### **Overall for Claude**
+
+* Produced the most balanced and interpretable outputs among tested tools.
+* Well-structured extraction, consistent scoring, and contextual explanations make it suitable for practical deployment in LLM-based resume evaluation pipelines.
