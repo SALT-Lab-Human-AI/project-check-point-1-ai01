@@ -93,3 +93,6 @@ Flow B — Multi-Job Scan
 
 6. Resume Editor Mode
    - Live preview; accept/reject suggestions inline; re-run scoring instantly.
+
+## Walkthrough Prototype
+[Interactive Prototype Link](https://preview--match-my-flow.lovable.app/)
