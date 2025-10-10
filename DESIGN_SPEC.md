@@ -1,4 +1,4 @@
-# HireSpark — Design Specification
+# HireShark — Design Specification
 
 ## Table of contents
 - [Overview](#overview)

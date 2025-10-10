@@ -1,4 +1,4 @@
-# Proposal For HireSpark
+# Proposal For HireShark
 
 ## Table Of Contents
 - [Problem & Importance](#problem--importance)
@@ -15,8 +15,8 @@ The recruitment process is time-consuming, costly, and often subjective. Recruit
 Legacy ATS (Applicant Tracking Systems) and most current recruitment AI solutions rely heavily on keyword-based filtering, which fails to account for context, skill relevance, and semantic similarity. Studies such as "Contextual Skill Matching Beyond Keyword Detection in Resume Screening" (Kumar et al., 2023) point out the limitations of classic matching systems. Platforms like HireVue and Pymetrics introduce AI in resume screening and video interviews but are still grappling with bias, lack of transparency, and limited integration of contextual NLP models. Moreover, fairness, privacy, and explainability remain persistent gaps. Industry reports (Deloitte, 2023; LinkedIn Talent Solutions, 2024) further highlight shortcomings in bias detection, diversity outcomes, and recruiter trust in fully automated shortlisting solutions.
 
 ## Proposed Approach
-HireSpark will leverage advanced NLP models (e.g., BERT, GPT-4, spaCy) to deeply analyze both resumes and job descriptions, extracting and ranking candidates on actual skill, contextual fit, and growth potential. We will combine NER-driven preprocessing to extract structured entities (skills, roles, education, years), and optionally apply a lightweight multi-agent debate (MAD) stage to surface diverse reasoning for ambiguous matches.
-The core innovation of HireSpark includes:
+HireShark will leverage advanced NLP models (e.g., BERT, GPT-4, spaCy) to deeply analyze both resumes and job descriptions, extracting and ranking candidates on actual skill, contextual fit, and growth potential. We will combine NER-driven preprocessing to extract structured entities (skills, roles, education, years), and optionally apply a lightweight multi-agent debate (MAD) stage to surface diverse reasoning for ambiguous matches.
+The core innovation of HireShark includes:
 
 - Semantic skill extraction and contextual candidate-job matching (beyond keyword logic).
 
@@ -31,7 +31,7 @@ The core innovation of HireSpark includes:
 This approach aims to deliver not only speed and accuracy, but also a fairer, more transparent system that directly addresses the weaknesses of prior recruitment solutions.
 
 ## Plan For Checkpoint 2 Validation
-At Checkpoint 2, we will validate HireSpark by assembling a test suite of anonymized resumes and open job postings, running the tool to generate shortlists and scoring explanations. Prompt-based evaluation will involve:
+At Checkpoint 2, we will validate HireShark by assembling a test suite of anonymized resumes and open job postings, running the tool to generate shortlists and scoring explanations. Prompt-based evaluation will involve:
 
 - Reviewing whether top-ranked candidates are relevant, diverse, and contextually qualified for jobs.
 

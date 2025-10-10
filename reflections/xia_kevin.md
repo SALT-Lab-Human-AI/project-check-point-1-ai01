@@ -27,7 +27,7 @@ Limitations / Risks:
 - Contextual blind spots: The model does not yet consider factors like experience, career progression, or soft skills, which are often critical in recruitment decisions.
 
 Idea for our project:
-- HireSpark could utilize the idea of NER to extract structured information from resumes and job descriptions, then using LLM to generate compatibility scores based on these entities, enhancing the accuracy of candidate position analysis.
+- HireShark could utilize the idea of NER to extract structured information from resumes and job descriptions, then using LLM to generate compatibility scores based on these entities, enhancing the accuracy of candidate position analysis.
 
 ---
 
