@@ -3,7 +3,7 @@
   <h1><img src="img/logo.png" alt="HireShark logo" width="240"/><br/><br/>🚀 HireShark</h1>
 </div>
 
-HireShark is an intelligent, AI-powered platform designed to revolutionize the recruitment process by providing a precise, data-driven approach to shortlisting candidates. By analyzing resumes and job descriptions, the app generates a compatibility score, helping recruiters quickly identify the most qualified applicants while ensuring objective and fair assessment of all candidates.
+HireShark is an intelligent, AI-powered platform designed to revolutionize the recruitment process by providing a precise, data-driven approach to shortlisting candidates. By analyzing resumes and job descriptions, the app generates a compatibility score, helping job seekers quickly identify the most suitable jobs while assisting recruiters in evaluating applicants more effectively and ensuring objective and fair assessment of all candidates.
 
 ## Table of contents
 - [🔍 Problem Statement](#problem-statement)
