@@ -133,6 +133,10 @@ Tasks:
 - Build prototype assets (Figma frames or HTML slides) and link them in the repo.
 - Collect peer/class feedback and summarize takeaways.
 
+#### Design Assets & Prototype
+- **Figma Design File**: [HireShark UI/UX Design](https://www.figma.com/design/jEami8bo2eyIWmObTfJL9E/HireShark?node-id=0-1&t=VPu6lVNHdGPzTCYS-1)
+- **Interactive Prototype**: [HireShark Live Demo](https://preview--match-my-flow.lovable.app/)
+
 ### Checkpoint 3 — Working Implementation & Live Demo (Weeks 6–10)
 Tasks:
 - Implement feature tickets (parsing, matching, scoring, UI flows).
