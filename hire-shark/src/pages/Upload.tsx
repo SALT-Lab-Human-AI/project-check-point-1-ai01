@@ -9,29 +9,42 @@ import { useResume } from "@/store/ResumeContext";
 
 const Upload = () => {
   const navigate = useNavigate();
-  const { uploadFile, resume } = useResume();
+  const { uploadFile, resume, parseResume, isParsing, clear } = useResume();
   const [isUploading, setIsUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
       setIsUploading(true);
-      try {
-        await uploadFile(file);
-        toast.success("Resume uploaded successfully!", {
-          description: "Your resume has been analyzed. Click continue to review the extracted information.",
-        });
-      } catch (error) {
-        toast.error("Failed to upload resume.");
-      } finally {
-        setIsUploading(false);
-      }
+      uploadFile(file);
+      toast.success("Resume uploaded successfully!", {
+        description: "Click continue to review the extracted information.",
+      });
+      setIsUploading(false);
     }
   };
 
   const handleButtonClick = () => {
     fileInputRef.current?.click();
+  };
+
+  const handleContinue = async () => {
+    if (resume) {
+      try {
+        await parseResume();
+        navigate("/review");
+      } catch (error) {
+        toast.error("Failed to parse resume.");
+      }
+    }
+  };
+
+  const handleClear = () => {
+    clear();
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
   };
 
   return (
@@ -71,18 +84,23 @@ const Upload = () => {
                   </p>
                 </div>
 
-                {!resume && (
-                  <>
-                    <input type="file" ref={fileInputRef} onChange={handleFileChange} style={{ display: 'none' }} accept=".pdf,.doc,.docx,.txt" />
-                    <Button
-                      onClick={handleButtonClick}
-                      disabled={isUploading}
-                      className="mt-4"
-                    >
-                      <FileText className="mr-2 h-4 w-4" />
-                      {isUploading ? "Uploading..." : "Choose File"}
-                    </Button>
-                  </>
+                <input type="file" ref={fileInputRef} onChange={handleFileChange} style={{ display: 'none' }} accept=".pdf,.doc,.docx,.txt" />
+                <Button
+                  onClick={handleButtonClick}
+                  disabled={isUploading}
+                  className="mt-4"
+                >
+                  <FileText className="mr-2 h-4 w-4" />
+                  {isUploading ? "Uploading..." : "Choose File"}
+                </Button>
+                {resume && (
+                  <Button
+                    variant="outline"
+                    onClick={handleClear}
+                    className="mt-2"
+                  >
+                    Clear File
+                  </Button>
                 )}
               </div>
             </div>
@@ -93,11 +111,11 @@ const Upload = () => {
 
             <Button
               size="lg"
-              onClick={() => navigate("/review")}
-              disabled={!resume}
+              onClick={handleContinue}
+              disabled={!resume || isParsing}
               className="w-full mt-8"
             >
-              Continue to Review →
+              {isParsing ? "Extracting..." : "Continue to Review →"}
             </Button>
           </div>
 
