@@ -7,4 +7,5 @@
 */node_modules/
 # Build Outputs
 */dist
-
+# environment Files
+hire-shark/.env
