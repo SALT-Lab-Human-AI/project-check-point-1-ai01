@@ -21,21 +21,18 @@ jobs:
           node-version: "18"
           cache: "npm"
 
-      - name: Install dependencies
-        run: npm ci
-        working-directory: hire-shark
+      - name: Install dependencies (hire-shark)
+        run: npm ci --prefix hire-shark
 
-      - name: Run tests
-        run: npm test --if-present
-        working-directory: hire-shark
+      - name: Run tests (hire-shark)
+        run: npm test --prefix hire-shark --if-present
 
-      - name: Build (set base)
+      - name: Build (set base) (hire-shark)
         env:
           BASE_URL: ${{ env.BASE_URL || '' }}
         run: |
           echo "Building with BASE_URL=${BASE_URL}"
-          npm run build
-        working-directory: hire-shark
+          npm run build --prefix hire-shark
 
   deploy:
     needs: test-and-build
