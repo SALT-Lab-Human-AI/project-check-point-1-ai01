@@ -1,0 +1,11 @@
+# Mac OS File
+.DS_Store
+# Temporary Files
+/temp
+
+# Node Modules
+*/node_modules/
+# Build Outputs
+*/dist
+# environment Files
+hire-shark/.env
