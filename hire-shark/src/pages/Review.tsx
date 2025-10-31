@@ -9,6 +9,18 @@ import { User, Briefcase, Edit2, CheckCircle, AlertCircle, XCircle, Mail, Phone,
 import { useResume } from "@/store/ResumeContext";
 import { useEffect } from "react";
 
+const getConfidenceText = (score: number) => {
+  if (score > 0.75) return "High Confidence";
+  if (score > 0.40) return "Medium Confidence";
+  return "Low Confidence";
+};
+
+const getConfidenceBadgeClass = (score: number) => {
+  if (score > 0.75) return "bg-success/10 text-success border-success/20";
+  if (score > 0.40) return "bg-warning/10 text-warning border-warning/20";
+  return "bg-destructive/10 text-destructive border-destructive/20";
+};
+
 const Review = () => {
   const navigate = useNavigate();
   const { resume, runMatching } = useResume();
@@ -53,8 +65,8 @@ const Review = () => {
                     </div>
                     <div>
                       <h3 className="text-lg font-semibold">Personal Information</h3>
-                      <Badge variant="outline" className="bg-success/10 text-success border-success/20">
-                        High Confidence
+                      <Badge variant="outline" className={getConfidenceBadgeClass(resume?.parsed?.confidence?.personalInfo ?? 0)}>
+                        {getConfidenceText(resume?.parsed?.confidence?.personalInfo ?? 0)}
                       </Badge>
                     </div>
                   </div>
@@ -92,8 +104,8 @@ const Review = () => {
                     </div>
                     <div>
                       <h3 className="text-lg font-semibold">Work Experience</h3>
-                      <Badge variant="outline" className="bg-warning/10 text-warning border-warning/20">
-                        Medium Confidence
+                      <Badge variant="outline" className={getConfidenceBadgeClass(resume?.parsed?.confidence?.experience ?? 0)}>
+                        {getConfidenceText(resume?.parsed?.confidence?.experience ?? 0)}
                       </Badge>
                     </div>
                   </div>

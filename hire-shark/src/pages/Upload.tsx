@@ -84,7 +84,7 @@ const Upload = () => {
                   </p>
                 </div>
 
-                <input type="file" ref={fileInputRef} onChange={handleFileChange} style={{ display: 'none' }} accept=".pdf,.doc,.docx,.txt" />
+                <input type="file" ref={fileInputRef} onChange={handleFileChange} style={{ display: 'none' }} accept=".pdf,.doc,.docx" />
                 <Button
                   onClick={handleButtonClick}
                   disabled={isUploading}

@@ -13,6 +13,12 @@ export type ResumeParsed = {
     end?: string;
     bullets?: string[];
   }>;
+  confidence?: {
+    personalInfo?: number;
+    experience?: number;
+    skills?: number;
+    education?: number;
+  };
   rawText: string;
   fileName: string;
 };

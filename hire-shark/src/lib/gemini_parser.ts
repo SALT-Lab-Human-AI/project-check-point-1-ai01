@@ -1,6 +1,7 @@
 
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { ResumeParsed } from "../types";
+import mammoth from "mammoth";
 
 const genAI = new GoogleGenerativeAI(import.meta.env.VITE_GEMINI_API_KEY);
 
@@ -39,13 +40,30 @@ export async function parseResumeWithGemini(file: File): Promise<ResumeParsed> {
               "end": "",
               "bullets": []
             }
-          ]
+          ],
+          "confidence": {
+            "personalInfo": 0.0,
+            "experience": 0.0,
+            "skills": 0.0,
+            "education": 0.0
+          }
         }
       `;
+
+        let generativePart;
+
+        if (file.type === "application/vnd.openxmlformats-officedocument.wordprocessingml.document") {
+            const arrayBuffer = await file.arrayBuffer();
+            const result = await mammoth.extractRawText({ arrayBuffer });
+            generativePart = { text: result.value };
+        } else if (file.type.startsWith("text/")) {
+            const text = await file.text();
+            generativePart = { text };
+        } else {
+            generativePart = await fileToGenerativePart(file);
+        }
       
-        const imagePart = await fileToGenerativePart(file);
-      
-        const result = await model.generateContent([prompt, imagePart]);
+        const result = await model.generateContent([prompt, generativePart]);
         const response = await result.response;
         const text = await response.text();
         const json = JSON.parse(text.replace(/```json/g, "").replace(/```/g, ""));
