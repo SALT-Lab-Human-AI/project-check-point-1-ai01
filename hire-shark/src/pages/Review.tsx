@@ -5,10 +5,24 @@ import { ProgressSteps } from "@/components/ProgressSteps";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { User, Briefcase, Edit2, CheckCircle, AlertCircle, XCircle } from "lucide-react";
+import { User, Briefcase, Edit2, CheckCircle, AlertCircle, XCircle, Mail, Phone, MapPin } from "lucide-react";
+import { useResume } from "@/store/ResumeContext";
+import { useEffect } from "react";
 
 const Review = () => {
   const navigate = useNavigate();
+  const { resume, runMatching } = useResume();
+
+  useEffect(() => {
+    if (!resume) {
+      navigate("/upload");
+    }
+  }, [resume, navigate]);
+
+  const handleRunMatching = async () => {
+    await runMatching();
+    navigate("/matches");
+  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -52,19 +66,19 @@ const Review = () => {
                 <div className="grid md:grid-cols-2 gap-4">
                   <div>
                     <label className="text-sm font-medium mb-2 block">Full Name</label>
-                    <Input defaultValue="Sarah Johnson" />
+                    <Input defaultValue={resume?.parsed?.name} />
                   </div>
                   <div>
                     <label className="text-sm font-medium mb-2 block">Email</label>
-                    <Input defaultValue="sarah.johnson@email.com" />
+                    <Input defaultValue={resume?.parsed?.email} />
                   </div>
                   <div>
                     <label className="text-sm font-medium mb-2 block">Phone</label>
-                    <Input defaultValue="+1 (555) 123-4567" />
+                    <Input defaultValue={resume?.parsed?.phone} />
                   </div>
                   <div>
                     <label className="text-sm font-medium mb-2 block">Location</label>
-                    <Input defaultValue="San Francisco, CA" />
+                    <Input defaultValue={resume?.parsed?.location} />
                   </div>
                 </div>
               </div>
@@ -89,31 +103,33 @@ const Review = () => {
                 </div>
 
                 <div className="space-y-4">
-                  <div className="grid md:grid-cols-2 gap-4">
-                    <div>
-                      <label className="text-sm font-medium mb-2 block">Job Title</label>
-                      <Input defaultValue="Senior Software Engineer" />
+                  {resume?.parsed?.experiences?.map((exp, index) => (
+                    <div key={index} className="grid md:grid-cols-2 gap-4">
+                      <div>
+                        <label className="text-sm font-medium mb-2 block">Job Title</label>
+                        <Input defaultValue={exp.title} />
+                      </div>
+                      <div>
+                        <label className="text-sm font-medium mb-2 block">Company</label>
+                        <Input defaultValue={exp.company} />
+                      </div>
+                      <div>
+                        <label className="text-sm font-medium mb-2 block">Start Date</label>
+                        <Input defaultValue={exp.start} />
+                      </div>
+                      <div>
+                        <label className="text-sm font-medium mb-2 block">End Date</label>
+                        <Input defaultValue={exp.end} />
+                      </div>
+                      <div className="md:col-span-2">
+                        <label className="text-sm font-medium mb-2 block">Description</label>
+                        <Textarea 
+                          defaultValue={exp.bullets?.join('\n')}
+                          rows={3}
+                        />
+                      </div>
                     </div>
-                    <div>
-                      <label className="text-sm font-medium mb-2 block">Company</label>
-                      <Input defaultValue="TechCorp Inc." />
-                    </div>
-                    <div>
-                      <label className="text-sm font-medium mb-2 block">Start Date</label>
-                      <Input defaultValue="January 2020" />
-                    </div>
-                    <div>
-                      <label className="text-sm font-medium mb-2 block">End Date</label>
-                      <Input defaultValue="Present" />
-                    </div>
-                  </div>
-                  <div>
-                    <label className="text-sm font-medium mb-2 block">Description</label>
-                    <Textarea 
-                      defaultValue="Led development of microservices architecture, improved system performance by 40%, managed team of 5 developers."
-                      rows={3}
-                    />
-                  </div>
+                  ))}
                 </div>
               </div>
             </div>
@@ -127,35 +143,33 @@ const Review = () => {
                 <div className="space-y-4">
                   <div className="flex items-start gap-3">
                     <div className="h-12 w-12 bg-gradient-to-br from-primary to-accent rounded-full flex items-center justify-center text-white font-bold">
-                      SJ
+                      {resume?.parsed?.name?.charAt(0).toUpperCase()}
                     </div>
                     <div className="flex-1">
-                      <h4 className="font-semibold">Sarah Johnson</h4>
-                      <p className="text-sm text-muted-foreground">Senior Software Engineer</p>
+                      <h4 className="font-semibold">{resume?.parsed?.name}</h4>
+                      <p className="text-sm text-muted-foreground">{resume?.parsed?.experiences?.[0]?.title}</p>
                     </div>
                   </div>
 
                   <div className="space-y-2 text-sm">
                     <div className="flex items-center gap-2 text-muted-foreground">
                       <Mail className="h-4 w-4" />
-                      <span>sarah.johnson@email.com</span>
+                      <span>{resume?.parsed?.email}</span>
                     </div>
                     <div className="flex items-center gap-2 text-muted-foreground">
                       <Phone className="h-4 w-4" />
-                      <span>+1 (555) 123-4567</span>
+                      <span>{resume?.parsed?.phone}</span>
                     </div>
                     <div className="flex items-center gap-2 text-muted-foreground">
                       <MapPin className="h-4 w-4" />
-                      <span>San Francisco, CA</span>
+                      <span>{resume?.parsed?.location}</span>
                     </div>
                   </div>
 
                   <div>
                     <h5 className="text-sm font-semibold mb-2">Top Skills</h5>
                     <div className="flex flex-wrap gap-2">
-                      <Badge variant="secondary">JavaScript</Badge>
-                      <Badge variant="secondary">React</Badge>
-                      <Badge variant="secondary">Node.js</Badge>
+                      {resume?.parsed?.skills.map(skill => <Badge key={skill} variant="secondary">{skill}</Badge>)}
                     </div>
                   </div>
                 </div>
@@ -200,7 +214,7 @@ const Review = () => {
             <Button variant="outline" size="lg" onClick={() => navigate("/upload")}>
               ← Back
             </Button>
-            <Button size="lg" onClick={() => navigate("/matches")}>
+            <Button size="lg" onClick={handleRunMatching}>
               Save & Continue →
             </Button>
           </div>

@@ -1,27 +1,37 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Header } from "@/components/Header";
 import { ProgressSteps } from "@/components/ProgressSteps";
 import { Upload as UploadIcon, FileText, CheckCircle2 } from "lucide-react";
 import { toast } from "sonner";
+import { useResume } from "@/store/ResumeContext";
 
 const Upload = () => {
   const navigate = useNavigate();
+  const { uploadFile, resume } = useResume();
   const [isUploading, setIsUploading] = useState(false);
-  const [isUploaded, setIsUploaded] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const handleFileUpload = () => {
-    setIsUploading(true);
-    
-    // Simulate file upload
-    setTimeout(() => {
-      setIsUploading(false);
-      setIsUploaded(true);
-      toast.success("Resume uploaded successfully!", {
-        description: "Your resume has been analyzed. Click continue to review the extracted information.",
-      });
-    }, 1500);
+  const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      setIsUploading(true);
+      try {
+        await uploadFile(file);
+        toast.success("Resume uploaded successfully!", {
+          description: "Your resume has been analyzed. Click continue to review the extracted information.",
+        });
+      } catch (error) {
+        toast.error("Failed to upload resume.");
+      } finally {
+        setIsUploading(false);
+      }
+    }
+  };
+
+  const handleButtonClick = () => {
+    fileInputRef.current?.click();
   };
 
   return (
@@ -43,9 +53,9 @@ const Upload = () => {
             <div className="border-2 border-dashed border-border rounded-2xl p-12 text-center bg-muted/30 hover:bg-muted/50 transition-colors">
               <div className="flex flex-col items-center space-y-4">
                 <div className={`h-16 w-16 rounded-full flex items-center justify-center transition-all ${
-                  isUploaded ? "bg-success/20" : "bg-primary/20"
+                  resume ? "bg-success/20" : "bg-primary/20"
                 }`}>
-                  {isUploaded ? (
+                  {resume ? (
                     <CheckCircle2 className="h-8 w-8 text-success" />
                   ) : (
                     <UploadIcon className="h-8 w-8 text-primary" />
@@ -54,22 +64,25 @@ const Upload = () => {
                 
                 <div className="space-y-2">
                   <p className="text-lg font-semibold">
-                    {isUploaded ? "Resume Uploaded!" : "Drag & drop your resume here"}
+                    {resume ? "Resume Uploaded!" : "Drag & drop your resume here"}
                   </p>
                   <p className="text-sm text-muted-foreground">
-                    {isUploaded ? "Ready to continue" : "or click to browse files"}
+                    {resume ? resume.file?.name : "or click to browse files"}
                   </p>
                 </div>
 
-                {!isUploaded && (
-                  <Button
-                    onClick={handleFileUpload}
-                    disabled={isUploading}
-                    className="mt-4"
-                  >
-                    <FileText className="mr-2 h-4 w-4" />
-                    {isUploading ? "Uploading..." : "Choose File"}
-                  </Button>
+                {!resume && (
+                  <>
+                    <input type="file" ref={fileInputRef} onChange={handleFileChange} style={{ display: 'none' }} accept=".pdf,.doc,.docx,.txt" />
+                    <Button
+                      onClick={handleButtonClick}
+                      disabled={isUploading}
+                      className="mt-4"
+                    >
+                      <FileText className="mr-2 h-4 w-4" />
+                      {isUploading ? "Uploading..." : "Choose File"}
+                    </Button>
+                  </>
                 )}
               </div>
             </div>
@@ -81,7 +94,7 @@ const Upload = () => {
             <Button
               size="lg"
               onClick={() => navigate("/review")}
-              disabled={!isUploaded}
+              disabled={!resume}
               className="w-full mt-8"
             >
               Continue to Review →

@@ -6,69 +6,22 @@ import { ProgressSteps } from "@/components/ProgressSteps";
 import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Code, TrendingUp, Paintbrush, Megaphone, Info, ArrowLeft } from "lucide-react";
-
-interface JobMatch {
-  id: number;
-  title: string;
-  company: string;
-  match: number;
-  icon: any;
-  iconBg: string;
-  skills: string[];
-  description: string;
-  requirements: string[];
-}
+import { useResume } from "@/store/ResumeContext";
+import { MatchResult } from "@/types";
 
 const Matches = () => {
   const navigate = useNavigate();
-  const [selectedJob, setSelectedJob] = useState<JobMatch | null>(null);
+  const { matches } = useResume();
+  const [selectedJob, setSelectedJob] = useState<MatchResult | null>(null);
 
-  const matches: JobMatch[] = [
-    {
-      id: 1,
-      title: "Senior Frontend Developer",
-      company: "TechCorp Solutions",
-      match: 95,
-      icon: Code,
-      iconBg: "bg-primary/20 text-primary",
-      skills: ["React", "TypeScript", "Node.js", "AWS"],
-      description: "We're looking for an experienced frontend developer to lead our web application development.",
-      requirements: ["5+ years React experience", "Strong TypeScript skills", "Leadership experience"],
-    },
-    {
-      id: 2,
-      title: "Product Manager",
-      company: "InnovateLab Inc",
-      match: 92,
-      icon: TrendingUp,
-      iconBg: "bg-accent/20 text-accent",
-      skills: ["Product Strategy", "Agile", "Analytics", "Leadership"],
-      description: "Join our product team to drive innovation and deliver exceptional user experiences.",
-      requirements: ["3+ years product management", "Technical background", "Agile methodology"],
-    },
-    {
-      id: 3,
-      title: "UX/UI Designer",
-      company: "CreativeStudio",
-      match: 87,
-      icon: Paintbrush,
-      iconBg: "bg-success/20 text-success",
-      skills: ["Figma", "User Research", "Prototyping", "Design Systems"],
-      description: "Create beautiful and intuitive designs for our digital products and services.",
-      requirements: ["Portfolio required", "Figma expertise", "User research experience"],
-    },
-    {
-      id: 4,
-      title: "Marketing Specialist",
-      company: "GrowthCo",
-      match: 84,
-      icon: Megaphone,
-      iconBg: "bg-warning/20 text-warning",
-      skills: ["Digital Marketing", "SEO", "Content Strategy", "Analytics"],
-      description: "Drive our marketing initiatives and help us reach new audiences.",
-      requirements: ["2+ years marketing", "SEO knowledge", "Content creation skills"],
-    },
-  ];
+  const getIcon = (title: string) => {
+    if (title.toLowerCase().includes("frontend")) return Code;
+    if (title.toLowerCase().includes("backend")) return Code;
+    if (title.toLowerCase().includes("manager")) return TrendingUp;
+    if (title.toLowerCase().includes("design")) return Paintbrush;
+    if (title.toLowerCase().includes("marketing")) return Megaphone;
+    return Code;
+  }
 
   return (
     <div className="min-h-screen bg-background">
@@ -117,15 +70,17 @@ const Matches = () => {
 
           {/* Match Cards */}
           <div className="grid md:grid-cols-2 gap-6">
-            {matches.map((match, index) => (
+            {matches.map((match, index) => {
+              const Icon = getIcon(match.title);
+              return (
               <div
-                key={match.id}
+                key={match.jobId}
                 className="bg-card rounded-2xl p-6 shadow-lg border hover:shadow-xl transition-all animate-slide-up"
                 style={{ animationDelay: `${index * 0.1}s` }}
               >
                 <div className="flex items-start gap-4 mb-4">
-                  <div className={`h-12 w-12 rounded-xl flex items-center justify-center ${match.iconBg}`}>
-                    <match.icon className="h-6 w-6" />
+                  <div className={`h-12 w-12 rounded-xl flex items-center justify-center bg-primary/20 text-primary`}>
+                    <Icon className="h-6 w-6" />
                   </div>
                   <div className="flex-1">
                     <h3 className="text-xl font-semibold mb-1">{match.title}</h3>
@@ -133,21 +88,21 @@ const Matches = () => {
                   </div>
                   <Badge
                     className={`${
-                      match.match >= 90
+                      match.score >= 0.9
                         ? "bg-success/10 text-success border-success/20"
-                        : match.match >= 85
+                        : match.score >= 0.8
                         ? "bg-accent/10 text-accent border-accent/20"
                         : "bg-warning/10 text-warning border-warning/20"
                     }`}
                   >
-                    {match.match}% Match
+                    {Math.round(match.score * 100)}% Match
                   </Badge>
                 </div>
 
                 <div className="mb-4">
                   <p className="text-sm font-medium mb-2">Key Skills Matched:</p>
                   <div className="flex flex-wrap gap-2">
-                    {match.skills.map((skill) => (
+                    {match.matchedSkills.map((skill) => (
                       <Badge key={skill} variant="secondary" className="text-xs">
                         {skill}
                       </Badge>
@@ -180,11 +135,12 @@ const Matches = () => {
                       state: { jobTitle: match.title, company: match.company } 
                     })}
                   >
-                    {match.match >= 90 ? "Apply Now" : "Express Interest"}
+                    {match.score >= 0.9 ? "Apply Now" : "Express Interest"}
                   </Button>
                 </div>
               </div>
-            ))}
+            )})
+          }
           </div>
 
           {/* Actions */}
@@ -212,33 +168,18 @@ const Matches = () => {
               <div>
                 <div className="flex items-center justify-between mb-4">
                   <Badge className="bg-success/10 text-success border-success/20 text-base px-4 py-1">
-                    {selectedJob.match}% Match
+                    {Math.round(selectedJob.score * 100)}% Match
                   </Badge>
-                  <div className={`h-12 w-12 rounded-xl flex items-center justify-center ${selectedJob.iconBg}`}>
-                    <selectedJob.icon className="h-6 w-6" />
-                  </div>
                 </div>
                 
                 <h3 className="font-semibold mb-2">About This Role</h3>
-                <p className="text-muted-foreground">{selectedJob.description}</p>
-              </div>
-
-              <div>
-                <h3 className="font-semibold mb-2">Requirements</h3>
-                <ul className="space-y-2">
-                  {selectedJob.requirements.map((req, i) => (
-                    <li key={i} className="flex items-start gap-2 text-sm text-muted-foreground">
-                      <span className="text-success mt-0.5">✓</span>
-                      {req}
-                    </li>
-                  ))}
-                </ul>
+                <p className="text-muted-foreground">{selectedJob.snippet}</p>
               </div>
 
               <div>
                 <h3 className="font-semibold mb-2">Matched Skills</h3>
                 <div className="flex flex-wrap gap-2">
-                  {selectedJob.skills.map((skill) => (
+                  {selectedJob.matchedSkills.map((skill) => (
                     <Badge key={skill} variant="secondary">
                       {skill}
                     </Badge>
