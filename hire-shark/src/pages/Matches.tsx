@@ -28,7 +28,7 @@ const Matches = () => {
       <Header />
       
       <main className="container px-4 py-12">
-        <ProgressSteps currentStep={3} />
+        <ProgressSteps currentStep={4} />
         
         <div className="max-w-6xl mx-auto">
           <div className="mb-8 text-center animate-fade-in">
@@ -61,10 +61,10 @@ const Matches = () => {
               variant="outline"
               size="sm"
               className="ml-auto"
-              onClick={() => navigate("/review")}
+              onClick={() => navigate("/preferences")}
             >
               <ArrowLeft className="h-4 w-4 mr-2" />
-              Edit Profile
+              Edit Preferences
             </Button>
           </div>
 

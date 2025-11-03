@@ -50,7 +50,7 @@ const Review = () => {
               Please review and confirm the information we extracted from your resume. 
               You can edit any field or add missing information.
             </p>
-            <p className="text-xs text-muted-foreground mt-2">Step 2 of 3</p>
+            <p className="text-xs text-muted-foreground mt-2">Step 2 of 4</p>
           </div>
 
           <div className="grid lg:grid-cols-3 gap-8">
@@ -226,7 +226,7 @@ const Review = () => {
             <Button variant="outline" size="lg" onClick={() => navigate("/upload")}>
               ← Back
             </Button>
-            <Button size="lg" onClick={handleRunMatching}>
+            <Button size="lg" onClick={() => navigate("/preferences")}>
               Save & Continue →
             </Button>
           </div>

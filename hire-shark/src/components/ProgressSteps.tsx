@@ -16,7 +16,8 @@ export const ProgressSteps = ({ currentStep }: ProgressStepsProps) => {
   const steps: Step[] = [
     { number: 1, label: "Upload Resume", completed: currentStep > 1, active: currentStep === 1 },
     { number: 2, label: "Review Extraction", completed: currentStep > 2, active: currentStep === 2 },
-    { number: 3, label: "Find Matches", completed: currentStep > 3, active: currentStep === 3 },
+    { number: 3, label: "Set Preferences", completed: currentStep > 3, active: currentStep === 3 },
+    { number: 4, label: "Find Matches", completed: currentStep > 4, active: currentStep === 4 },
   ];
 
   return (
