@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Header } from "@/components/Header";
@@ -7,18 +7,46 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Briefcase, MapPin, DollarSign, Clock, Building, Target } from "lucide-react";
+import { usePreferences } from "@/store/PreferencesContext";
 
 const Preferences = () => {
   const navigate = useNavigate();
-  const [jobType, setJobType] = useState("");
-  const [jobRole, setJobRole] = useState("");
-  const [customJobRole, setCustomJobRole] = useState("");
-  const [location, setLocation] = useState("");
-  const [salary, setSalary] = useState("");
-  const [workMode, setWorkMode] = useState("");
-  const [companySize, setCompanySize] = useState("");
+  const { preferences, updatePreferences } = usePreferences();
+  
+  const [jobType, setJobType] = useState(preferences.jobType || "");
+  const [jobRole, setJobRole] = useState(preferences.jobRole || "");
+  const [customJobRole, setCustomJobRole] = useState(preferences.customJobRole || "");
+  const [location, setLocation] = useState(preferences.location || "");
+  const [salary, setSalary] = useState(preferences.salary || "");
+  const [workMode, setWorkMode] = useState(preferences.workMode || "");
+  const [companySize, setCompanySize] = useState(preferences.companySize || "");
 
-  const handleContinue = () => {
+  // Update context when form values change
+  useEffect(() => {
+    updatePreferences({
+      jobType,
+      jobRole,
+      customJobRole,
+      location,
+      salary,
+      workMode,
+      companySize,
+    });
+  }, [jobType, jobRole, customJobRole, location, salary, workMode, companySize, updatePreferences]);
+
+  const handleContinue = async () => {
+    // Save final preferences
+    updatePreferences({
+      jobType,
+      jobRole,
+      customJobRole,
+      location,
+      salary,
+      workMode,
+      companySize,
+    });
+    
+    // Navigate to matches page - matching will be triggered there
     navigate("/matches");
   };
 

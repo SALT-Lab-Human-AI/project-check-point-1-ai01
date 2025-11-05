@@ -13,6 +13,16 @@ export type ResumeParsed = {
     end?: string;
     bullets?: string[];
   }>;
+  education?: Array<{
+    degree?: string;
+    field?: string;
+    institution?: string;
+    location?: string;
+    start?: string;
+    end?: string;
+    gpa?: string;
+    honors?: string[];
+  }>;
   confidence?: {
     personalInfo?: number;
     experience?: number;
@@ -37,6 +47,11 @@ export type MatchResult = {
   score: number; // 0..1
   matchedSkills: string[];
   snippet?: string;
+  location?: string;
+  salary?: string;
+  jobType?: string;
+  url?: string;
+  postedDate?: string;
 };
 
 export type JobPosting = {
@@ -46,3 +61,15 @@ export type JobPosting = {
     description: string;
     skills: string[];
 };
+
+// User Preferences Types
+export type JobPreferences = {
+  jobType?: string; // full-time, part-time, contract, etc.
+  jobRole?: string; // preferred job role
+  customJobRole?: string; // custom job role input
+  location?: string; // location preference
+  salary?: string; // salary range
+  workMode?: string; // remote, hybrid, onsite, flexible
+  companySize?: string; // startup, small, medium, large, enterprise
+};
+

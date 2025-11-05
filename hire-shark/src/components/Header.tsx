@@ -18,15 +18,51 @@ export const Header = () => {
           <Link to="/" className="text-sm font-medium text-foreground/80 hover:text-foreground transition-colors">
             Home
           </Link>
-          <Link to="#about" className="text-sm font-medium text-foreground/80 hover:text-foreground transition-colors">
-            About
-          </Link>
-          <Link to="#how-it-works" className="text-sm font-medium text-foreground/80 hover:text-foreground transition-colors">
-            How it Works
-          </Link>
-          <Link to="#contact" className="text-sm font-medium text-foreground/80 hover:text-foreground transition-colors">
-            Contact
-          </Link>
+          {location.pathname === "/" ? (
+            <button
+              onClick={() => {
+                const aboutSection = document.getElementById("about");
+                aboutSection?.scrollIntoView({ behavior: "smooth" });
+              }}
+              className="text-sm font-medium text-foreground/80 hover:text-foreground transition-colors"
+            >
+              About
+            </button>
+          ) : (
+            <Link to="/#about" className="text-sm font-medium text-foreground/80 hover:text-foreground transition-colors">
+              About
+            </Link>
+          )}
+          {location.pathname === "/" ? (
+            <button
+              onClick={() => {
+                const howItWorksSection = document.getElementById("how-it-works");
+                howItWorksSection?.scrollIntoView({ behavior: "smooth" });
+              }}
+              className="text-sm font-medium text-foreground/80 hover:text-foreground transition-colors"
+            >
+              How it Works
+            </button>
+          ) : (
+            <Link to="/#how-it-works" className="text-sm font-medium text-foreground/80 hover:text-foreground transition-colors">
+              How it Works
+            </Link>
+          )}
+          {location.pathname === "/" ? (
+            <button
+              onClick={() => {
+                const contactSection = document.getElementById("contact");
+                contactSection?.scrollIntoView({ behavior: "smooth" });
+              }}
+              className="text-sm font-medium text-foreground/80 hover:text-foreground transition-colors"
+            >
+              Contact
+            </button>
+          ) : (
+            <Link to="/#contact" className="text-sm font-medium text-foreground/80 hover:text-foreground transition-colors">
+              Contact
+            </Link>
+          )}
         </nav>
 
         <div className="flex items-center gap-3">

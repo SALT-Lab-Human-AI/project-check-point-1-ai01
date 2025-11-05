@@ -32,6 +32,18 @@ export async function parseResumeWithGemini(file: File): Promise<ResumeParsed> {
           "location": "",
           "summary": "",
           "skills": [],
+          "education": [
+            {
+              "degree": "",
+              "field": "",
+              "institution": "",
+              "location": "",
+              "start": "",
+              "end": "",
+              "gpa": "",
+              "honors": []
+            }
+          ],
           "experiences": [
             {
               "company": "",
@@ -48,6 +60,9 @@ export async function parseResumeWithGemini(file: File): Promise<ResumeParsed> {
             "education": 0.0
           }
         }
+        
+        Important: Extract all education entries including degrees, certifications, and educational qualifications. 
+        Include the degree type (e.g., Bachelor's, Master's, PhD), field of study, institution name, location, dates, GPA (if available), and any honors or distinctions.
       `;
 
         let generativePart;

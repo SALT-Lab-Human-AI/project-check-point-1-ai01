@@ -1,18 +1,35 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Header } from "@/components/Header";
 import { ProgressSteps } from "@/components/ProgressSteps";
 import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
-import { Code, TrendingUp, Paintbrush, Megaphone, Info, ArrowLeft } from "lucide-react";
+import { Code, TrendingUp, Paintbrush, Megaphone, Info, ArrowLeft, Loader2, AlertCircle } from "lucide-react";
 import { useResume } from "@/store/ResumeContext";
 import { MatchResult } from "@/types";
+import { toast } from "@/hooks/use-toast";
 
 const Matches = () => {
   const navigate = useNavigate();
-  const { matches } = useResume();
+  const { matches, isMatching, resume, runMatching } = useResume();
   const [selectedJob, setSelectedJob] = useState<MatchResult | null>(null);
+  const [hasSearched, setHasSearched] = useState(false);
+
+  // Trigger matching when page loads if we have a parsed resume but no matches yet
+  useEffect(() => {
+    if (resume?.parsed && matches.length === 0 && !isMatching && !hasSearched) {
+      setHasSearched(true);
+      runMatching().catch((error) => {
+        console.error("Error running matching:", error);
+        toast({
+          title: "Error fetching matches",
+          description: "Failed to fetch jobs. Please try again.",
+          variant: "destructive",
+        });
+      });
+    }
+  }, [resume?.parsed, matches.length, isMatching, hasSearched, runMatching]);
 
   const getIcon = (title: string) => {
     if (title.toLowerCase().includes("frontend")) return Code;
@@ -68,7 +85,33 @@ const Matches = () => {
             </Button>
           </div>
 
+          {/* Loading State */}
+          {isMatching && (
+            <div className="flex flex-col items-center justify-center py-12">
+              <Loader2 className="h-12 w-12 animate-spin text-primary mb-4" />
+              <p className="text-lg font-medium">Finding your perfect matches...</p>
+              <p className="text-sm text-muted-foreground mt-2">
+                Finding the best job matches for you
+              </p>
+            </div>
+          )}
+
+          {/* No Matches State */}
+          {!isMatching && matches.length === 0 && hasSearched && (
+            <div className="flex flex-col items-center justify-center py-12 bg-card rounded-2xl border">
+              <AlertCircle className="h-12 w-12 text-muted-foreground mb-4" />
+              <p className="text-lg font-medium mb-2">No matches found</p>
+              <p className="text-sm text-muted-foreground text-center max-w-md mb-4">
+                We couldn't find any jobs matching your preferences. Try adjusting your preferences or search again.
+              </p>
+              <Button onClick={() => navigate("/preferences")}>
+                Edit Preferences
+              </Button>
+            </div>
+          )}
+
           {/* Match Cards */}
+          {!isMatching && matches.length > 0 && (
           <div className="grid md:grid-cols-2 gap-6">
             {matches.map((match, index) => {
               const Icon = getIcon(match.title);
@@ -142,6 +185,7 @@ const Matches = () => {
             )})
           }
           </div>
+          )}
 
           {/* Actions */}
           <div className="flex justify-center gap-4 mt-12">

@@ -7,6 +7,7 @@ import { parseResumeWithGemini } from "../lib/gemini_parser";
 
 type ResumeContextType = {
   isParsing: boolean;
+  isMatching: boolean;
   resume?: ResumeData;
   matches: MatchResult[];
   uploadFile: (file: File) => void;
@@ -17,9 +18,10 @@ type ResumeContextType = {
 
 export const ResumeContext = createContext<ResumeContextType | undefined>(undefined);
 
-export const ResumeProvider: React.FC = ({ children }) => {
+export const ResumeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [resume, setResume] = useState<ResumeData | undefined>();
   const [isParsing, setIsParsing] = useState(false);
+  const [isMatching, setIsMatching] = useState(false);
   const [matches, setMatches] = useState<MatchResult[]>([]);
 
   const uploadFile = (file: File) => {
@@ -39,9 +41,20 @@ export const ResumeProvider: React.FC = ({ children }) => {
   };
 
   const runMatching = async () => {
-    if (resume?.parsed) {
+    if (!resume?.parsed) {
+      console.error("Cannot run matching: Resume not parsed");
+      return;
+    }
+
+    setIsMatching(true);
+    try {
+      // Match resume against mock jobs
       const matchResults = await getMatches(resume.parsed, mockJobs);
       setMatches(matchResults);
+    } catch (error) {
+      console.error("Error running matching:", error);
+    } finally {
+      setIsMatching(false);
     }
   };
 
@@ -51,7 +64,7 @@ export const ResumeProvider: React.FC = ({ children }) => {
   };
 
   return (
-    <ResumeContext.Provider value={{ isParsing, resume, matches, uploadFile, parseResume, runMatching, clear }}>
+    <ResumeContext.Provider value={{ isParsing, isMatching, resume, matches, uploadFile, parseResume, runMatching, clear }}>
       {children}
     </ResumeContext.Provider>
   );

@@ -5,7 +5,7 @@ import { ProgressSteps } from "@/components/ProgressSteps";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { User, Briefcase, Edit2, CheckCircle, AlertCircle, XCircle, Mail, Phone, MapPin } from "lucide-react";
+import { User, Briefcase, Edit2, CheckCircle, AlertCircle, XCircle, Mail, Phone, MapPin, GraduationCap } from "lucide-react";
 import { useResume } from "@/store/ResumeContext";
 import { useEffect } from "react";
 
@@ -95,8 +95,79 @@ const Review = () => {
                 </div>
               </div>
 
-              {/* Work Experience */}
+              {/* Education */}
               <div className="bg-card rounded-2xl p-6 shadow-lg border animate-slide-up" style={{ animationDelay: "0.1s" }}>
+                <div className="flex items-center justify-between mb-6">
+                  <div className="flex items-center gap-3">
+                    <div className="h-10 w-10 bg-accent/20 rounded-lg flex items-center justify-center">
+                      <GraduationCap className="h-5 w-5 text-accent" />
+                    </div>
+                    <div>
+                      <h3 className="text-lg font-semibold">Education</h3>
+                      <Badge variant="outline" className={getConfidenceBadgeClass(resume?.parsed?.confidence?.education ?? 0)}>
+                        {getConfidenceText(resume?.parsed?.confidence?.education ?? 0)}
+                      </Badge>
+                    </div>
+                  </div>
+                  <Button variant="ghost" size="sm">
+                    <Edit2 className="h-4 w-4" />
+                  </Button>
+                </div>
+
+                <div className="space-y-4">
+                  {resume?.parsed?.education && resume.parsed.education.length > 0 ? (
+                    resume.parsed.education.map((edu, index) => (
+                      <div key={index} className="grid md:grid-cols-2 gap-4">
+                        <div>
+                          <label className="text-sm font-medium mb-2 block">Degree</label>
+                          <Input defaultValue={edu.degree} placeholder="e.g., Bachelor's, Master's, PhD" />
+                        </div>
+                        <div>
+                          <label className="text-sm font-medium mb-2 block">Field of Study</label>
+                          <Input defaultValue={edu.field} placeholder="e.g., Computer Science, Business" />
+                        </div>
+                        <div>
+                          <label className="text-sm font-medium mb-2 block">Institution</label>
+                          <Input defaultValue={edu.institution} placeholder="University or School name" />
+                        </div>
+                        <div>
+                          <label className="text-sm font-medium mb-2 block">Location</label>
+                          <Input defaultValue={edu.location} placeholder="City, State/Country" />
+                        </div>
+                        <div>
+                          <label className="text-sm font-medium mb-2 block">Start Date</label>
+                          <Input defaultValue={edu.start} placeholder="e.g., Sep 2018" />
+                        </div>
+                        <div>
+                          <label className="text-sm font-medium mb-2 block">End Date</label>
+                          <Input defaultValue={edu.end} placeholder="e.g., May 2022 or Present" />
+                        </div>
+                        <div>
+                          <label className="text-sm font-medium mb-2 block">GPA</label>
+                          <Input defaultValue={edu.gpa} placeholder="e.g., 3.8/4.0" />
+                        </div>
+                        {edu.honors && edu.honors.length > 0 && (
+                          <div className="md:col-span-2">
+                            <label className="text-sm font-medium mb-2 block">Honors & Awards</label>
+                            <Textarea 
+                              defaultValue={edu.honors.join('\n')}
+                              rows={2}
+                              placeholder="Honors, distinctions, or awards"
+                            />
+                          </div>
+                        )}
+                      </div>
+                    ))
+                  ) : (
+                    <div className="text-center py-8 text-muted-foreground border-2 border-dashed rounded-lg">
+                      <p className="text-sm">No education information found. Please add your education details.</p>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Work Experience */}
+              <div className="bg-card rounded-2xl p-6 shadow-lg border animate-slide-up" style={{ animationDelay: "0.15s" }}>
                 <div className="flex items-center justify-between mb-6">
                   <div className="flex items-center gap-3">
                     <div className="h-10 w-10 bg-warning/20 rounded-lg flex items-center justify-center">
@@ -205,8 +276,17 @@ const Review = () => {
                     <span>Skills: Complete</span>
                   </div>
                   <div className="flex items-center gap-3 text-sm">
-                    <XCircle className="h-5 w-5 text-destructive" />
-                    <span>Education: Missing fields</span>
+                    {resume?.parsed?.education && resume.parsed.education.length > 0 ? (
+                      <>
+                        <CheckCircle className="h-5 w-5 text-success" />
+                        <span>Education: Complete</span>
+                      </>
+                    ) : (
+                      <>
+                        <XCircle className="h-5 w-5 text-destructive" />
+                        <span>Education: Missing fields</span>
+                      </>
+                    )}
                   </div>
                 </div>
               </div>
