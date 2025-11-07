@@ -22,7 +22,7 @@ const App = () => (
         <ResumeProvider>
           <Toaster />
           <Sonner />
-          <BrowserRouter>
+          <BrowserRouter basename="/project-check-point-1-ai01/">
             <Routes>
               <Route path="/" element={<Landing />} />
               <Route path="/upload" element={<Upload />} />
