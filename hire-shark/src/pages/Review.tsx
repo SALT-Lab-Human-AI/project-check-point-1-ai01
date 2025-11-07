@@ -8,6 +8,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { User, Briefcase, Edit2, CheckCircle, AlertCircle, XCircle, Mail, Phone, MapPin, GraduationCap, ChevronDown, ChevronUp, MinusCircle, PlusCircle } from "lucide-react";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { useResume } from "@/store/ResumeContext";
+import { LoadingModal } from "@/components/LoadingModal";
+import { GeneratingRolesModal } from "@/components/GeneratingRolesModal";
 import { useEffect, useState } from "react";
 
 const getConfidenceText = (score: number) => {
@@ -24,11 +26,12 @@ const getConfidenceBadgeClass = (score: number) => {
 
 const Review = () => {
   const navigate = useNavigate();
-  const { resume, runMatching } = useResume();
+  const { resume, runMatching, generateJobRolesFromEditedResume } = useResume();
   const [editedResume, setEditedResume] = useState(resume);
   const [skillsText, setSkillsText] = useState('');
   const [openEducation, setOpenEducation] = useState<boolean[]>([]);
   const [openExperience, setOpenExperience] = useState<boolean[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     if (!resume) {
@@ -152,6 +155,18 @@ const Review = () => {
         experiences: newExperiences,
       },
     }));
+  };
+
+  const handleSaveAndContinue = async () => {
+    setIsLoading(true);
+    try {
+      await generateJobRolesFromEditedResume(editedResume);
+      navigate("/preferences");
+    } catch (error) {
+      console.error("Error generating job roles:", error);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -539,12 +554,13 @@ const Review = () => {
             <Button variant="outline" size="lg" onClick={() => navigate("/upload")}>
               ← Back
             </Button>
-            <Button size="lg" onClick={() => navigate("/preferences")}>
+            <Button size="lg" onClick={handleSaveAndContinue}>
               Save & Continue →
             </Button>
           </div>
         </div>
       </main>
+      <GeneratingRolesModal isOpen={isLoading} onClose={() => setIsLoading(false)} />
     </div>
   );
 };

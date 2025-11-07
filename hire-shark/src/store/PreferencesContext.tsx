@@ -1,4 +1,4 @@
-import React, { createContext, useState, useContext, ReactNode } from "react";
+import React, { createContext, useState, useContext, ReactNode, useCallback } from "react";
 import { JobPreferences } from "../types";
 
 type PreferencesContextType = {
@@ -12,12 +12,12 @@ export const PreferencesContext = createContext<PreferencesContextType | undefin
 export const PreferencesProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [preferences, setPreferences] = useState<JobPreferences>({});
 
-  const updatePreferences = (prefs: Partial<JobPreferences>) => {
+  const updatePreferences = useCallback((prefs: Partial<JobPreferences>) => {
     setPreferences((prev) => ({ ...prev, ...prefs }));
     // Optionally save to localStorage for persistence
     const updated = { ...preferences, ...prefs };
     localStorage.setItem("jobPreferences", JSON.stringify(updated));
-  };
+  }, [preferences]);
 
   const clearPreferences = () => {
     setPreferences({});

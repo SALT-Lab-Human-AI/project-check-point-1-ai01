@@ -16,6 +16,12 @@ const Matches = () => {
   const [selectedJob, setSelectedJob] = useState<MatchResult | null>(null);
   const [hasSearched, setHasSearched] = useState(false);
 
+  useEffect(() => {
+    if (!resume?.parsed) {
+      navigate("/upload");
+    }
+  }, [resume, navigate]);
+
   // Trigger matching when page loads if we have a parsed resume but no matches yet
   useEffect(() => {
     if (resume?.parsed && matches.length === 0 && !isMatching && !hasSearched) {

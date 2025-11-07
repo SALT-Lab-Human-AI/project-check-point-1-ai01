@@ -8,40 +8,68 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Briefcase, MapPin, DollarSign, Clock, Building, Target } from "lucide-react";
 import { usePreferences } from "@/store/PreferencesContext";
+import { useResume } from "@/store/ResumeContext";
+
+const minSalaryOptions = [
+  { value: "0", label: "Less than $2,000" },
+  { value: "2000", label: "$2,000" },
+  { value: "3000", label: "$3,000" },
+  { value: "4000", label: "$4,000" },
+  { value: "5000", label: "$5,000" },
+  { value: "6000", label: "$6,000" },
+  { value: "7000", label: "$7,000" },
+  { value: "8000", label: "$8,000" },
+];
+
+const maxSalaryOptions = [
+  { value: "3000", label: "$3,000" },
+  { value: "4000", label: "$4,000" },
+  { value: "5000", label: "$5,000" },
+  { value: "6000", label: "$6,000" },
+  { value: "7000", label: "$7,000" },
+  { value: "8000", label: "$8,000" },
+  { value: "9000", label: "$9,000+" },
+];
 
 const Preferences = () => {
   const navigate = useNavigate();
   const { preferences, updatePreferences } = usePreferences();
+  const { resume, generatedJobRoles, generatedLocations } = useResume();
   
   const [jobType, setJobType] = useState(preferences.jobType || "");
   const [jobRole, setJobRole] = useState(preferences.jobRole || "");
   const [customJobRole, setCustomJobRole] = useState(preferences.customJobRole || "");
+  const [customLocation, setCustomLocation] = useState(preferences.customLocation || "");
   const [location, setLocation] = useState(preferences.location || "");
   const [salary, setSalary] = useState(preferences.salary || "");
   const [workMode, setWorkMode] = useState(preferences.workMode || "");
   const [companySize, setCompanySize] = useState(preferences.companySize || "");
+  const [minSalary, setMinSalary] = useState(preferences.minSalary || "");
+  const [maxSalary, setMaxSalary] = useState(preferences.maxSalary || "");
 
-  // Update context when form values change
   useEffect(() => {
-    updatePreferences({
-      jobType,
-      jobRole,
-      customJobRole,
-      location,
-      salary,
-      workMode,
-      companySize,
-    });
-  }, [jobType, jobRole, customJobRole, location, salary, workMode, companySize, updatePreferences]);
+    return () => {
+      setCustomJobRole("");
+      setCustomLocation("");
+    };
+  }, []);
+
+
 
   const handleContinue = async () => {
+    if (minSalary && maxSalary && parseInt(minSalary) > parseInt(maxSalary)) {
+      alert("Maximum salary must be greater than minimum salary.");
+      return;
+    }
     // Save final preferences
     updatePreferences({
       jobType,
       jobRole,
       customJobRole,
       location,
-      salary,
+      customLocation,
+      minSalary,
+      maxSalary,
       workMode,
       companySize,
     });
@@ -103,28 +131,21 @@ const Preferences = () => {
                     <SelectValue placeholder="Select preferred job role" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="data-analyst">Data Analyst</SelectItem>
-                    <SelectItem value="business-analyst">Business Analyst</SelectItem>
-                    <SelectItem value="product-owner">Product Owner</SelectItem>
-                    <SelectItem value="product-manager">Product Manager</SelectItem>
-                    <SelectItem value="project-manager">Project Manager</SelectItem>
-                    <SelectItem value="software-engineer">Software Engineer</SelectItem>
-                    <SelectItem value="data-scientist">Data Scientist</SelectItem>
-                    <SelectItem value="sales">Sales</SelectItem>
-                    <SelectItem value="marketing">Marketing</SelectItem>
-                    <SelectItem value="customer-success">Customer Success</SelectItem>
-                    <SelectItem value="hr">Human Resources</SelectItem>
-                    <SelectItem value="finance">Finance</SelectItem>
-                    <SelectItem value="operations">Operations</SelectItem>
+                    {generatedJobRoles.map((role) => (
+                      <SelectItem key={role} value={role.toLowerCase().replace(/ /g, "-")}>{role}</SelectItem>
+                    ))}
+                    <SelectItem value="other">Other</SelectItem>
                   </SelectContent>
                 </Select>
-                <Input
-                  id="custom-job-role"
-                  placeholder="Or enter your preferred job role manually"
-                  value={customJobRole}
-                  onChange={(e) => setCustomJobRole(e.target.value)}
-                  className="h-12"
-                />
+                {jobRole === "other" && (
+                  <Input
+                    id="custom-job-role"
+                    placeholder="Or enter your preferred job role manually"
+                    value={customJobRole}
+                    onChange={(e) => setCustomJobRole(e.target.value)}
+                    className="h-12"
+                  />
+                )}
               </div>
 
               {/* Location Preference */}
@@ -140,15 +161,24 @@ const Preferences = () => {
                     <SelectValue placeholder="Select location preference" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="san-francisco">San Francisco, CA</SelectItem>
-                    <SelectItem value="new-york">New York, NY</SelectItem>
-                    <SelectItem value="austin">Austin, TX</SelectItem>
-                    <SelectItem value="seattle">Seattle, WA</SelectItem>
-                    <SelectItem value="boston">Boston, MA</SelectItem>
+                    {resume?.parsed?.location && <SelectItem value={resume.parsed.location.toLowerCase().replace(/ /g, "-")}>{resume.parsed.location}</SelectItem>}
+                    {generatedLocations.map((loc) => (
+                      <SelectItem key={loc} value={loc.toLowerCase().replace(/ /g, "-")}>{loc}</SelectItem>
+                    ))}
                     <SelectItem value="remote">Remote (Anywhere)</SelectItem>
                     <SelectItem value="flexible">Flexible</SelectItem>
+                    <SelectItem value="other">Other</SelectItem>
                   </SelectContent>
                 </Select>
+                {location === "other" && (
+                  <Input
+                    id="custom-location"
+                    placeholder="Or enter your preferred location manually"
+                    value={customLocation}
+                    onChange={(e) => setCustomLocation(e.target.value)}
+                    className="h-12"
+                  />
+                )}
               </div>
 
               {/* Work Mode */}
@@ -178,20 +208,30 @@ const Preferences = () => {
                   <div className="h-8 w-8 bg-warning/20 rounded-lg flex items-center justify-center">
                     <DollarSign className="h-4 w-4 text-warning" />
                   </div>
-                  Expected Salary Range
+                  Expected Monthly Salary Range
                 </Label>
-                <Select value={salary} onValueChange={setSalary}>
-                  <SelectTrigger id="salary" className="h-12">
-                    <SelectValue placeholder="Select salary range" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="50-75k">$50,000 - $75,000</SelectItem>
-                    <SelectItem value="75-100k">$75,000 - $100,000</SelectItem>
-                    <SelectItem value="100-150k">$100,000 - $150,000</SelectItem>
-                    <SelectItem value="150-200k">$150,000 - $200,000</SelectItem>
-                    <SelectItem value="200k+">$200,000+</SelectItem>
-                  </SelectContent>
-                </Select>
+                <div className="grid grid-cols-2 gap-4">
+                  <Select value={minSalary} onValueChange={setMinSalary}>
+                    <SelectTrigger id="min-salary" className="h-12">
+                      <SelectValue placeholder="Minimum" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {minSalaryOptions.filter(option => !maxSalary || parseInt(option.value) < parseInt(maxSalary)).map(option => (
+                        <SelectItem key={option.value} value={option.value}>{option.label}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <Select value={maxSalary} onValueChange={setMaxSalary}>
+                    <SelectTrigger id="max-salary" className="h-12">
+                      <SelectValue placeholder="Maximum" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {maxSalaryOptions.filter(option => !minSalary || parseInt(option.value) > parseInt(minSalary)).map(option => (
+                        <SelectItem key={option.value} value={option.value}>{option.label}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
               </div>
 
               {/* Company Size */}

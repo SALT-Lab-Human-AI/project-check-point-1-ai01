@@ -3,7 +3,7 @@ import { GoogleGenerativeAI } from "@google/generative-ai";
 import { ResumeParsed } from "../types";
 import mammoth from "mammoth";
 
-const genAI = new GoogleGenerativeAI(import.meta.env.VITE_GEMINI_API_KEY);
+export const genAI = new GoogleGenerativeAI(import.meta.env.VITE_GEMINI_API_KEY);
 
 function fileToGenerativePart(file: File) {
   return new Promise((resolve, reject) => {
@@ -20,7 +20,7 @@ function fileToGenerativePart(file: File) {
 
 export async function parseResumeWithGemini(file: File): Promise<ResumeParsed> {
     try {
-        const model = genAI.getGenerativeModel({ model: "gemini-2.5-pro" });
+        const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
       
         const prompt = `
         Extract the following information from the resume and return it as a JSON object.
