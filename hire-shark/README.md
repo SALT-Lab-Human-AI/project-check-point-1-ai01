@@ -1,6 +1,9 @@
 # HireShark
 AI-assisted resume analysis and job matching. Upload a résumé, let Gemini extract structured data, tune your preferences, and pull live roles from Adzuna to see the best-fit opportunities.
 
+## Try it live
+[Github Page Deployment](https://salt-lab-human-ai.github.io/project-check-point-1-ai01/)
+
 ---
 
 ## Tech Stack
