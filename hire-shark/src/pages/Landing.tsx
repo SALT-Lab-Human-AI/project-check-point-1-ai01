@@ -399,176 +399,111 @@ const Landing = () => {
               </p>
             </div>
 
-            <div className="grid md:grid-cols-2 gap-12">
-              {/* Contact Information */}
-              <div className="space-y-8">
-                <div>
-                  <h3 className="text-2xl font-semibold mb-6">Contact Information</h3>
-                  <div className="space-y-6">
-                    <div className="flex items-start gap-4">
-                      <div className="h-12 w-12 bg-primary/20 rounded-lg flex items-center justify-center flex-shrink-0">
-                        <Mail className="h-6 w-6 text-primary" />
-                      </div>
-                      <div>
-                        <h4 className="font-semibold mb-1">Email</h4>
-                        <p className="text-sm text-muted-foreground">support@hireshark.com</p>
-                        <p className="text-sm text-muted-foreground">info@hireshark.com</p>
-                      </div>
-                    </div>
+                        <div className="grid md:grid-cols-2 gap-12">
+                          {/* Team and Social Links */}
+                          <div className="space-y-8">
+                            <div>
+                              <h3 className="text-2xl font-semibold mb-6">Our Team</h3>
+                              <div className="grid grid-cols-2 gap-4">
+                                <div className="bg-card rounded-lg p-4 border">
+                                  <h4 className="font-semibold text-sm mb-1">Kevin Xia</h4>
+                                  <a 
+                                    href="https://github.com/HerobrineXia" 
+                                    target="_blank" 
+                                    rel="noopener noreferrer"
+                                    className="text-xs text-muted-foreground hover:text-primary transition-colors flex items-center gap-1"
+                                  >
+                                    <Github className="h-3 w-3" />
+                                    @HerobrineXia
+                                  </a>
+                                </div>
+                                <div className="bg-card rounded-lg p-4 border">
+                                  <h4 className="font-semibold text-sm mb-1">Ramprasath Loganda</h4>
+                                  <a 
+                                    href="https://github.com/Ramprasathls" 
+                                    target="_blank" 
+                                    rel="noopener noreferrer"
+                                    className="text-xs text-muted-foreground hover:text-primary transition-colors flex items-center gap-1"
+                                  >
+                                    <Github className="h-3 w-3" />
+                                    @Ramprasathls
+                                  </a>
+                                </div>
+                                <div className="bg-card rounded-lg p-4 border">
+                                  <h4 className="font-semibold text-sm mb-1">Changho Jung</h4>
+                                  <a 
+                                    href="https://github.com/ChanghoJ" 
+                                    target="_blank" 
+                                    rel="noopener noreferrer"
+                                    className="text-xs text-muted-foreground hover:text-primary transition-colors flex items-center gap-1"
+                                  >
+                                    <Github className="h-3 w-3" />
+                                    @ChanghoJ
+                                  </a>
+                                </div>
+                                <div className="bg-card rounded-lg p-4 border">
+                                  <h4 className="font-semibold text-sm mb-1">Ashwin Shanmugam</h4>
+                                  <a 
+                                    href="https://github.com/ash-win19" 
+                                    target="_blank" 
+                                    rel="noopener noreferrer"
+                                    className="text-xs text-muted-foreground hover:text-primary transition-colors flex items-center gap-1"
+                                  >
+                                    <Github className="h-3 w-3" />
+                                    @ash-win19
+                                  </a>
+                                </div>
+                              </div>
+                            </div>
+            
+                            {/* Social Links */}
+                            <div className="pt-6 border-t">
+                              <h3 className="font-semibold mb-4">Connect With Us</h3>
+                              <div className="flex gap-4">
+                                <a
+                                  href="https://github.com/SALT-Lab-Human-AI/project-check-point-1-ai01"
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="h-10 w-10 bg-card rounded-lg border flex items-center justify-center hover:bg-primary/10 hover:border-primary transition-colors"
+                                  aria-label="GitHub"
+                                >
+                                  <Github className="h-5 w-5" />
+                                </a>
 
-                    <div className="flex items-start gap-4">
-                      <div className="h-12 w-12 bg-success/20 rounded-lg flex items-center justify-center flex-shrink-0">
-                        <MessageSquare className="h-6 w-6 text-success" />
-                      </div>
-                      <div>
-                        <h4 className="font-semibold mb-1">Support</h4>
-                        <p className="text-sm text-muted-foreground">We typically respond within 24 hours</p>
-                        <p className="text-sm text-muted-foreground">Monday - Friday, 9 AM - 5 PM EST</p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
+                              </div>
+                            </div>
+                          </div>
 
-                {/* Team Section */}
-                <div className="pt-6 border-t">
-                  <h3 className="text-2xl font-semibold mb-6">Our Team</h3>
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="bg-card rounded-lg p-4 border">
-                      <h4 className="font-semibold text-sm mb-1">Kevin Xia</h4>
-                      <a 
-                        href="https://github.com/HerobrineXia" 
-                        target="_blank" 
-                        rel="noopener noreferrer"
-                        className="text-xs text-muted-foreground hover:text-primary transition-colors flex items-center gap-1"
-                      >
-                        <Github className="h-3 w-3" />
-                        @HerobrineXia
-                      </a>
-                    </div>
-                    <div className="bg-card rounded-lg p-4 border">
-                      <h4 className="font-semibold text-sm mb-1">Ramprasath Loganda</h4>
-                      <a 
-                        href="https://github.com/Ramprasathls" 
-                        target="_blank" 
-                        rel="noopener noreferrer"
-                        className="text-xs text-muted-foreground hover:text-primary transition-colors flex items-center gap-1"
-                      >
-                        <Github className="h-3 w-3" />
-                        @Ramprasathls
-                      </a>
-                    </div>
-                    <div className="bg-card rounded-lg p-4 border">
-                      <h4 className="font-semibold text-sm mb-1">Changho Jung</h4>
-                      <a 
-                        href="https://github.com/ChanghoJ" 
-                        target="_blank" 
-                        rel="noopener noreferrer"
-                        className="text-xs text-muted-foreground hover:text-primary transition-colors flex items-center gap-1"
-                      >
-                        <Github className="h-3 w-3" />
-                        @ChanghoJ
-                      </a>
-                    </div>
-                    <div className="bg-card rounded-lg p-4 border">
-                      <h4 className="font-semibold text-sm mb-1">Ashwin Shanmugam</h4>
-                      <a 
-                        href="https://github.com/ash-win19" 
-                        target="_blank" 
-                        rel="noopener noreferrer"
-                        className="text-xs text-muted-foreground hover:text-primary transition-colors flex items-center gap-1"
-                      >
-                        <Github className="h-3 w-3" />
-                        @ash-win19
-                      </a>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Social Links */}
-                <div className="pt-6 border-t">
-                  <h3 className="font-semibold mb-4">Connect With Us</h3>
-                  <div className="flex gap-4">
-                    <a
-                      href="https://github.com/SALT-Lab-Human-AI/project-check-point-1-ai01"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="h-10 w-10 bg-card rounded-lg border flex items-center justify-center hover:bg-primary/10 hover:border-primary transition-colors"
-                      aria-label="GitHub"
-                    >
-                      <Github className="h-5 w-5" />
-                    </a>
-                    <a
-                      href="#"
-                      className="h-10 w-10 bg-card rounded-lg border flex items-center justify-center hover:bg-primary/10 hover:border-primary transition-colors"
-                      aria-label="LinkedIn"
-                    >
-                      <Linkedin className="h-5 w-5" />
-                    </a>
-                  </div>
-                </div>
-              </div>
-
-              {/* Contact Form */}
-              <div className="bg-card rounded-2xl p-8 border shadow-lg">
-                <h3 className="text-2xl font-semibold mb-6">Send us a Message</h3>
-                <form className="space-y-6" onSubmit={(e) => {
-                  e.preventDefault();
-                  // Handle form submission
-                  alert("Thank you for your message! We'll get back to you soon.");
-                }}>
-                  <div className="space-y-2">
-                    <Label htmlFor="name">Name</Label>
-                    <Input 
-                      id="name" 
-                      placeholder="Your name" 
-                      required
-                      className="h-12"
-                    />
-                  </div>
-                  
-                  <div className="space-y-2">
-                    <Label htmlFor="email">Email</Label>
-                    <Input 
-                      id="email" 
-                      type="email" 
-                      placeholder="your.email@example.com" 
-                      required
-                      className="h-12"
-                    />
-                  </div>
-                  
-                  <div className="space-y-2">
-                    <Label htmlFor="subject">Subject</Label>
-                    <Input 
-                      id="subject" 
-                      placeholder="What's this about?" 
-                      required
-                      className="h-12"
-                    />
-                  </div>
-                  
-                  <div className="space-y-2">
-                    <Label htmlFor="message">Message</Label>
-                    <Textarea 
-                      id="message" 
-                      placeholder="Tell us how we can help..." 
-                      required
-                      rows={6}
-                      className="resize-none"
-                    />
-                  </div>
-                  
-                  <Button 
-                    type="submit" 
-                    size="lg" 
-                    className="w-full"
-                  >
-                    <Send className="mr-2 h-5 w-5" />
-                    Send Message
-                  </Button>
-                </form>
-              </div>
-            </div>
+                          {/* Contact Information */}
+                          <div className="space-y-8">
+                            <div>
+                              <h3 className="text-2xl font-semibold mb-6">Contact Information</h3>
+                              <div className="space-y-6">
+                                <div className="flex items-start gap-4">
+                                  <div className="h-12 w-12 bg-primary/20 rounded-lg flex items-center justify-center flex-shrink-0">
+                                    <Mail className="h-6 w-6 text-primary" />
+                                  </div>
+                                  <div>
+                                    <h4 className="font-semibold mb-1">Email</h4>
+                                    <p className="text-sm text-muted-foreground">support@hireshark.com</p>
+                                    <p className="text-sm text-muted-foreground">info@hireshark.com</p>
+                                  </div>
+                                </div>
+            
+                                <div className="flex items-start gap-4">
+                                  <div className="h-12 w-12 bg-success/20 rounded-lg flex items-center justify-center flex-shrink-0">
+                                    <MessageSquare className="h-6 w-6 text-success" />
+                                  </div>
+                                  <div>
+                                    <h4 className="font-semibold mb-1">Support</h4>
+                                    <p className="text-sm text-muted-foreground">We typically respond within 24 hours</p>
+                                    <p className="text-sm text-muted-foreground">Monday - Friday, 9 AM - 5 PM EST</p>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
 
             {/* Additional Info */}
             <div className="mt-16 text-center">

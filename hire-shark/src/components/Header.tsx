@@ -1,9 +1,10 @@
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import logo from "@/assets/logo.png";
 
 export const Header = () => {
   const location = useLocation();
+  const navigate = useNavigate();
   const isLanding = location.pathname === "/";
 
   return (
@@ -15,7 +16,7 @@ export const Header = () => {
         </Link>
         
         <nav className="hidden md:flex items-center gap-8">
-          <Link to="/" className="text-sm font-medium text-foreground/80 hover:text-foreground transition-colors">
+          <Link to="/" className="text-sm font-medium text-foreground/80 hover:text-foreground transition-colors" onClick={() => window.scrollTo(0, 0)}>
             Home
           </Link>
           {location.pathname === "/" ? (
@@ -66,10 +67,8 @@ export const Header = () => {
         </nav>
 
         <div className="flex items-center gap-3">
-          <Button variant="ghost" size="sm" className="text-sm font-medium">
-            Sign In
-          </Button>
-          <Button size="sm" className="text-sm font-medium">
+
+          <Button size="sm" className="text-sm font-medium" onClick={() => navigate("/upload")}>
             Get Started
           </Button>
         </div>

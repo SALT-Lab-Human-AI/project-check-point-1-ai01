@@ -5,9 +5,10 @@ import { ProgressSteps } from "@/components/ProgressSteps";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { User, Briefcase, Edit2, CheckCircle, AlertCircle, XCircle, Mail, Phone, MapPin, GraduationCap } from "lucide-react";
+import { User, Briefcase, Edit2, CheckCircle, AlertCircle, XCircle, Mail, Phone, MapPin, GraduationCap, ChevronDown, ChevronUp, MinusCircle, PlusCircle } from "lucide-react";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { useResume } from "@/store/ResumeContext";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 const getConfidenceText = (score: number) => {
   if (score > 0.75) return "High Confidence";
@@ -24,16 +25,133 @@ const getConfidenceBadgeClass = (score: number) => {
 const Review = () => {
   const navigate = useNavigate();
   const { resume, runMatching } = useResume();
+  const [editedResume, setEditedResume] = useState(resume);
+  const [skillsText, setSkillsText] = useState('');
+  const [openEducation, setOpenEducation] = useState<boolean[]>([]);
+  const [openExperience, setOpenExperience] = useState<boolean[]>([]);
 
   useEffect(() => {
     if (!resume) {
       navigate("/upload");
+    }
+    setEditedResume(resume);
+    if (resume?.parsed?.skills) {
+      setSkillsText(resume.parsed.skills.join(', '));
+    }
+    if (resume?.parsed?.education) {
+      setOpenEducation(Array(resume.parsed.education.length).fill(false));
+    }
+    if (resume?.parsed?.experiences) {
+      setOpenExperience(Array(resume.parsed.experiences.length).fill(false));
     }
   }, [resume, navigate]);
 
   const handleRunMatching = async () => {
     await runMatching();
     navigate("/matches");
+  };
+
+  const handlePersonalInfoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setEditedResume((prev) => ({
+      ...prev,
+      parsed: {
+        ...prev.parsed,
+        [name]: value,
+      },
+    }));
+  };
+
+  const handleSkillsChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const { value } = e.target;
+    setSkillsText(value);
+    setEditedResume((prev) => ({
+      ...prev,
+      parsed: {
+        ...prev.parsed,
+        skills: value.split(',').map(skill => skill.trim()),
+      },
+    }));
+  };
+
+  const handleEducationChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>, index: number) => {
+    const { name, value } = e.target;
+    const newEducation = [...editedResume.parsed.education];
+    if (name === 'honors') {
+      newEducation[index] = { ...newEducation[index], [name]: value.split('\n') };
+    } else {
+      newEducation[index] = { ...newEducation[index], [name]: value };
+    }
+    setEditedResume((prev) => ({
+      ...prev,
+      parsed: {
+        ...prev.parsed,
+        education: newEducation,
+      },
+    }));
+  };
+
+  const handleExperienceChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>, index: number) => {
+    const { name, value } = e.target;
+    const newExperiences = [...editedResume.parsed.experiences];
+    if (name === 'bullets') {
+      newExperiences[index] = { ...newExperiences[index], [name]: value.split('\n') };
+    } else {
+      newExperiences[index] = { ...newExperiences[index], [name]: value };
+    }
+    setEditedResume((prev) => ({
+      ...prev,
+      parsed: {
+        ...prev.parsed,
+        experiences: newExperiences,
+      },
+    }));
+  };
+
+  const addEducation = () => {
+    const newEducation = [...editedResume.parsed.education, { degree: '', field: '', institution: '', location: '', start: '', end: '', gpa: '', honors: [] }];
+    setEditedResume((prev) => ({
+      ...prev,
+      parsed: {
+        ...prev.parsed,
+        education: newEducation,
+      },
+    }));
+  };
+
+  const removeEducation = (index: number) => {
+    const newEducation = [...editedResume.parsed.education];
+    newEducation.splice(index, 1);
+    setEditedResume((prev) => ({
+      ...prev,
+      parsed: {
+        ...prev.parsed,
+        education: newEducation,
+      },
+    }));
+  };
+
+  const addExperience = () => {
+    const newExperiences = [...editedResume.parsed.experiences, { title: '', company: '', start: '', end: '', bullets: [] }];
+    setEditedResume((prev) => ({
+      ...prev,
+      parsed: {
+        ...prev.parsed,
+        experiences: newExperiences,
+      },
+    }));
+  };
+
+  const removeExperience = (index: number) => {
+    const newExperiences = [...editedResume.parsed.experiences];
+    newExperiences.splice(index, 1);
+    setEditedResume((prev) => ({
+      ...prev,
+      parsed: {
+        ...prev.parsed,
+        experiences: newExperiences,
+      },
+    }));
   };
 
   return (
@@ -70,27 +188,24 @@ const Review = () => {
                       </Badge>
                     </div>
                   </div>
-                  <Button variant="ghost" size="sm">
-                    <Edit2 className="h-4 w-4" />
-                  </Button>
                 </div>
 
                 <div className="grid md:grid-cols-2 gap-4">
                   <div>
                     <label className="text-sm font-medium mb-2 block">Full Name</label>
-                    <Input defaultValue={resume?.parsed?.name} />
+                    <Input name="name" value={editedResume?.parsed?.name} onChange={handlePersonalInfoChange} />
                   </div>
                   <div>
                     <label className="text-sm font-medium mb-2 block">Email</label>
-                    <Input defaultValue={resume?.parsed?.email} />
+                    <Input name="email" value={editedResume?.parsed?.email} onChange={handlePersonalInfoChange} />
                   </div>
                   <div>
                     <label className="text-sm font-medium mb-2 block">Phone</label>
-                    <Input defaultValue={resume?.parsed?.phone} />
+                    <Input name="phone" value={editedResume?.parsed?.phone} onChange={handlePersonalInfoChange} />
                   </div>
                   <div>
                     <label className="text-sm font-medium mb-2 block">Location</label>
-                    <Input defaultValue={resume?.parsed?.location} />
+                    <Input name="location" value={editedResume?.parsed?.location} onChange={handlePersonalInfoChange} />
                   </div>
                 </div>
               </div>
@@ -109,54 +224,71 @@ const Review = () => {
                       </Badge>
                     </div>
                   </div>
-                  <Button variant="ghost" size="sm">
-                    <Edit2 className="h-4 w-4" />
+                  <Button variant="ghost" size="sm" onClick={addEducation}>
+                    <PlusCircle className="h-5 w-5" />
                   </Button>
                 </div>
-
                 <div className="space-y-4">
-                  {resume?.parsed?.education && resume.parsed.education.length > 0 ? (
-                    resume.parsed.education.map((edu, index) => (
-                      <div key={index} className="grid md:grid-cols-2 gap-4">
-                        <div>
-                          <label className="text-sm font-medium mb-2 block">Degree</label>
-                          <Input defaultValue={edu.degree} placeholder="e.g., Bachelor's, Master's, PhD" />
+                  {editedResume?.parsed?.education && editedResume.parsed.education.length > 0 ? (
+                    editedResume.parsed.education.map((edu, index) => (
+                      <Collapsible key={index} onOpenChange={(isOpen) => setOpenEducation(prev => { const newState = [...prev]; newState[index] = isOpen; return newState; })}>
+                      <div className="flex items-center justify-between p-4 bg-muted/50 rounded-lg">
+                        <CollapsibleTrigger className="w-full text-left">
+                          <p className="font-semibold">{edu.degree}{edu.field && ` in ${edu.field}`}</p>
+                          <p className="text-sm text-muted-foreground">{edu.institution}</p>
+                        </CollapsibleTrigger>
+                        <div className="flex items-center">
+                          <Button variant="ghost" size="sm" onClick={() => removeEducation(index)}>
+                            <MinusCircle className="h-5 w-5 text-destructive" />
+                          </Button>
+                          <CollapsibleTrigger>
+                            {openEducation[index] ? <ChevronUp className="h-5 w-5" /> : <ChevronDown className="h-5 w-5" />}
+                          </CollapsibleTrigger>
                         </div>
-                        <div>
-                          <label className="text-sm font-medium mb-2 block">Field of Study</label>
-                          <Input defaultValue={edu.field} placeholder="e.g., Computer Science, Business" />
-                        </div>
-                        <div>
-                          <label className="text-sm font-medium mb-2 block">Institution</label>
-                          <Input defaultValue={edu.institution} placeholder="University or School name" />
-                        </div>
-                        <div>
-                          <label className="text-sm font-medium mb-2 block">Location</label>
-                          <Input defaultValue={edu.location} placeholder="City, State/Country" />
-                        </div>
-                        <div>
-                          <label className="text-sm font-medium mb-2 block">Start Date</label>
-                          <Input defaultValue={edu.start} placeholder="e.g., Sep 2018" />
-                        </div>
-                        <div>
-                          <label className="text-sm font-medium mb-2 block">End Date</label>
-                          <Input defaultValue={edu.end} placeholder="e.g., May 2022 or Present" />
-                        </div>
-                        <div>
-                          <label className="text-sm font-medium mb-2 block">GPA</label>
-                          <Input defaultValue={edu.gpa} placeholder="e.g., 3.8/4.0" />
-                        </div>
-                        {edu.honors && edu.honors.length > 0 && (
-                          <div className="md:col-span-2">
-                            <label className="text-sm font-medium mb-2 block">Honors & Awards</label>
-                            <Textarea 
-                              defaultValue={edu.honors.join('\n')}
-                              rows={2}
-                              placeholder="Honors, distinctions, or awards"
-                            />
-                          </div>
-                        )}
                       </div>
+                        <CollapsibleContent className="p-4">
+                          <div className="grid md:grid-cols-2 gap-4">
+                            <div>
+                              <label className="text-sm font-medium mb-2 block">Degree</label>
+                              <Input name="degree" value={edu.degree} onChange={(e) => handleEducationChange(e, index)} placeholder="e.g., Bachelor's, Master's, PhD" />
+                            </div>
+                            <div>
+                              <label className="text-sm font-medium mb-2 block">Field of Study</label>
+                              <Input name="field" value={edu.field} onChange={(e) => handleEducationChange(e, index)} placeholder="e.g., Computer Science, Business" />
+                            </div>
+                            <div>
+                              <label className="text-sm font-medium mb-2 block">Institution</label>
+                              <Input name="institution" value={edu.institution} onChange={(e) => handleEducationChange(e, index)} placeholder="University or School name" />
+                            </div>
+                            <div>
+                              <label className="text-sm font-medium mb-2 block">Location</label>
+                              <Input name="location" value={edu.location} onChange={(e) => handleEducationChange(e, index)} placeholder="City, State/Country" />
+                            </div>
+                            <div>
+                              <label className="text-sm font-medium mb-2 block">Start Date</label>
+                              <Input name="start" value={edu.start} onChange={(e) => handleEducationChange(e, index)} placeholder="e.g., Sep 2018" />
+                            </div>
+                            <div>
+                              <label className="text-sm font-medium mb-2 block">End Date</label>
+                              <Input name="end" value={edu.end} onChange={(e) => handleEducationChange(e, index)} placeholder="e.g., May 2022 or Present" />
+                            </div>
+                            <div>
+                              <label className="text-sm font-medium mb-2 block">GPA</label>
+                              <Input name="gpa" value={edu.gpa} onChange={(e) => handleEducationChange(e, index)} placeholder="e.g., 3.8/4.0" />
+                            </div>
+                            <div className="md:col-span-2">
+                              <label className="text-sm font-medium mb-2 block">Honors & Awards</label>
+                              <Textarea 
+                                name="honors"
+                                value={edu.honors?.join('\n')}
+                                onChange={(e) => handleEducationChange(e, index)}
+                                rows={2}
+                                placeholder="Honors, distinctions, or awards"
+                              />
+                            </div>
+                          </div>
+                        </CollapsibleContent>
+                      </Collapsible>
                     ))
                   ) : (
                     <div className="text-center py-8 text-muted-foreground border-2 border-dashed rounded-lg">
@@ -180,39 +312,91 @@ const Review = () => {
                       </Badge>
                     </div>
                   </div>
-                  <Button variant="ghost" size="sm">
-                    <Edit2 className="h-4 w-4" />
+                  <Button variant="ghost" size="sm" onClick={addExperience}>
+                    <PlusCircle className="h-5 w-5" />
                   </Button>
                 </div>
 
                 <div className="space-y-4">
-                  {resume?.parsed?.experiences?.map((exp, index) => (
-                    <div key={index} className="grid md:grid-cols-2 gap-4">
-                      <div>
-                        <label className="text-sm font-medium mb-2 block">Job Title</label>
-                        <Input defaultValue={exp.title} />
-                      </div>
-                      <div>
-                        <label className="text-sm font-medium mb-2 block">Company</label>
-                        <Input defaultValue={exp.company} />
-                      </div>
-                      <div>
-                        <label className="text-sm font-medium mb-2 block">Start Date</label>
-                        <Input defaultValue={exp.start} />
-                      </div>
-                      <div>
-                        <label className="text-sm font-medium mb-2 block">End Date</label>
-                        <Input defaultValue={exp.end} />
-                      </div>
-                      <div className="md:col-span-2">
-                        <label className="text-sm font-medium mb-2 block">Description</label>
-                        <Textarea 
-                          defaultValue={exp.bullets?.join('\n')}
-                          rows={3}
-                        />
-                      </div>
+                  {editedResume?.parsed?.experiences && editedResume.parsed.experiences.length > 0 ? (
+                    editedResume?.parsed?.experiences?.map((exp, index) => (
+                      <Collapsible key={index} onOpenChange={(isOpen) => setOpenExperience(prev => { const newState = [...prev]; newState[index] = isOpen; return newState; })}>
+                        <div className="flex items-center justify-between p-4 bg-muted/50 rounded-lg">
+                          <CollapsibleTrigger className="w-full text-left">
+                            <p className="font-semibold">{exp.title}{exp.company && ` at ${exp.company}`}</p>
+                            <p className="text-sm text-muted-foreground">{exp.start} - {exp.end}</p>
+                          </CollapsibleTrigger>
+                          <div className="flex items-center">
+                            <Button variant="ghost" size="sm" onClick={() => removeExperience(index)}>
+                              <MinusCircle className="h-5 w-5 text-destructive" />
+                            </Button>
+                            <CollapsibleTrigger>
+                              {openExperience[index] ? <ChevronUp className="h-5 w-5" /> : <ChevronDown className="h-5 w-5" />}
+                            </CollapsibleTrigger>
+                          </div>
+                        </div>
+                        <CollapsibleContent className="p-4">
+                          <div className="grid md:grid-cols-2 gap-4">
+                            <div>
+                              <label className="text-sm font-medium mb-2 block">Job Title</label>
+                              <Input name="title" value={exp.title} onChange={(e) => handleExperienceChange(e, index)} />
+                            </div>
+                            <div>
+                              <label className="text-sm font-medium mb-2 block">Company</label>
+                              <Input name="company" value={exp.company} onChange={(e) => handleExperienceChange(e, index)} />
+                            </div>
+                            <div>
+                              <label className="text-sm font-medium mb-2 block">Start Date</label>
+                              <Input name="start" value={exp.start} onChange={(e) => handleExperienceChange(e, index)} />
+                            </div>
+                            <div>
+                              <label className="text-sm font-medium mb-2 block">End Date</label>
+                              <Input name="end" value={exp.end} onChange={(e) => handleExperienceChange(e, index)} />
+                            </div>
+                            <div className="md:col-span-2">
+                              <label className="text-sm font-medium mb-2 block">Description</label>
+                              <Textarea 
+                                name="bullets"
+                                value={exp.bullets?.join('\n')}
+                                onChange={(e) => handleExperienceChange(e, index)}
+                                rows={3}
+                              />
+                            </div>
+                          </div>
+                        </CollapsibleContent>
+                      </Collapsible>
+                    ))
+                  ) : (
+                    <div className="text-center py-8 text-muted-foreground border-2 border-dashed rounded-lg">
+                      <p className="text-sm">No work experience information found. Please add your work experience details.</p>
                     </div>
-                  ))}
+                  )}
+                </div>
+              </div>
+
+              {/* Skills */}
+              <div className="bg-card rounded-2xl p-6 shadow-lg border animate-slide-up" style={{ animationDelay: "0.2s" }}>
+                <div className="flex items-center justify-between mb-6">
+                  <div className="flex items-center gap-3">
+                    <div className="h-10 w-10 bg-success/20 rounded-lg flex items-center justify-center">
+                      <CheckCircle className="h-5 w-5 text-success" />
+                    </div>
+                    <div>
+                      <h3 className="text-lg font-semibold">Skills</h3>
+                      <Badge variant="outline" className={getConfidenceBadgeClass(resume?.parsed?.confidence?.skills ?? 0)}>
+                        {getConfidenceText(resume?.parsed?.confidence?.skills ?? 0)}
+                      </Badge>
+                    </div>
+                  </div>
+                </div>
+
+                <div>
+                  <label className="text-sm font-medium mb-2 block">Top Skills (comma-separated)</label>
+                  <Textarea 
+                    value={skillsText}
+                    onChange={handleSkillsChange}
+                    rows={3}
+                  />
                 </div>
               </div>
             </div>
@@ -226,33 +410,33 @@ const Review = () => {
                 <div className="space-y-4">
                   <div className="flex items-start gap-3">
                     <div className="h-12 w-12 bg-gradient-to-br from-primary to-accent rounded-full flex items-center justify-center text-white font-bold">
-                      {resume?.parsed?.name?.charAt(0).toUpperCase()}
+                      {editedResume?.parsed?.name?.charAt(0).toUpperCase()}
                     </div>
                     <div className="flex-1">
-                      <h4 className="font-semibold">{resume?.parsed?.name}</h4>
-                      <p className="text-sm text-muted-foreground">{resume?.parsed?.experiences?.[0]?.title}</p>
+                      <h4 className="font-semibold">{editedResume?.parsed?.name}</h4>
+                      <p className="text-sm text-muted-foreground">{editedResume?.parsed?.experiences?.[0]?.title}</p>
                     </div>
                   </div>
 
                   <div className="space-y-2 text-sm">
                     <div className="flex items-center gap-2 text-muted-foreground">
                       <Mail className="h-4 w-4" />
-                      <span>{resume?.parsed?.email}</span>
+                      <span>{editedResume?.parsed?.email}</span>
                     </div>
                     <div className="flex items-center gap-2 text-muted-foreground">
                       <Phone className="h-4 w-4" />
-                      <span>{resume?.parsed?.phone}</span>
+                      <span>{editedResume?.parsed?.phone}</span>
                     </div>
                     <div className="flex items-center gap-2 text-muted-foreground">
                       <MapPin className="h-4 w-4" />
-                      <span>{resume?.parsed?.location}</span>
+                      <span>{editedResume?.parsed?.location}</span>
                     </div>
                   </div>
 
                   <div>
                     <h5 className="text-sm font-semibold mb-2">Top Skills</h5>
                     <div className="flex flex-wrap gap-2">
-                      {resume?.parsed?.skills.map(skill => <Badge key={skill} variant="secondary">{skill}</Badge>)}
+                      {editedResume?.parsed?.skills.map((skill, index) => <Badge key={`${skill}-${index}`} variant="secondary">{skill}</Badge>)}
                     </div>
                   </div>
                 </div>
@@ -264,23 +448,78 @@ const Review = () => {
                 
                 <div className="space-y-3">
                   <div className="flex items-center gap-3 text-sm">
-                    <CheckCircle className="h-5 w-5 text-success" />
-                    <span>Personal Info: Complete</span>
+                    {resume?.parsed?.name ? (
+                      resume?.parsed?.confidence?.personalInfo > 0.75 ? (
+                        <>
+                          <CheckCircle className="h-5 w-5 text-success" />
+                          <span>Personal Info: Complete</span>
+                        </>
+                      ) : (
+                        <>
+                          <AlertCircle className="h-5 w-5 text-warning" />
+                          <span>Personal Info: Needs review</span>
+                        </>
+                      )
+                    ) : (
+                      <>
+                        <XCircle className="h-5 w-5 text-destructive" />
+                        <span>Personal Info: Missing fields</span>
+                      </>
+                    )}
                   </div>
                   <div className="flex items-center gap-3 text-sm">
-                    <AlertCircle className="h-5 w-5 text-warning" />
-                    <span>Work Experience: Needs review</span>
+                    {resume?.parsed?.experiences && resume.parsed.experiences.length > 0 ? (
+                      resume?.parsed?.confidence?.experience > 0.75 ? (
+                        <>
+                          <CheckCircle className="h-5 w-5 text-success" />
+                          <span>Work Experience: Complete</span>
+                        </>
+                      ) : (
+                        <>
+                          <AlertCircle className="h-5 w-5 text-warning" />
+                          <span>Work Experience: Needs review</span>
+                        </>
+                      )
+                    ) : (
+                      <>
+                        <XCircle className="h-5 w-5 text-destructive" />
+                        <span>Work Experience: Missing fields</span>
+                      </>
+                    )}
                   </div>
                   <div className="flex items-center gap-3 text-sm">
-                    <CheckCircle className="h-5 w-5 text-success" />
-                    <span>Skills: Complete</span>
+                    {resume?.parsed?.skills && resume.parsed.skills.length > 0 ? (
+                      resume?.parsed?.confidence?.skills > 0.75 ? (
+                        <>
+                          <CheckCircle className="h-5 w-5 text-success" />
+                          <span>Skills: Complete</span>
+                        </>
+                      ) : (
+                        <>
+                          <AlertCircle className="h-5 w-5 text-warning" />
+                          <span>Skills: Needs review</span>
+                        </>
+                      )
+                    ) : (
+                      <>
+                        <XCircle className="h-5 w-5 text-destructive" />
+                        <span>Skills: Missing fields</span>
+                      </>
+                    )}
                   </div>
                   <div className="flex items-center gap-3 text-sm">
                     {resume?.parsed?.education && resume.parsed.education.length > 0 ? (
-                      <>
-                        <CheckCircle className="h-5 w-5 text-success" />
-                        <span>Education: Complete</span>
-                      </>
+                      resume?.parsed?.confidence?.education > 0.75 ? (
+                        <>
+                          <CheckCircle className="h-5 w-5 text-success" />
+                          <span>Education: Complete</span>
+                        </>
+                      ) : (
+                        <>
+                          <AlertCircle className="h-5 w-5 text-warning" />
+                          <span>Education: Needs review</span>
+                        </>
+                      )
                     ) : (
                       <>
                         <XCircle className="h-5 w-5 text-destructive" />
@@ -291,13 +530,7 @@ const Review = () => {
                 </div>
               </div>
 
-              {/* Add Missing Section */}
-              <div className="bg-muted/50 rounded-2xl p-6 border-2 border-dashed border-border animate-slide-up" style={{ animationDelay: "0.4s" }}>
-                <h3 className="text-sm font-semibold mb-3">Add Missing Section</h3>
-                <Button variant="outline" className="w-full">
-                  + Add Section
-                </Button>
-              </div>
+
             </div>
           </div>
 

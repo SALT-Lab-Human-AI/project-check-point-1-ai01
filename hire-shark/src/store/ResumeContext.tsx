@@ -14,6 +14,7 @@ type ResumeContextType = {
   parseResume: () => Promise<void>;
   runMatching: () => Promise<void>;
   clear: () => void;
+  cancelParse: () => void;
 };
 
 export const ResumeContext = createContext<ResumeContextType | undefined>(undefined);
@@ -63,8 +64,12 @@ export const ResumeProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     setMatches([]);
   };
 
+  const cancelParse = () => {
+    setIsParsing(false);
+  };
+
   return (
-    <ResumeContext.Provider value={{ isParsing, isMatching, resume, matches, uploadFile, parseResume, runMatching, clear }}>
+    <ResumeContext.Provider value={{ isParsing, isMatching, resume, matches, uploadFile, parseResume, runMatching, clear, cancelParse }}>
       {children}
     </ResumeContext.Provider>
   );

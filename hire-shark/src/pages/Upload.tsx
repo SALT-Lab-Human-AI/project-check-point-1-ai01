@@ -6,11 +6,13 @@ import { ProgressSteps } from "@/components/ProgressSteps";
 import { Upload as UploadIcon, FileText, CheckCircle2 } from "lucide-react";
 import { toast } from "sonner";
 import { useResume } from "@/store/ResumeContext";
+import { LoadingModal } from "@/components/LoadingModal";
 
 const Upload = () => {
   const navigate = useNavigate();
-  const { uploadFile, resume, parseResume, isParsing, clear } = useResume();
+  const { uploadFile, resume, parseResume, isParsing, clear, cancelParse } = useResume();
   const [isUploading, setIsUploading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -31,11 +33,14 @@ const Upload = () => {
 
   const handleContinue = async () => {
     if (resume) {
+      setIsLoading(true);
       try {
         await parseResume();
         navigate("/review");
       } catch (error) {
         toast.error("Failed to parse resume.");
+      } finally {
+        setIsLoading(false);
       }
     }
   };
@@ -44,6 +49,20 @@ const Upload = () => {
     clear();
     if (fileInputRef.current) {
       fileInputRef.current.value = "";
+    }
+  };
+
+  const handleDrop = (event: React.DragEvent<HTMLDivElement>) => {
+    event.preventDefault();
+    event.stopPropagation();
+    const file = event.dataTransfer.files?.[0];
+    if (file) {
+      setIsUploading(true);
+      uploadFile(file);
+      toast.success("Resume uploaded successfully!", {
+        description: "Click continue to review the extracted information.",
+      });
+      setIsUploading(false);
     }
   };
 
@@ -63,7 +82,11 @@ const Upload = () => {
               You can review and edit everything afterward.
             </p>
 
-            <div className="border-2 border-dashed border-border rounded-2xl p-12 text-center bg-muted/30 hover:bg-muted/50 transition-colors">
+            <div 
+              className="border-2 border-dashed border-border rounded-2xl p-12 text-center bg-muted/30 hover:bg-muted/50 transition-colors"
+              onDrop={handleDrop}
+              onDragOver={(e) => e.preventDefault()}
+            >
               <div className="flex flex-col items-center space-y-4">
                 <div className={`h-16 w-16 rounded-full flex items-center justify-center transition-all ${
                   resume ? "bg-success/20" : "bg-primary/20"
@@ -179,6 +202,7 @@ const Upload = () => {
           </div>
         </div>
       </main>
+      <LoadingModal isOpen={isLoading} onClose={() => { setIsLoading(false); cancelParse(); }} />
     </div>
   );
 };
