@@ -22,7 +22,7 @@ const App = () => (
         <ResumeProvider>
           <Toaster />
           <Sonner />
-          <BrowserRouter basename="/project-check-point-1-ai01/">
+          <BrowserRouter basename={import.meta.env.MODE === 'production' ? "/project-check-point-1-ai01/" : "/"}>
             <Routes>
               <Route path="/" element={<Landing />} />
               <Route path="/upload" element={<Upload />} />
