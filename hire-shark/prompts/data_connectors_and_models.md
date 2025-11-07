@@ -36,3 +36,21 @@ This reference summarizes every external connector and model configuration that 
   - `full_time`, `part_time`, `contract` (mutually exclusive flags)
 - **Response mapping:** see `matchJobs` → `MatchResult` (title, company, description snippet, location, salary string, job type, URLs, posted date).
 - **Notes:** This connector is purely REST/JSON; no LLM involved, but prompt outputs (generated job roles) influence the `what` query.
+
+---
+
+## 3. JD Skill Extraction Flow
+- **Used for:** Building the JD skill list that powers match scoring (`hire-shark/src/lib/skillExtractor.ts`).
+- **Inputs:** Job title, sanitized Adzuna description (up to ~2.5k chars) and any keywords returned by the API.
+- **LLM layer (optional):**
+  - Model: `gemini-2.5-flash` via `@google/generative-ai`.
+  - Generation config: `temperature=0`, `topK=1`, `topP=0.1` for deterministic output.
+  - Prompt: see `prompts.md` ("JD Skill Extraction").
+- **Heuristic fallback (always runs first):**
+  - Keyword seeding + dictionary lookup (`COMMON_SKILL_CANDIDATES`).
+  - Bullet/phrase parsing with strict sanitization (stop-word filtering, descriptive suffix ban, short-token whitelist).
+  - Signals (uppercase, special characters, domain vocabulary) must be present for single-word skills.
+- **Post-processing:**
+  - Merge LLM output with heuristic skills (dedupe + sanitization) only when new items pass validation.
+  - Stable ordering by first appearance in the JD text, then alphabetically.
+  - In-memory cache keyed by title/description/keywords/limit so repeated matches reuse the same list.

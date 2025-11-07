@@ -1,15 +1,25 @@
-import type { ResumeParsed, MatchResult } from "../types";
+import type { ResumeParsed, MatchResult, JobPreferences } from "../types";
 import { fetchAdzunaJobs } from "./adzunaApi";
-import { JobPreferences } from "../types";
+import { extractJobSkills } from "./skillExtractor";
+
+const MATCH_THRESHOLD = 0.75;
+const MAX_SKILL_BADGES = 10;
+
+type SkillVector = {
+  raw: string;
+  normalized: string;
+  vector: number[];
+};
+
+type SkillEmbeddingEngine = {
+  vectorize(text: string): number[];
+  cosine(a: number[], b: number[]): number;
+};
 
 export async function matchJobs(resume: ResumeParsed, preferences: JobPreferences, limit = 10): Promise<MatchResult[]> {
-  // Fetch jobs from Adzuna
   const adzunaResults = await fetchAdzunaJobs(preferences);
-
   if (!adzunaResults.length) return [];
 
-  // Build plain job objects from Adzuna results (they already are MatchResult-shaped,
-  // but ensure we have description text to vectorize)
   const jobs = adzunaResults.map(j => ({
     id: j.jobId,
     title: j.title,
@@ -24,73 +34,98 @@ export async function matchJobs(resume: ResumeParsed, preferences: JobPreference
     postedDate: j.postedDate,
   }));
 
-  const resumeText = buildResumeDocument(resume);
-  // Include resumeText in the corpus for TF-IDF so resume tokens are part of the vocabulary
-  const corpus = jobs.map(j => `${j.title || ""} ${j.description || ""} ${(j.keywords || []).join(" ")}`);
+  const resumeSkills = dedupeSkills(resume.skills ?? []);
+  const resumeSkillMap = new Map(resumeSkills.map(skill => [normalizeSkill(skill), skill]));
 
-  // Try to initialize optional skip-gram adapter via shared initializer, passing the full corpus
-  // (jobs + resume) so the model trains on relevant tokens.
-  let skipAdapter: any = null;
-  try {
-    const { getSkipGramAdapter } = await import("./skipgramAdapter");
-    skipAdapter = await getSkipGramAdapter([...corpus, resumeText]);
-  } catch (e) {
-    // ignore and fall back
-  }
-
-  let jobVectors: number[][] = [];
-  let resumeVector: number[] = [];
-
-  if (skipAdapter) {
-    jobVectors = corpus.map(c => skipAdapter.vectorizeText(c));
-    resumeVector = skipAdapter.vectorizeText(resumeText);
-  } else {
-    const { buildVectorizer } = await import("./embeddings");
-    // include resumeText so its tokens are included in the TF-IDF vocabulary
-    const vectorizer = buildVectorizer([...corpus, resumeText]);
-    jobVectors = corpus.map(c => vectorizer.vectorize(c));
-    resumeVector = vectorizer.vectorize(resumeText);
-  }
-
-  const resumeSkillsOriginal = resume.skills ?? [];
-  const resumeSkillTokens = resumeSkillsOriginal.map(s => s.toLowerCase().trim()).filter(Boolean);
-
-  const results: MatchResult[] = await Promise.all(jobs.map(async (job, idx) => {
-    const jobText = `${job.title} ${job.description} ${(job.keywords || []).join(' ')}`;
-    const jobLowerText = jobText.toLowerCase();
-
-    // compute vector similarity
-    let vecSim = 0;
-    if (skipAdapter) {
-      vecSim = skipAdapter.cosineSimilarity(resumeVector, jobVectors[idx]);
-    } else {
-      const { cosineSimilarity } = await import("./embeddings");
-      vecSim = cosineSimilarity(resumeVector, jobVectors[idx]);
-    }
-
-    const matchedSkills = Array.from(new Set(resumeSkillTokens.filter(skill => jobLowerText.includes(skill)).map(s => toTitleCase(s)))).slice(0, 10);
-    const skillScore = resumeSkillsOriginal.length ? matchedSkills.length / resumeSkillsOriginal.length : 0;
-
-    // Debug info: if vecSim is zero often it means resume vector has no overlap with job vocab
-    // or vectors are zero. Log minimal diagnostics to help trace why scores are 0.
-    if (typeof process !== "undefined" && process.env && process.env.NODE_ENV !== "production") {
+  const jobSkillLists = await Promise.all(
+    jobs.map(async job => {
       try {
-        const rvNonZero = Array.isArray(resumeVector) ? (resumeVector as number[]).some(v => Math.abs(v) > 1e-9) : true;
-        const jvNonZero = Array.isArray(jobVectors[idx]) ? jobVectors[idx].some(v => Math.abs(v) > 1e-9) : true;
-        console.debug(`matchJobs debug: job=${job.title} vecSim=${vecSim.toFixed(6)} rvNonZero=${rvNonZero} jvNonZero=${jvNonZero} skillScore=${skillScore.toFixed(6)}`);
-      } catch (e) {
-        // ignore logging errors
+        const skills = await extractJobSkills({
+          title: job.title ?? "",
+          description: job.description ?? "",
+          keywords: job.keywords ?? [],
+        });
+        return dedupeSkills(skills);
+      } catch (error) {
+        console.warn("Failed to extract job skills", error);
+        return [];
+      }
+    }),
+  );
+
+  const skillCorpus = Array.from(new Set([...resumeSkills, ...jobSkillLists.flat()])).filter(Boolean);
+  const embeddingEngine = skillCorpus.length ? await buildSkillEmbeddingEngine(skillCorpus) : null;
+  const vectorCache = new Map<string, number[]>();
+  const getVector = (text: string): number[] => {
+    const key = text.toLowerCase();
+    if (vectorCache.has(key)) {
+      return vectorCache.get(key)!;
+    }
+    const vec = embeddingEngine ? embeddingEngine.vectorize(text) : [];
+    vectorCache.set(key, vec);
+    return vec;
+  };
+
+  const resumeSkillVectors: SkillVector[] = embeddingEngine
+    ? resumeSkills.map(skill => ({
+        raw: skill,
+        normalized: normalizeSkill(skill),
+        vector: getVector(skill),
+      }))
+    : [];
+
+  const results: MatchResult[] = jobs.map((job, idx) => {
+    const jobSkills = jobSkillLists[idx] ?? [];
+    const jobSkillVectors: SkillVector[] = jobSkills.map(skill => ({
+      raw: skill,
+      normalized: normalizeSkill(skill),
+      vector: getVector(skill),
+    }));
+
+    const matchedSkills: string[] = [];
+    const missingSkills: string[] = [];
+
+    for (const jobSkill of jobSkillVectors) {
+      if (!jobSkill.normalized) continue;
+
+      if (resumeSkillMap.has(jobSkill.normalized)) {
+        matchedSkills.push(jobSkill.raw);
+        continue;
+      }
+
+      let bestScore = 0;
+      if (embeddingEngine && vectorHasMagnitude(jobSkill.vector) && resumeSkillVectors.length) {
+        for (const resumeSkill of resumeSkillVectors) {
+          if (!vectorHasMagnitude(resumeSkill.vector)) continue;
+          const similarity = embeddingEngine.cosine(jobSkill.vector, resumeSkill.vector);
+          if (similarity > bestScore) {
+            bestScore = similarity;
+          }
+        }
+      }
+
+      if (bestScore >= MATCH_THRESHOLD) {
+        matchedSkills.push(jobSkill.raw);
+      } else {
+        missingSkills.push(jobSkill.raw);
       }
     }
 
-    const score = Math.min(1, 0.75 * vecSim + 0.25 * skillScore);
+    const totalRequired = jobSkills.length;
+    const matchedCount = matchedSkills.length;
+    const missingCount = missingSkills.length;
+    const coverage = totalRequired ? matchedCount / totalRequired : 0;
 
     return {
       jobId: job.id,
       title: job.title,
       company: job.company ?? "",
-      score,
-      matchedSkills,
+      score: Math.min(1, coverage),
+      matchedSkills: matchedSkills.slice(0, MAX_SKILL_BADGES),
+      missingSkills: missingSkills.slice(0, MAX_SKILL_BADGES),
+      matchedSkillCount: matchedCount,
+      missingSkillCount: missingCount,
+      totalJobSkills: totalRequired,
       snippet: job.description ? job.description.slice(0, 300) : undefined,
       location: job.location,
       salary: job.salary,
@@ -99,28 +134,49 @@ export async function matchJobs(resume: ResumeParsed, preferences: JobPreference
       applyUrl: job.applyUrl || job.jobUrl,
       postedDate: job.postedDate,
     } as MatchResult;
-  }));
+  });
 
   return results.sort((a, b) => b.score - a.score).slice(0, limit);
 }
 
-function buildResumeDocument(resume: ResumeParsed): string {
-  const pieces: string[] = [];
-  if (resume.summary) pieces.push(resume.summary);
-  if (resume.skills?.length) pieces.push(resume.skills.join(" "));
-  resume.experiences?.forEach(exp => {
-    if (exp.title) pieces.push(exp.title);
-    if (exp.company) pieces.push(exp.company);
-    if (exp.bullets?.length) pieces.push(exp.bullets.join(" "));
-  });
-  resume.education?.forEach(edu => {
-    if (edu.degree) pieces.push(edu.degree);
-    if (edu.field) pieces.push(edu.field);
-    if (edu.institution) pieces.push(edu.institution);
-  });
-  return pieces.join(" ");
+function normalizeSkill(value: string): string {
+  return value.toLowerCase().replace(/\s+/g, " ").trim();
 }
 
-function toTitleCase(value: string): string {
-  return value.replace(/\b\w+/g, word => word.charAt(0).toUpperCase() + word.slice(1));
+function dedupeSkills(list: string[]): string[] {
+  const seen = new Set<string>();
+  const result: string[] = [];
+  for (const item of list) {
+    const normalized = normalizeSkill(item || "");
+    if (!normalized || seen.has(normalized)) continue;
+    seen.add(normalized);
+    result.push(item.trim());
+  }
+  return result;
+}
+
+function vectorHasMagnitude(vec: number[]): boolean {
+  return Array.isArray(vec) && vec.some(v => Math.abs(v) > 1e-6);
+}
+
+async function buildSkillEmbeddingEngine(corpus: string[]): Promise<SkillEmbeddingEngine> {
+  try {
+    const { getSkipGramAdapter } = await import("./skipgramAdapter");
+    const adapter = await getSkipGramAdapter(corpus);
+    if (adapter) {
+      return {
+        vectorize: (text: string) => adapter.vectorizeText(text),
+        cosine: (a: number[], b: number[]) => adapter.cosineSimilarity(a, b),
+      };
+    }
+  } catch (error) {
+    console.warn("Skip-gram adapter unavailable, falling back to TF-IDF", error);
+  }
+
+  const { buildVectorizer, cosineSimilarity } = await import("./embeddings");
+  const vectorizer = buildVectorizer(corpus);
+  return {
+    vectorize: (text: string) => vectorizer.vectorize(text),
+    cosine: (a: number[], b: number[]) => cosineSimilarity(a, b),
+  };
 }

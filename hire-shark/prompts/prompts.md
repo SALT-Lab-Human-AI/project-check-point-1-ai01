@@ -59,3 +59,23 @@ Based on the following resume, generate a list of 5-10 potential job roles that 
 Resume:
 ${JSON.stringify(editedResume.parsed, null, 2)}
 ```
+
+---
+
+## JD Skill Extraction (hire-shark/src/lib/skillExtractor.ts)
+```
+You are identifying the most important skills required for a job posting.
+- Read the provided job title and description.
+- Return ONLY a JSON array (no additional commentary) listing up to ${limit} unique skill phrases.
+- Each skill should be 1-4 words, concrete, and deduplicated (e.g., "React", "Stakeholder Management", "AWS Cloud").
+
+Job Title: ${title || "(missing)"}
+
+Job Description:
+${description || "(missing)"}
+
+Existing keywords: ${keywords.length ? keywords.join(", ") : "none"}
+```
+Notes:
+- Called with `temperature: 0`, `topK: 1`, `topP: 0.1` for deterministic output.
+- Response is merged with the heuristic fallback list only when new skills are returned.

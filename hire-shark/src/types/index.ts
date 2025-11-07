@@ -46,6 +46,10 @@ export type MatchResult = {
   company: string;
   score: number; // 0..1
   matchedSkills: string[];
+  missingSkills?: string[];
+  matchedSkillCount?: number;
+  missingSkillCount?: number;
+  totalJobSkills?: number;
   snippet?: string;
   location?: string;
   salary?: string;

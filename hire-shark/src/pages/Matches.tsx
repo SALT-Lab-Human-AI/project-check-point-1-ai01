@@ -14,6 +14,7 @@ const Matches = () => {
   const navigate = useNavigate();
   const { matches, isMatching, resume, runMatching } = useResume();
   const [selectedJob, setSelectedJob] = useState<MatchResult | null>(null);
+  const [modalView, setModalView] = useState<"why" | "details">("details");
   const [hasSearched, setHasSearched] = useState(false);
   const [sortBy, setSortBy] = useState<"score" | "recent" | "company">("score");
 
@@ -164,7 +165,7 @@ const Matches = () => {
                         : "bg-warning/10 text-warning border-warning/20"
                     }`}
                   >
-                    {Math.round(match.score * 100)}% Match
+                    {Math.round(match.score * 100)}% Skill Coverage
                   </Badge>
                 </div>
 
@@ -179,12 +180,28 @@ const Matches = () => {
                   </div>
                 </div>
 
+                {match.missingSkills?.length ? (
+                  <div className="mb-4">
+                    <p className="text-sm font-medium mb-2">Missing Skills:</p>
+                    <div className="flex flex-wrap gap-2">
+                      {match.missingSkills.map((skill) => (
+                        <Badge key={`${match.jobId}-${skill}`} variant="outline" className="text-xs border-destructive/40 text-destructive">
+                          {skill}
+                        </Badge>
+                      ))}
+                    </div>
+                  </div>
+                ) : null}
+
                 <div className="flex gap-2">
                   <Button
                     variant="outline"
                     size="sm"
                     className="flex-1"
-                    onClick={() => setSelectedJob(match)}
+                    onClick={() => {
+                      setSelectedJob(match);
+                      setModalView("why");
+                    }}
                   >
                     <Info className="h-4 w-4 mr-1" />
                     Why this match?
@@ -193,7 +210,10 @@ const Matches = () => {
                     variant="outline"
                     size="sm"
                     className="flex-1"
-                    onClick={() => setSelectedJob(match)}
+                    onClick={() => {
+                      setSelectedJob(match);
+                      setModalView("details");
+                    }}
                   >
                     View Details
                   </Button>
@@ -232,7 +252,15 @@ const Matches = () => {
       </main>
 
       {/* Job Details Modal */}
-      <Dialog open={!!selectedJob} onOpenChange={() => setSelectedJob(null)}>
+      <Dialog
+        open={!!selectedJob}
+        onOpenChange={(open) => {
+          if (!open) {
+            setSelectedJob(null);
+            setModalView("details");
+          }
+        }}
+      >
         <DialogContent className="max-w-2xl">
           <DialogHeader>
             <DialogTitle className="text-2xl">{selectedJob?.title}</DialogTitle>
@@ -241,58 +269,98 @@ const Matches = () => {
           
           {selectedJob && (
             <div className="space-y-6 mt-4">
-              <div>
-                <div className="flex items-center justify-between mb-4">
-                  <Badge className="bg-success/10 text-success border-success/20 text-base px-4 py-1">
-                    {Math.round(selectedJob.score * 100)}% Match
-                  </Badge>
-                </div>
-                
-                <h3 className="font-semibold mb-2">About This Role</h3>
-                <p className="text-muted-foreground">{selectedJob.snippet}</p>
+              <div className="flex gap-2">
+                <Button
+                  variant={modalView === "details" ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => setModalView("details")}
+                >
+                  View Details
+                </Button>
+                <Button
+                  variant={modalView === "why" ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => setModalView("why")}
+                >
+                  Why This Match
+                </Button>
               </div>
 
-              <div>
-                <h3 className="font-semibold mb-2">Matched Skills</h3>
-                <div className="flex flex-wrap gap-2">
-                  {selectedJob.matchedSkills.map((skill) => (
-                    <Badge key={skill} variant="secondary">
-                      {skill}
-                    </Badge>
-                  ))}
-                </div>
-              </div>
+              {modalView === "details" ? (
+                <>
+                  <div>
+                    <div className="flex items-center justify-between mb-4">
+                      <Badge className="bg-success/10 text-success border-success/20 text-base px-4 py-1">
+                        {Math.round(selectedJob.score * 100)}% Skill Coverage
+                      </Badge>
+                    </div>
+                    
+                    <h3 className="font-semibold mb-2">About This Role</h3>
+                    <p className="text-muted-foreground">{selectedJob.snippet}</p>
+                  </div>
 
-              <div>
-                <h3 className="font-semibold mb-2">Role Details</h3>
-                <div className="grid gap-4 sm:grid-cols-2">
                   <div>
-                    <p className="text-xs uppercase text-muted-foreground tracking-wide mb-1">Location</p>
-                    <p className="font-medium">{selectedJob.location || "Not provided"}</p>
+                    <h3 className="font-semibold mb-2">Matched Skills</h3>
+                    {selectedJob.matchedSkills.length ? (
+                      <div className="flex flex-wrap gap-2">
+                        {selectedJob.matchedSkills.map((skill) => (
+                          <Badge key={skill} variant="secondary">
+                            {skill}
+                          </Badge>
+                        ))}
+                      </div>
+                    ) : (
+                      <p className="text-sm text-muted-foreground">No overlapping skills detected yet.</p>
+                    )}
                   </div>
-                  <div>
-                    <p className="text-xs uppercase text-muted-foreground tracking-wide mb-1">Job Type</p>
-                    <p className="font-medium capitalize">{selectedJob.jobType || "Not provided"}</p>
-                  </div>
-                  <div>
-                    <p className="text-xs uppercase text-muted-foreground tracking-wide mb-1">Posted</p>
-                    <p className="font-medium">{formatDate(selectedJob.postedDate)}</p>
-                  </div>
-                </div>
-              </div>
 
-              {(selectedJob.url || selectedJob.applyUrl) && (
-                <div>
-                  <p className="text-xs uppercase text-muted-foreground tracking-wide mb-1">Job Listing</p>
-                  <a
-                    href={(selectedJob.applyUrl || selectedJob.url) ?? "#"}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-primary font-medium break-all hover:underline"
-                  >
-                    {selectedJob.applyUrl || selectedJob.url}
-                  </a>
-                </div>
+                  {selectedJob.missingSkills?.length ? (
+                    <div>
+                      <h3 className="font-semibold mb-2">Missing Skills</h3>
+                      <div className="flex flex-wrap gap-2">
+                        {selectedJob.missingSkills.map((skill) => (
+                          <Badge key={`${selectedJob.jobId}-${skill}`} variant="outline" className="border-destructive/40 text-destructive">
+                            {skill}
+                          </Badge>
+                        ))}
+                      </div>
+                    </div>
+                  ) : null}
+
+                  <div>
+                    <h3 className="font-semibold mb-2">Role Details</h3>
+                    <div className="grid gap-4 sm:grid-cols-2">
+                      <div>
+                        <p className="text-xs uppercase text-muted-foreground tracking-wide mb-1">Location</p>
+                        <p className="font-medium">{selectedJob.location || "Not provided"}</p>
+                      </div>
+                      <div>
+                        <p className="text-xs uppercase text-muted-foreground tracking-wide mb-1">Job Type</p>
+                        <p className="font-medium capitalize">{selectedJob.jobType || "Not provided"}</p>
+                      </div>
+                      <div>
+                        <p className="text-xs uppercase text-muted-foreground tracking-wide mb-1">Posted</p>
+                        <p className="font-medium">{formatDate(selectedJob.postedDate)}</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {(selectedJob.url || selectedJob.applyUrl) && (
+                    <div>
+                      <p className="text-xs uppercase text-muted-foreground tracking-wide mb-1">Job Listing</p>
+                      <a
+                        href={(selectedJob.applyUrl || selectedJob.url) ?? "#"}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-primary font-medium break-all hover:underline"
+                      >
+                        {selectedJob.applyUrl || selectedJob.url}
+                      </a>
+                    </div>
+                  )}
+                </>
+              ) : (
+                <WhyMatchDetails match={selectedJob} />
               )}
 
               <div className="flex gap-3 pt-4">
@@ -311,7 +379,15 @@ const Matches = () => {
                     Apply
                   </Button>
                 )}
-                <Button variant="outline" className="flex-1" size="lg" onClick={() => setSelectedJob(null)}>
+                <Button
+                  variant="outline"
+                  className="flex-1"
+                  size="lg"
+                  onClick={() => {
+                    setSelectedJob(null);
+                    setModalView("details");
+                  }}
+                >
                   Close
                 </Button>
               </div>
@@ -324,3 +400,99 @@ const Matches = () => {
 };
 
 export default Matches;
+
+type WhyMatchProps = {
+  match: MatchResult;
+};
+
+const WhyMatchDetails = ({ match }: WhyMatchProps) => {
+  const matchedCount = match.matchedSkillCount ?? match.matchedSkills.length;
+  const totalSkillsFromCounts =
+    match.totalJobSkills ??
+    (match.matchedSkillCount !== undefined && match.missingSkillCount !== undefined
+      ? match.matchedSkillCount + match.missingSkillCount
+      : undefined);
+  const inferredTotal =
+    totalSkillsFromCounts ??
+    (match.missingSkillCount !== undefined ? matchedCount + match.missingSkillCount : undefined);
+  const totalSkills = inferredTotal ?? (matchedCount || match.missingSkills?.length ? matchedCount + (match.missingSkills?.length || 0) : undefined);
+  const missingCount =
+    match.missingSkillCount ??
+    (totalSkills !== undefined ? Math.max(totalSkills - matchedCount, 0) : match.missingSkills?.length ?? 0);
+  const coveragePct = Math.round((match.score ?? 0) * 100);
+
+  return (
+    <div className="space-y-4">
+      <div className="flex items-center justify-between">
+        <Badge className="bg-success/10 text-success border-success/20 text-base px-4 py-1">
+          {coveragePct}% Skill Coverage
+        </Badge>
+        <p className="text-xs uppercase text-muted-foreground tracking-wide">
+          Coverage = Matched JD Skills ÷ Total JD Skills
+        </p>
+      </div>
+
+      <p className="text-sm text-muted-foreground">
+        A skill counts as matched when it overlaps with your edited resume skills directly or when the semantic similarity
+        (cosine &gt;= 0.75) between skill embeddings exceeds the threshold. Missing skills highlight JD expectations you can
+        focus on to raise the score.
+      </p>
+
+      <div className="grid gap-4 sm:grid-cols-3">
+        <div className="rounded-xl border p-4">
+          <p className="text-xs uppercase text-muted-foreground mb-1">JD Skills</p>
+          <p className="text-2xl font-semibold">{totalSkills ?? "—"}</p>
+        </div>
+        <div className="rounded-xl border p-4">
+          <p className="text-xs uppercase text-muted-foreground mb-1">Matched</p>
+          <p className="text-2xl font-semibold">{matchedCount}</p>
+        </div>
+        <div className="rounded-xl border p-4">
+          <p className="text-xs uppercase text-muted-foreground mb-1">Missing</p>
+          <p className="text-2xl font-semibold">{missingCount}</p>
+        </div>
+      </div>
+
+      <div>
+        <h3 className="font-semibold mb-2">Matched Skills</h3>
+        {match.matchedSkills.length ? (
+          <div className="flex flex-wrap gap-2">
+            {match.matchedSkills.map((skill) => (
+              <Badge key={`why-matched-${match.jobId}-${skill}`} variant="secondary">
+                {skill}
+              </Badge>
+            ))}
+          </div>
+        ) : (
+          <p className="text-sm text-muted-foreground">No overlapping skills detected.</p>
+        )}
+      </div>
+
+      <div>
+        <h3 className="font-semibold mb-2">Skills To Improve</h3>
+        {match.missingSkills?.length ? (
+          <div className="flex flex-wrap gap-2">
+            {match.missingSkills.map((skill) => (
+              <Badge key={`why-missing-${match.jobId}-${skill}`} variant="outline" className="border-destructive/40 text-destructive">
+                {skill}
+              </Badge>
+            ))}
+          </div>
+        ) : (
+          <p className="text-sm text-muted-foreground">No missing skills were detected.</p>
+        )}
+      </div>
+
+      <div className="rounded-xl border bg-muted/40 p-4">
+        <p className="text-sm font-medium mb-1">Matching rule</p>
+        <p className="text-sm text-muted-foreground">
+          • JD → skills extracted via LLM/fallback heuristics.
+          <br />
+          • Resume → uses your edited top skills.
+          <br />
+          • Embedding cosine similarity ≥ 0.75 counts as a match; otherwise listed under Missing.
+        </p>
+      </div>
+    </div>
+  );
+};
