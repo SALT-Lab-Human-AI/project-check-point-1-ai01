@@ -197,30 +197,21 @@ const Matches = () => {
                   >
                     View Details
                   </Button>
-                  <Button 
-                    size="sm" 
-                    className="flex-1"
-                    onClick={() => navigate("/success", { 
-                      state: { jobTitle: match.title, company: match.company } 
-                    })}
-                  >
-                    Express Interest
-                  </Button>
-                  <Button
-                    size="sm"
-                    className="flex-1"
-                    variant="secondary"
-                    disabled={!applyLink}
-                    asChild
-                  >
-                    <a
-                      href={applyLink || "#"}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
+                  {applyLink ? (
+                    <Button size="sm" className="flex-1" asChild>
+                      <a
+                        href={applyLink}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        Apply
+                      </a>
+                    </Button>
+                  ) : (
+                    <Button size="sm" className="flex-1" disabled>
                       Apply
-                    </a>
-                  </Button>
+                    </Button>
+                  )}
                 </div>
               </div>
             )})
@@ -305,30 +296,21 @@ const Matches = () => {
               )}
 
               <div className="flex gap-3 pt-4">
-                <Button 
-                  className="flex-1" 
-                  size="lg"
-                  onClick={() => navigate("/success", { 
-                    state: { jobTitle: selectedJob.title, company: selectedJob.company } 
-                  })}
-                >
-                  Express Interest
-                </Button>
-                <Button
-                  className="flex-1"
-                  size="lg"
-                  variant="secondary"
-                  disabled={!selectedJob.applyUrl && !selectedJob.url}
-                  asChild
-                >
-                  <a
-                    href={(selectedJob.applyUrl || selectedJob.url) ?? "#"}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
+                {selectedJob.applyUrl || selectedJob.url ? (
+                  <Button className="flex-1" size="lg" asChild>
+                    <a
+                      href={(selectedJob.applyUrl || selectedJob.url)!}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      Apply
+                    </a>
+                  </Button>
+                ) : (
+                  <Button className="flex-1" size="lg" disabled>
                     Apply
-                  </a>
-                </Button>
+                  </Button>
+                )}
                 <Button variant="outline" className="flex-1" size="lg" onClick={() => setSelectedJob(null)}>
                   Close
                 </Button>
