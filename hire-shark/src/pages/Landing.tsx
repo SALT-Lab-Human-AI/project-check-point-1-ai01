@@ -147,63 +147,56 @@ const Landing = () => {
             <div className="text-center mb-12">
               <h2 className="text-4xl md:text-5xl font-bold mb-4">About HireShark</h2>
               <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-                Revolutionizing recruitment through intelligent, AI-powered candidate matching
+                AI-powered job matching that turns a single resume upload into a curated shortlist of roles you can apply to instantly.
               </p>
             </div>
 
             <div className="bg-card rounded-2xl p-8 md:p-12 border shadow-lg">
               <div className="space-y-8">
                 <div>
-                  <h3 className="text-2xl font-semibold mb-4">Our Mission</h3>
+                  <h3 className="text-2xl font-semibold mb-4">What We Do</h3>
                   <p className="text-muted-foreground leading-relaxed">
-                    HireShark is an intelligent, AI-powered platform designed to revolutionize the recruitment process by providing a precise, data-driven approach to shortlisting candidates. By analyzing resumes and job descriptions, we generate compatibility scores that help job seekers quickly identify the most suitable opportunities while assisting recruiters in evaluating applicants more effectively.
+                    HireShark parses your resume, extracts key experience and skills, and then uses natural language processing to compare it against real job descriptions. Every match comes with the reasoning behind the score, highlighted skills, and a direct link to apply.
                   </p>
                 </div>
 
                 <div>
-                  <h3 className="text-2xl font-semibold mb-4">The Problem We Solve</h3>
+                  <h3 className="text-2xl font-semibold mb-4">Why It Matters</h3>
                   <p className="text-muted-foreground leading-relaxed mb-4">
-                    The recruitment process is fundamentally broken. Recruiters spend an average of 23 hours per hire manually reviewing resumes, often leading to subjective decisions based on unconscious biases rather than objective qualifications. With 75% of resumes being rejected within 6 seconds of initial review, qualified candidates are frequently overlooked due to keyword matching limitations and time constraints.
+                    Traditional keyword searches miss nuance, and scrolling endless job boards wastes time. We combine resume understanding with job corpus analysis so you spend less time searching and more time applying to opportunities that fit.
                   </p>
-                  <p className="text-muted-foreground leading-relaxed">
-                    Current recruitment tools rely heavily on simple keyword matching, which fails to understand context, skill relevance, or the nuanced ways candidates describe their experience. This results in both false positives and false negatives, impacting both job seekers and employers.
-                  </p>
-                </div>
-
-                <div>
-                  <h3 className="text-2xl font-semibold mb-4">How We're Different</h3>
                   <div className="grid md:grid-cols-2 gap-6 mt-6">
                     <div className="space-y-2">
-                      <h4 className="font-semibold text-primary">Advanced NLP Technology</h4>
+                      <h4 className="font-semibold text-primary">Resume-Driven Matching</h4>
                       <p className="text-sm text-muted-foreground">
-                        Our platform leverages advanced natural language processing and machine learning to understand context, skill relevance, and experience depth—going far beyond simple keyword matching.
+                        Upload once and let our NLP engine compare your profile against every role in the Greenhouse job catalog, surfacing the ones where your skills shine.
                       </p>
                     </div>
                     <div className="space-y-2">
-                      <h4 className="font-semibold text-primary">Objective Scoring</h4>
+                      <h4 className="font-semibold text-primary">Transparent Scores</h4>
                       <p className="text-sm text-muted-foreground">
-                        We provide automated compatibility scoring and candidate ranking that ensures fair and unbiased evaluation, reducing time-to-hire by 60% and improving candidate quality by 40%.
+                        Each card shows the match percentage, the skills we aligned, and a “Why this match?” breakdown so you understand the recommendation.
                       </p>
                     </div>
                     <div className="space-y-2">
-                      <h4 className="font-semibold text-primary">Bias Detection</h4>
+                      <h4 className="font-semibold text-primary">Apply in Seconds</h4>
                       <p className="text-sm text-muted-foreground">
-                        Our platform includes built-in bias detection algorithms and fairness metrics to ensure objective and fair assessment of all candidates, regardless of background.
+                        Every recommendation includes direct apply links. Tap “Apply” to jump straight to the company’s application form.
                       </p>
                     </div>
                     <div className="space-y-2">
-                      <h4 className="font-semibold text-primary">Detailed Insights</h4>
+                      <h4 className="font-semibold text-primary">Human-Friendly UI</h4>
                       <p className="text-sm text-muted-foreground">
-                        We provide comprehensive candidate insights and skill gap analysis, helping both job seekers understand their fit and recruiters make informed hiring decisions.
+                        Resume review, preference setup, match explanations, and saved interest — all in a single, approachable workflow.
                       </p>
                     </div>
                   </div>
                 </div>
 
                 <div className="pt-6 border-t">
-                  <h3 className="text-2xl font-semibold mb-4">Our Value Proposition</h3>
+                  <h3 className="text-2xl font-semibold mb-4">Our Vision</h3>
                   <p className="text-muted-foreground leading-relaxed">
-                    HireShark transforms recruitment from a time-intensive, subjective process into an efficient, data-driven system that identifies the most qualified candidates while ensuring fair and unbiased evaluation. We help reduce time-to-hire by 60% and improve candidate quality by 40%, making recruitment more efficient for everyone involved.
+                    We’re building a smarter job search assistant that connects talent to meaningful roles without the noise. Upload your resume, explore tailored matches, and apply with confidence — HireShark keeps the process fast, transparent, and focused on roles that fit.
                   </p>
                 </div>
               </div>

@@ -1,11 +1,22 @@
+import { useEffect, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import logo from "@/assets/logo.png";
+import { useTheme } from "next-themes";
+import { Sun, Moon } from "lucide-react";
 
 export const Header = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const isLanding = location.pathname === "/";
+  const { theme, setTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  const currentTheme = (theme as string | undefined) ?? "light";
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-card/95 backdrop-blur supports-[backdrop-filter]:bg-card/80">
@@ -67,7 +78,28 @@ export const Header = () => {
         </nav>
 
         <div className="flex items-center gap-3">
-
+          {mounted && (
+            <div className="flex items-center gap-1 rounded-full border bg-muted/60 p-1 shadow-sm">
+              <Button
+                size="icon"
+                variant={currentTheme === "light" ? "default" : "ghost"}
+                onClick={() => setTheme("light")}
+                aria-label="Switch to light mode"
+                className="h-9 w-9"
+              >
+                <Sun className="h-4 w-4" />
+              </Button>
+              <Button
+                size="icon"
+                variant={currentTheme === "dark" ? "default" : "ghost"}
+                onClick={() => setTheme("dark")}
+                aria-label="Switch to dark mode"
+                className="h-9 w-9"
+              >
+                <Moon className="h-4 w-4" />
+              </Button>
+            </div>
+          )}
           <Button size="sm" className="text-sm font-medium" onClick={() => navigate("/upload")}>
             Get Started
           </Button>
