@@ -1,0 +1,35 @@
+flowchart LR
+  subgraph Browser [Browser - React App]
+    Router[BrowserRouter]
+    Pages[Pages: Landing, Upload, Review, Preferences, Matches, Success]
+    UI[shadcn / radix UI]
+    RC[ResumeContext]
+    PC[PreferencesContext]
+    Libs[libs: gemini_parser.ts, parser.ts, matcher.ts, mockJobs.ts]
+  end
+
+  subgraph External
+    Gemini[Google Generative AI\n@google/generative-ai]
+    PDFWorker[pdf.worker.min.mjs (pdf.js worker)]
+    LocalStorage[(localStorage)]
+  end
+
+  Router --> Pages
+  Pages --> RC
+  Pages --> PC
+  RC --> Libs
+  PC --> LocalStorage
+
+  %% Parsing flows
+  RC -- parseResumeWithGemini --> Gemini
+  Libs -- pdfjs/mammoth --> PDFWorker
+
+  %% Matching
+  RC -- getMatches --> Libs
+
+  %% Build/Serve
+  subgraph Tooling
+    Vite[Vite + vite-plugin-static-copy]
+  end
+  Vite -- copies --> PDFWorker
+

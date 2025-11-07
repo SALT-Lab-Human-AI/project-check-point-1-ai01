@@ -1,0 +1,20 @@
+sequenceDiagram
+  participant Review as Review.tsx
+  participant ResumeCtx as ResumeContext.tsx
+  participant Gemini as Google Generative AI
+  participant Prefs as Preferences.tsx
+  participant Matches as Matches.tsx
+  participant Matcher as matcher.ts
+
+  Review->>ResumeCtx: generateJobRolesFromEditedResume(edited)
+  ResumeCtx->>Gemini: generateContent(job roles prompt)
+  Gemini-->>ResumeCtx: roles JSON
+  ResumeCtx->>Gemini: generateContent(locations prompt)
+  Gemini-->>ResumeCtx: locations JSON
+  Review->>Prefs: navigate(/preferences)
+  Prefs->>Matches: navigate(/matches)
+  Matches->>ResumeCtx: runMatching()
+  ResumeCtx->>Matcher: getMatches(parsed, mockJobs)
+  Matcher-->>ResumeCtx: MatchResult[]
+  ResumeCtx-->>Matches: set matches
+
