@@ -1,4 +1,5 @@
 import type { ResumeParsed, MatchResult } from "../types";
+import { buildVectorizer, cosineSimilarity as tfidfCosine } from "./embeddings";
 
 interface CsvJob {
   id: string;
@@ -17,11 +18,26 @@ let cachedJobs: CsvJob[] | null = null;
 export async function matchResumeWithGreenhouseCsv(resume: ResumeParsed, limit = 10): Promise<MatchResult[]> {
   const jobs = await loadJobs();
   if (!jobs.length) return [];
+  // Try to initialize optional skip-gram adapter. If unavailable, we'll fall back
+  // to the existing term-frequency method (or TF-IDF vectorizer below).
+  let skipAdapter: any = null;
+  try {
+    const mod = await import("./word_match_skipgram");
+    if (mod && typeof mod.initSkipGram === "function") {
+      skipAdapter = await mod.initSkipGram();
+    }
+  } catch (e) {
+    // ignore and fall back
+  }
 
   const resumeText = buildResumeDocument(resume);
-  const resumeTokens = tokenize(resumeText);
-  const resumeVector = termFrequency(resumeTokens);
-  const resumeMagnitude = vectorMagnitude(resumeVector);
+  let resumeVector: number[] | Map<string, number>;
+  let resumeMagnitude: number | undefined;
+  if (!skipAdapter) {
+    const resumeTokens = tokenize(resumeText);
+    resumeVector = termFrequency(resumeTokens);
+    resumeMagnitude = vectorMagnitude(resumeVector as Map<string, number>);
+  }
   const resumeSkillsOriginal = resume.skills ?? [];
   const resumeSkillTokens = resumeSkillsOriginal
     .map(skill => skill.toLowerCase().trim())
@@ -29,12 +45,20 @@ export async function matchResumeWithGreenhouseCsv(resume: ResumeParsed, limit =
 
   const results = jobs.map(job => {
     const jobText = buildJobDocument(job);
-    const jobTokens = tokenize(jobText);
-    const jobVector = termFrequency(jobTokens);
-    const jobMagnitude = vectorMagnitude(jobVector);
     const jobLowerText = jobText.toLowerCase();
 
-    const similarity = cosineSimilarity(resumeVector, resumeMagnitude, jobVector, jobMagnitude);
+    let similarity = 0;
+    if (skipAdapter) {
+      // skipAdapter provides vectorizeText and cosineSimilarity
+      const rVec = skipAdapter.vectorizeText(resumeText);
+      const jVec = skipAdapter.vectorizeText(jobText);
+      similarity = skipAdapter.cosineSimilarity(rVec, jVec);
+    } else {
+      const jobTokens = tokenize(jobText);
+      const jobVector = termFrequency(jobTokens);
+      const jobMagnitude = vectorMagnitude(jobVector);
+      similarity = cosineSimilarity(resumeVector as Map<string, number>, resumeMagnitude as number, jobVector, jobMagnitude);
+    }
 
     const matchedSkills = Array.from(
       new Set(
