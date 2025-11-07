@@ -13,28 +13,17 @@ export const PreferencesProvider: React.FC<{ children: ReactNode }> = ({ childre
   const [preferences, setPreferences] = useState<JobPreferences>({});
 
   const updatePreferences = useCallback((prefs: Partial<JobPreferences>) => {
-    setPreferences((prev) => ({ ...prev, ...prefs }));
-    // Optionally save to localStorage for persistence
-    const updated = { ...preferences, ...prefs };
-    localStorage.setItem("jobPreferences", JSON.stringify(updated));
+    setPreferences((prev) => {
+      const updated = { ...prev, ...prefs };
+      return updated;
+    });
   }, [preferences]);
 
   const clearPreferences = () => {
     setPreferences({});
-    localStorage.removeItem("jobPreferences");
   };
 
-  // Load preferences from localStorage on mount
-  React.useEffect(() => {
-    const saved = localStorage.getItem("jobPreferences");
-    if (saved) {
-      try {
-        setPreferences(JSON.parse(saved));
-      } catch (e) {
-        console.error("Failed to load preferences from localStorage", e);
-      }
-    }
-  }, []);
+
 
   return (
     <PreferencesContext.Provider value={{ preferences, updatePreferences, clearPreferences }}>
