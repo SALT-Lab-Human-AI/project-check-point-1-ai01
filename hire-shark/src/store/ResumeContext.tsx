@@ -1,10 +1,11 @@
 
 import React, { createContext, useState, useContext, useCallback } from "react";
-import { ResumeData, MatchResult, ResumeParsed } from "../types";
+import { ResumeData, MatchResult } from "../types";
 import { getMatches } from "../lib/matcher";
 import { mockJobs } from "../lib/mockJobs";
 import { parseResumeWithGemini, genAI } from "../lib/gemini_parser";
 import { usePreferences } from "./PreferencesContext";
+import { matchResumeWithGreenhouseCsv } from "../lib/jobMatcher";
 
 type ResumeContextType = {
   isParsing: boolean;
@@ -72,11 +73,11 @@ ${JSON.stringify(parsedResume, null, 2)}`;
 
     setIsMatching(true);
     try {
-      // Match resume against mock jobs
-      const matchResults = await getMatches(resume.parsed, mockJobs);
+      const matchResults = await matchResumeWithGreenhouseCsv(resume.parsed);
       setMatches(matchResults);
     } catch (error) {
       console.error("Error running matching:", error);
+      setMatches([]);
     } finally {
       setIsMatching(false);
     }

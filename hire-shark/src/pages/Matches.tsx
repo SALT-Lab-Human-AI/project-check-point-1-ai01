@@ -121,6 +121,7 @@ const Matches = () => {
           <div className="grid md:grid-cols-2 gap-6">
             {matches.map((match, index) => {
               const Icon = getIcon(match.title);
+              const applyLink = match.applyUrl || match.url;
               return (
               <div
                 key={match.jobId}
@@ -184,7 +185,22 @@ const Matches = () => {
                       state: { jobTitle: match.title, company: match.company } 
                     })}
                   >
-                    {match.score >= 0.9 ? "Apply Now" : "Express Interest"}
+                    Express Interest
+                  </Button>
+                  <Button
+                    size="sm"
+                    className="flex-1"
+                    variant="secondary"
+                    disabled={!applyLink}
+                    asChild
+                  >
+                    <a
+                      href={applyLink || "#"}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      Apply
+                    </a>
                   </Button>
                 </div>
               </div>
@@ -245,7 +261,22 @@ const Matches = () => {
                     state: { jobTitle: selectedJob.title, company: selectedJob.company } 
                   })}
                 >
-                  Apply Now
+                  Express Interest
+                </Button>
+                <Button
+                  className="flex-1"
+                  size="lg"
+                  variant="secondary"
+                  disabled={!selectedJob.applyUrl && !selectedJob.url}
+                  asChild
+                >
+                  <a
+                    href={(selectedJob.applyUrl || selectedJob.url) ?? "#"}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Apply
+                  </a>
                 </Button>
                 <Button variant="outline" className="flex-1" size="lg" onClick={() => setSelectedJob(null)}>
                   Close

@@ -51,6 +51,7 @@ export type MatchResult = {
   salary?: string;
   jobType?: string;
   url?: string;
+  applyUrl?: string;
   postedDate?: string;
 };
 
