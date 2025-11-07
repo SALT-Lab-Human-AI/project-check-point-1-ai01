@@ -41,7 +41,10 @@ export async function fetchAdzunaJobs(preferences: JobPreferences): Promise<Matc
     // Add other required parameters as needed based on Adzuna API docs
   });
 
-  const jobQuery = preferences.jobRole || preferences.customJobRole;
+  const jobQuery =
+    preferences.jobRole === "other"
+      ? preferences.customJobRole
+      : preferences.jobRole || preferences.customJobRole;
   if (jobQuery) {
     const normalizedQuery = jobQuery.replace(/-/g, " ").trim();
     if (normalizedQuery) {
