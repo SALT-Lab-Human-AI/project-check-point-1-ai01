@@ -24,7 +24,8 @@ const Matches = () => {
 
   // Trigger matching when page loads if we have a parsed resume but no matches yet
   useEffect(() => {
-    if (resume?.parsed && matches.length === 0 && !isMatching && !hasSearched) {
+    console.log("Matches useEffect", resume?.parsed, matches.length, isMatching, hasSearched);
+    if (resume?.parsed && !isMatching && !hasSearched) {
       setHasSearched(true);
       runMatching().catch((error) => {
         console.error("Error running matching:", error);

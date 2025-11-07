@@ -3,7 +3,7 @@ import React, { createContext, useState, useContext, useCallback } from "react";
 import { ResumeData, MatchResult, ResumeParsed } from "../types";
 import { parseResumeWithGemini, genAI } from "../lib/gemini_parser";
 import { usePreferences } from "./PreferencesContext";
-import { matchResumeWithGreenhouseCsv } from "../lib/jobMatcher";
+import { matchJobs } from "../lib/jobMatcher";
 
 type ResumeContextType = {
   isParsing: boolean;
@@ -11,7 +11,6 @@ type ResumeContextType = {
   resume?: ResumeData;
   matches: MatchResult[];
   generatedJobRoles: string[];
-  generatedLocations: string[];
   uploadFile: (file: File) => void;
   parseResume: () => Promise<void>;
   runMatching: () => Promise<void>;
@@ -23,13 +22,12 @@ type ResumeContextType = {
 export const ResumeContext = createContext<ResumeContextType | undefined>(undefined);
 
 export const ResumeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const { clearPreferences } = usePreferences();
+  const { clearPreferences, preferences } = usePreferences();
   const [resume, setResume] = useState<ResumeData | undefined>();
   const [isParsing, setIsParsing] = useState(false);
   const [isMatching, setIsMatching] = useState(false);
   const [matches, setMatches] = useState<MatchResult[]>([]);
   const [generatedJobRoles, setGeneratedJobRoles] = useState<string[]>([]);
-  const [generatedLocations, setGeneratedLocations] = useState<string[]>([]);
 
   const uploadFile = (file: File) => {
     setResume({ id: "1", file, uploadedAt: new Date().toISOString() });
@@ -47,21 +45,7 @@ export const ResumeProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     }
   };
 
-  const generateLocations = async (parsedResume: ResumeParsed) => {
-    // @ts-ignore
-    const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
 
-    const prompt = `Based on the user's location in the resume, generate a list of 5 nearby cities or states that would be relevant for a job search. Return the list as a JSON array of strings.
-
-Resume:
-${JSON.stringify(parsedResume, null, 2)}`;
-
-    const result = await model.generateContent(prompt);
-    const response = await result.response;
-    const text = await response.text();
-    const json = JSON.parse(text.replace(/```json/g, "").replace(/```/g, ""));
-    setGeneratedLocations(json);
-  };
 
   const runMatching = useCallback(async () => {
     if (!resume?.parsed) {
@@ -71,7 +55,7 @@ ${JSON.stringify(parsedResume, null, 2)}`;
 
     setIsMatching(true);
     try {
-      const matchResults = await matchResumeWithGreenhouseCsv(resume.parsed);
+      const matchResults = await matchJobs(resume.parsed, preferences);
       setMatches(matchResults);
     } catch (error) {
       console.error("Error running matching:", error);
@@ -79,7 +63,7 @@ ${JSON.stringify(parsedResume, null, 2)}`;
     } finally {
       setIsMatching(false);
     }
-  }, [resume?.parsed]);
+  }, [resume?.parsed, preferences]);
 
   const clear = () => {
     setResume(undefined);
@@ -95,7 +79,7 @@ ${JSON.stringify(parsedResume, null, 2)}`;
     // @ts-ignore
     const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
 
-    const prompt = `Based on the following resume, generate a list of 5-10 potential job roles that would be a good fit for this person. Return the list as a JSON array of strings.
+    const prompt = `Based on the following resume, generate a list of 5-10 potential job roles that would be a good fit for this person. Return the list as a JSON array of strings. Job title should be concise and simple.
 
 Resume:
 ${JSON.stringify(editedResume.parsed, null, 2)}`;
@@ -105,11 +89,10 @@ ${JSON.stringify(editedResume.parsed, null, 2)}`;
     const text = await response.text();
     const json = JSON.parse(text.replace(/```json/g, "").replace(/```/g, ""));
     setGeneratedJobRoles(json);
-    await generateLocations(editedResume.parsed);
   };
 
   return (
-    <ResumeContext.Provider value={{ isParsing, isMatching, resume, matches, generatedJobRoles, generatedLocations, uploadFile, parseResume, runMatching, clear, cancelParse, generateJobRolesFromEditedResume }}>
+    <ResumeContext.Provider value={{ isParsing, isMatching, resume, matches, generatedJobRoles, uploadFile, parseResume, runMatching, clear, cancelParse, generateJobRolesFromEditedResume }}>
       {children}
     </ResumeContext.Provider>
   );

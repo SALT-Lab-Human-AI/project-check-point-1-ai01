@@ -68,9 +68,7 @@ export type JobPreferences = {
   jobType?: string; // full-time, part-time, contract, etc.
   jobRole?: string; // preferred job role
   customJobRole?: string; // custom job role input
-  location?: string; // location preference
-  salary?: string; // salary range
-  workMode?: string; // remote, hybrid, onsite, flexible
-  companySize?: string; // startup, small, medium, large, enterprise
+  minSalary?: string;
+  maxSalary?: string;
 };
 
