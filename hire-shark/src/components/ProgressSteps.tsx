@@ -25,51 +25,52 @@ export const ProgressSteps = ({ currentStep }: ProgressStepsProps) => {
 
           return (
             <div key={step.number} className="flex items-center w-full relative z-10 flex-1">
-                {index > 0 && (
-                  <div
-                    className={cn(
-                      "h-1 flex-1 transition-all duration-500",
-                      hasReached ? "bg-success" : "bg-border"
-                    )}
-                  />
-                )}
-                <div className="flex flex-col items-center mx-2 min-w-[90px]">
-                  <div
-                    className={cn(
-                      "w-10 h-10 rounded-full flex items-center justify-center font-semibold text-sm transition-all duration-300",
-                      isCompleted
-                        ? "bg-success text-success-foreground"
-                        : isActive
-                        ? "bg-primary text-primary-foreground ring-4 ring-primary/20"
-                        : "bg-muted text-muted-foreground"
-                    )}
-                  >
-                    {isCompleted ? <Check className="h-5 w-5" /> : step.number}
-                  </div>
-                  <span
-                    className={cn(
-                      "text-xs font-medium mt-2 transition-colors text-center",
-                      isCompleted
-                        ? "text-success"
-                        : isActive
-                        ? "text-primary"
-                        : hasReached
-                        ? "text-success"
-                        : "text-muted-foreground"
-                    )}
-                  >
-                    {step.label}
-                  </span>
+              {index > 0 && (
+                <div
+                  className={cn(
+                    "h-1 flex-1 transition-all duration-500",
+                    hasReached ? "bg-success" : "bg-border"
+                  )}
+                />
+              )}
+
+              <div className="flex flex-col items-center mx-2 min-w-[90px]">
+                <div
+                  className={cn(
+                    "w-10 h-10 rounded-full flex items-center justify-center font-semibold text-sm transition-all duration-300",
+                    isCompleted
+                      ? "bg-success text-success-foreground"
+                      : isActive
+                      ? "bg-primary text-primary-foreground ring-4 ring-primary/20"
+                      : "bg-muted text-muted-foreground"
+                  )}
+                >
+                  {isCompleted ? <Check className="h-5 w-5" /> : step.number}
                 </div>
-                {index < STEP_DEFS.length - 1 && (
-                  <div
-                    className={cn(
-                      "h-1 flex-1 transition-all duration-500",
-                      currentStep > step.number ? "bg-success" : "bg-border"
-                    )}
-                  />
-                )}
+                <span
+                  className={cn(
+                    "text-xs font-medium mt-2 transition-colors text-center",
+                    isCompleted
+                      ? "text-success"
+                      : isActive
+                      ? "text-primary"
+                      : hasReached
+                      ? "text-success"
+                      : "text-muted-foreground"
+                  )}
+                >
+                  {step.label}
+                </span>
               </div>
+
+              {index < STEP_DEFS.length - 1 && (
+                <div
+                  className={cn(
+                    "h-1 flex-1 transition-all duration-500",
+                    currentStep > step.number ? "bg-success" : "bg-border"
+                  )}
+                />
+              )}
             </div>
           );
         })}
