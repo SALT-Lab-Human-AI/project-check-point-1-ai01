@@ -5,7 +5,7 @@ import { render, act, waitFor } from "@testing-library/react";
 import { ResumeProvider, useResume } from "../../store/ResumeContext";
 import { PreferencesProvider } from "../../store/PreferencesContext";
 import * as gemini from "../../lib/gemini_parser";
-import * as matcher from "../../lib/matcher";
+import * as jobMatcher from "../../lib/jobMatcher";
 import { ResumeData, ResumeParsed } from "../../types";
 
 // Small harness to access the context imperatively in tests
@@ -242,7 +242,7 @@ describe("ResumeContext: Run Matching (Context Integration)", () => {
     ];
     let resolveMatches: ((v: any) => void) | null = null;
     const deferredMatches = new Promise((res) => (resolveMatches = res));
-    vi.spyOn(matcher, "getMatches").mockReturnValue(deferredMatches as any);
+    vi.spyOn(jobMatcher, "matchJobs").mockReturnValue(deferredMatches as any);
 
     await act(async () => {
       const p = get().runMatching();
@@ -255,9 +255,46 @@ describe("ResumeContext: Run Matching (Context Integration)", () => {
     expect(state.matches).toEqual(fakeMatches);
   });
 
+  it("accepts an override resume and persists it before matching", async () => {
+    const get = renderWithProvider();
+
+    const override: ResumeData = {
+      id: "override",
+      file: null,
+      parsed: {
+        name: "",
+        email: "",
+        phone: "",
+        location: "",
+        summary: "",
+        skills: ["Vue"],
+        experiences: [],
+        education: [],
+        confidence: { personalInfo: 1, experience: 1, skills: 1, education: 1 },
+        rawText: "",
+        fileName: "override.txt",
+      },
+      uploadedAt: new Date().toISOString(),
+    };
+
+    const fakeMatches = [{ jobId: "j1", title: "Vue Dev", company: "C1", score: 0.8, matchedSkills: ["Vue"] }];
+    const matchSpy = vi.spyOn(jobMatcher, "matchJobs").mockResolvedValue(fakeMatches as any);
+
+    await act(async () => {
+      await get().runMatching(override);
+    });
+
+    expect(matchSpy).toHaveBeenCalled();
+    expect(matchSpy.mock.calls[0][0]).toBe(override.parsed);
+    await waitFor(() => {
+      expect(get().resume?.parsed?.skills).toEqual(["Vue"]);
+      expect(get().matches).toEqual(fakeMatches);
+    });
+  });
+
   it("safe early-return when resume.parsed is missing", async () => {
     const get = renderWithProvider();
-    const spy = vi.spyOn(matcher, "getMatches");
+    const spy = vi.spyOn(jobMatcher, "matchJobs");
     const errSpy = vi.spyOn(console, "error").mockImplementation(() => {});
 
     await act(async () => {

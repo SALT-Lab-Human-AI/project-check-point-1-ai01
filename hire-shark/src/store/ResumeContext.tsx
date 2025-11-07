@@ -15,10 +15,11 @@ type ResumeContextType = {
   generatedJobRoles: string[];
   uploadFile: (file: File) => void;
   parseResume: () => Promise<void>;
-  runMatching: () => Promise<void>;
+  runMatching: (override?: ResumeData) => Promise<void>;
   clear: () => void;
   cancelParse: () => void;
   generateJobRolesFromEditedResume: (editedResume: ResumeData) => Promise<void>;
+  saveEditedResume: (editedResume: ResumeData) => void;
 };
 
 export const ResumeContext = createContext<ResumeContextType | undefined>(undefined);
@@ -76,15 +77,20 @@ export const ResumeProvider: React.FC<{ children: React.ReactNode }> = ({ childr
 
 
 
-  const runMatching = useCallback(async () => {
-    if (!resume?.parsed) {
+  const runMatching = useCallback(async (override?: ResumeData) => {
+    const sourceResume = override ?? resume;
+    if (!sourceResume?.parsed) {
       console.error("Cannot run matching: Resume not parsed");
       return;
     }
 
+    if (override) {
+      setResume(override);
+    }
+
     setIsMatching(true);
     try {
-      const matchResults = await matchJobs(resume.parsed, preferences);
+      const matchResults = await matchJobs(sourceResume.parsed, preferences);
       setMatches(matchResults);
     } catch (error) {
       console.error("Error running matching:", error);
@@ -92,7 +98,11 @@ export const ResumeProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     } finally {
       setIsMatching(false);
     }
-  }, [resume?.parsed, preferences]);
+  }, [resume, preferences]);
+
+  const saveEditedResume = useCallback((editedResumeData: ResumeData) => {
+    setResume(editedResumeData);
+  }, []);
 
   const clear = () => {
     setResume(undefined);
@@ -121,7 +131,7 @@ ${JSON.stringify(editedResume.parsed, null, 2)}`;
   };
 
   return (
-    <ResumeContext.Provider value={{ isParsing, isMatching, resume, matches, generatedJobRoles, uploadFile, parseResume, runMatching, clear, cancelParse, generateJobRolesFromEditedResume }}>
+    <ResumeContext.Provider value={{ isParsing, isMatching, resume, matches, generatedJobRoles, uploadFile, parseResume, runMatching, clear, cancelParse, generateJobRolesFromEditedResume, saveEditedResume }}>
       {children}
     </ResumeContext.Provider>
   );

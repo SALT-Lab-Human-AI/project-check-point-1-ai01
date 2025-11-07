@@ -26,7 +26,7 @@ const getConfidenceBadgeClass = (score: number) => {
 
 const Review = () => {
   const navigate = useNavigate();
-  const { resume, runMatching, generateJobRolesFromEditedResume } = useResume();
+  const { resume, runMatching, generateJobRolesFromEditedResume, saveEditedResume } = useResume();
   const [editedResume, setEditedResume] = useState(resume);
   const [skillsText, setSkillsText] = useState('');
   const [openEducation, setOpenEducation] = useState<boolean[]>([]);
@@ -50,7 +50,9 @@ const Review = () => {
   }, [resume, navigate]);
 
   const handleRunMatching = async () => {
-    await runMatching();
+    const targetResume = editedResume ?? resume;
+    if (!targetResume) return;
+    await runMatching(targetResume);
     navigate("/matches");
   };
 
@@ -158,6 +160,10 @@ const Review = () => {
   };
 
   const handleSaveAndContinue = async () => {
+    if (!editedResume) {
+      return;
+    }
+    saveEditedResume(editedResume);
     setIsLoading(true);
     try {
       await generateJobRolesFromEditedResume(editedResume);
