@@ -1,5 +1,5 @@
 
-import React, { createContext, useState, useContext, useCallback } from "react";
+import React, { createContext, useState, useContext, useCallback, useEffect } from "react";
 import { ResumeData, MatchResult } from "../types";
 import { getMatches } from "../lib/matcher";
 import { mockJobs } from "../lib/mockJobs";
@@ -46,6 +46,24 @@ export const ResumeProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       }
     }
   };
+
+  // Warm up skip-gram adapter on provider mount so the model starts initializing early.
+  useEffect(() => {
+    let mounted = true;
+    (async () => {
+      try {
+        const mod = await import("../lib/skipgramAdapter");
+        if (mounted && mod && typeof mod.warmUpSkipGram === "function") {
+          mod.warmUpSkipGram();
+        }
+      } catch (e) {
+        // ignore
+      }
+    })();
+    return () => {
+      mounted = false;
+    };
+  }, []);
 
 
 
