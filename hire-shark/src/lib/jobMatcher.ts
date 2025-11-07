@@ -69,7 +69,7 @@ export async function matchJobs(resume: ResumeParsed, preferences: JobPreference
 
     // Debug info: if vecSim is zero often it means resume vector has no overlap with job vocab
     // or vectors are zero. Log minimal diagnostics to help trace why scores are 0.
-    if (process && process.env && process.env.NODE_ENV !== 'production') {
+    if (typeof process !== "undefined" && process.env && process.env.NODE_ENV !== "production") {
       try {
         const rvNonZero = Array.isArray(resumeVector) ? (resumeVector as number[]).some(v => Math.abs(v) > 1e-9) : true;
         const jvNonZero = Array.isArray(jobVectors[idx]) ? jobVectors[idx].some(v => Math.abs(v) > 1e-9) : true;
