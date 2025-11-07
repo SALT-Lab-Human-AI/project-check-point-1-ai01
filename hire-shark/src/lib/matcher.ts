@@ -14,18 +14,17 @@ export async function getMatches(parsed: ResumeParsed, jobs: JobPosting[], limit
         // Build corpus from jobs: title + description + skills
         const corpus = jobs.map(j => `${j.title || ""} ${j.description || ""} ${j.skills.join(' ')}`);
 
-    // Try to initialize skip-gram adapter first; if unavailable, use TF-IDF vectorizer
-    const skipAdapter = await getSkipGramAdapter();
+    // Build resume text and include it with the corpus so skip-gram trains on relevant tokens
+    const resumeText = parsed.rawText || [parsed.summary || "", (parsed.skills || []).join(' '), ...(parsed.experiences || []).flatMap(e => e.bullets || [])].join(' ');
+    const skipAdapter = await getSkipGramAdapter([...corpus, resumeText]);
 
         let jobVectors: number[][] = [];
         let resumeVector: number[] = [];
 
         if (skipAdapter) {
             jobVectors = corpus.map(c => skipAdapter.vectorizeText(c));
-            const resumeText = parsed.rawText || [parsed.summary || "", (parsed.skills || []).join(' '), ...(parsed.experiences || []).flatMap(e => e.bullets || [])].join(' ');
             resumeVector = skipAdapter.vectorizeText(resumeText);
         } else {
-            const resumeText = parsed.rawText || [parsed.summary || "", (parsed.skills || []).join(' '), ...(parsed.experiences || []).flatMap(e => e.bullets || [])].join(' ');
             // include resume text in the corpus so the TF-IDF vocabulary captures resume tokens
             const vectorizer = buildVectorizer([...corpus, resumeText]);
             // Precompute job vectors
