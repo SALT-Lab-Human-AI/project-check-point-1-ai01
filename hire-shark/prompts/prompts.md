@@ -1,5 +1,5 @@
 # List of Prompts used in HireShark
-This document contains a list of prompts used in the HireShark application for various functionalities such as retrieving information from resumes and generating related job roles and locations.
+This document contains a list of prompts used in the HireShark application for various functionalities such as retrieving information from resumes and generating related job roles.
 
 ## Resume Parsing Prompts
 ### Prompt location: gemini_parser.ts
@@ -50,7 +50,3 @@ This document contains a list of prompts used in the HireShark application for v
 ## Job Role Generation Prompts
 ### Prompt location: ResumeContext.tsx
 - `Based on the user's location in the resume, generate a list of 5 nearby cities or states that would be relevant for a job search. Return the list as a JSON array of strings. Resume: ${JSON.stringify(parsedResume, null, 2)}`
-
-## Location Generation Prompts
-### Prompt location: ResumeContext.tsx
-- `Based on the following resume, generate a list of 5-10 potential job roles that would be a good fit for this person. Return the list as a JSON array of strings. Resume: ${JSON.stringify(editedResume.parsed, null, 2)}`
