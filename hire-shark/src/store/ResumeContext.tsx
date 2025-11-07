@@ -48,13 +48,22 @@ export const ResumeProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   };
 
   // Warm up skip-gram adapter on provider mount so the model starts initializing early.
+  // Warm up skip-gram adapter when we have a parsed resume so the adapter is
+  // initialized with resume tokens (avoid initializing with an empty corpus).
   useEffect(() => {
     let mounted = true;
     (async () => {
       try {
+        if (!resume?.parsed) return;
+
+        // Build a compact resume text to seed the skip-gram training.
+        const resumeText =
+          resume.parsed.rawText ||
+          [resume.parsed.summary || "", (resume.parsed.skills || []).join(" "), ...(resume.parsed.experiences || []).flatMap((e: any) => e.bullets || [])].join(" ");
+
         const mod = await import("../lib/skipgramAdapter");
         if (mounted && mod && typeof mod.warmUpSkipGram === "function") {
-          mod.warmUpSkipGram();
+          mod.warmUpSkipGram([resumeText]);
         }
       } catch (e) {
         // ignore
@@ -63,7 +72,7 @@ export const ResumeProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     return () => {
       mounted = false;
     };
-  }, []);
+  }, [resume?.parsed]);
 
 
 
