@@ -21,17 +21,17 @@ export async function matchJobs(resume: ResumeParsed, preferences: JobPreference
     jobUrl: j.url,
   }));
 
-  // Try to initialize optional skip-gram adapter. If unavailable, fall back to TF-IDF.
+  // Try to initialize optional skip-gram adapter via shared initializer.
   let skipAdapter: any = null;
   try {
-    const mod = await import("./word_match_skipgram");
-    if (mod && typeof mod.initSkipGram === "function") {
-      skipAdapter = await mod.initSkipGram();
-    }
+    const { getSkipGramAdapter } = await import("./skipgramAdapter");
+    skipAdapter = await getSkipGramAdapter();
   } catch (e) {
     // ignore and fall back
   }
 
+  const resumeText = buildResumeDocument(resume);
+  // Include resumeText in the corpus for TF-IDF so resume tokens are part of the vocabulary
   const corpus = jobs.map(j => `${j.title || ""} ${j.description || ""} ${(j.keywords || []).join(" ")}`);
 
   let jobVectors: number[][] = [];
@@ -39,13 +39,12 @@ export async function matchJobs(resume: ResumeParsed, preferences: JobPreference
 
   if (skipAdapter) {
     jobVectors = corpus.map(c => skipAdapter.vectorizeText(c));
-    const resumeText = buildResumeDocument(resume);
     resumeVector = skipAdapter.vectorizeText(resumeText);
   } else {
     const { buildVectorizer } = await import("./embeddings");
-    const vectorizer = buildVectorizer(corpus);
+    // include resumeText so its tokens are included in the TF-IDF vocabulary
+    const vectorizer = buildVectorizer([...corpus, resumeText]);
     jobVectors = corpus.map(c => vectorizer.vectorize(c));
-    const resumeText = buildResumeDocument(resume);
     resumeVector = vectorizer.vectorize(resumeText);
   }
 
@@ -67,6 +66,18 @@ export async function matchJobs(resume: ResumeParsed, preferences: JobPreference
 
     const matchedSkills = Array.from(new Set(resumeSkillTokens.filter(skill => jobLowerText.includes(skill)).map(s => toTitleCase(s)))).slice(0, 10);
     const skillScore = resumeSkillsOriginal.length ? matchedSkills.length / resumeSkillsOriginal.length : 0;
+
+    // Debug info: if vecSim is zero often it means resume vector has no overlap with job vocab
+    // or vectors are zero. Log minimal diagnostics to help trace why scores are 0.
+    if (process && process.env && process.env.NODE_ENV !== 'production') {
+      try {
+        const rvNonZero = Array.isArray(resumeVector) ? (resumeVector as number[]).some(v => Math.abs(v) > 1e-9) : true;
+        const jvNonZero = Array.isArray(jobVectors[idx]) ? jobVectors[idx].some(v => Math.abs(v) > 1e-9) : true;
+        console.debug(`matchJobs debug: job=${job.title} vecSim=${vecSim.toFixed(6)} rvNonZero=${rvNonZero} jvNonZero=${jvNonZero} skillScore=${skillScore.toFixed(6)}`);
+      } catch (e) {
+        // ignore logging errors
+      }
+    }
 
     const score = Math.min(1, 0.75 * vecSim + 0.25 * skillScore);
 
