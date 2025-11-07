@@ -1,73 +1,55 @@
-# Welcome to your Lovable project
+# HireShark
+AI-assisted resume analysis and job matching. Upload a résumé, let Gemini extract structured data, tune your preferences, and pull live roles from Adzuna to see the best-fit opportunities.
 
-## Project info
+---
 
-**URL**: https://lovable.dev/projects/2555b871-3051-4d2d-a1a2-4c8991753884
+## Tech Stack
+- **Frontend:** Vite, React 18, TypeScript, Tailwind CSS, shadcn/ui
+- **State/Data:** React Context (resume & preferences), TanStack Query for future data hooks
+- **AI & APIs:** Google Gemini (`@google/generative-ai`) for parsing + ideation, Adzuna Jobs API for live listings
+- **Tooling:** ESLint, Mermaid diagrams, GitHub Actions → GH Pages deploy
 
-## How can I edit this code?
+---
 
-There are several ways of editing your application.
+## Key Flows
+1. **Upload** – Users drag/drop PDF/DOC/DOCX; files stored in `ResumeContext`.
+2. **Review** – Gemini prompt extracts personal info, experience, education, and skills for in-app editing.
+3. **Preferences** – Users select AI-suggested roles or a custom role, job type, and salary bands.
+4. **Matches** – Preferences + parsed resume trigger Adzuna searches; results are sortable and include detail modals.
 
-**Use Lovable**
+Supporting resources:
+- `docs/` – architecture & sequence Mermaid diagrams (render via `npm run diagram:build`).
+- `prompts/prompts.md` – complete text of every LLM prompt.
+- `prompts/data_connectors_and_models.md` – model IDs, API endpoints, and auth notes.
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/2555b871-3051-4d2d-a1a2-4c8991753884) and start prompting.
+---
 
-Changes made via Lovable will be committed automatically to this repo.
-
-**Use your preferred IDE**
-
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
-
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
-
-Follow these steps:
+## Getting Started
+Detailed install steps live in [`INSTALL.md`](./INSTALL.md). Quick version:
 
 ```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
+git clone <repo>
+cd hire-shark
+npm install
+cp .env.example .env   # then add real keys
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
+### Environment Variables (`.env`)
+| Name | Description |
+| --- | --- |
+| `VITE_GEMINI_API_KEY` | Google Gemini API key used client-side for parsing + suggestions. |
+| `VITE_ADZUNA_APP_ID`, `VITE_ADZUNA_APP_KEY` | Credentials for Adzuna REST API calls. |
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+Restart the dev server after editing `.env`.
 
-**Use GitHub Codespaces**
+## Deployment
+GitHub Actions (`.github/workflows/deploy-gh-pages.yml`) builds on pushes to `main`, injects secrets into `hire-shark/.env`, and publishes `dist/` to the `gh-pages` branch. Ensure the repo secrets `VITE_GEMINI_API_KEY`, `VITE_ADZUNA_APP_ID`, and `VITE_ADZUNA_APP_KEY` are configured before enabling the workflow.
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+---
 
-## What technologies are used for this project?
-
-This project is built with:
-
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
-
-## How can I deploy this project?
-
-Simply open [Lovable](https://lovable.dev/projects/2555b871-3051-4d2d-a1a2-4c8991753884) and click on Share -> Publish.
-
-## Can I connect a custom domain to my Lovable project?
-
-Yes, you can!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
+## Safety & Privacy
+- **Resume data stay local:** Uploads live in browser memory (`ResumeContext`). Refreshing clears all resume data; there is no backend persistence in this repo.  
+- **LLM disclosure:** The full parsed résumé is sent to Google Gemini for extraction and job-role ideation. The information is not stored by HireShark, but review Google’s data policies for Gemini.
+- **API keys:** `VITE_GEMINI_API_KEY`, `VITE_ADZUNA_APP_ID`, and `VITE_ADZUNA_APP_KEY` are bundled at build time. Treat them as secrets—keep them in `.env`.  
+- **External calls:** Adzuna requests only include preference data (role, salary, job type); we never transmit résumé content to Adzuna.  
