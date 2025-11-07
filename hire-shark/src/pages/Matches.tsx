@@ -15,6 +15,7 @@ const Matches = () => {
   const { matches, isMatching, resume, runMatching } = useResume();
   const [selectedJob, setSelectedJob] = useState<MatchResult | null>(null);
   const [hasSearched, setHasSearched] = useState(false);
+  const [sortBy, setSortBy] = useState<"score" | "recent" | "company">("score");
 
   useEffect(() => {
     if (!resume?.parsed) {
@@ -24,7 +25,6 @@ const Matches = () => {
 
   // Trigger matching when page loads if we have a parsed resume but no matches yet
   useEffect(() => {
-    console.log("Matches useEffect", resume?.parsed, matches.length, isMatching, hasSearched);
     if (resume?.parsed && !isMatching && !hasSearched) {
       setHasSearched(true);
       runMatching().catch((error) => {
@@ -47,6 +47,29 @@ const Matches = () => {
     return Code;
   }
 
+  const sortedMatches = [...matches].sort((a, b) => {
+    if (sortBy === "recent") {
+      const aDate = a.postedDate ? new Date(a.postedDate).getTime() : 0;
+      const bDate = b.postedDate ? new Date(b.postedDate).getTime() : 0;
+      return bDate - aDate;
+    }
+    if (sortBy === "company") {
+      return (a.company || "").localeCompare(b.company || "");
+    }
+    return (b.score ?? 0) - (a.score ?? 0);
+  });
+
+  const formatDate = (dateString?: string) => {
+    if (!dateString) return "Not provided";
+    const date = new Date(dateString);
+    if (Number.isNaN(date.getTime())) return "Not provided";
+    return date.toLocaleDateString(undefined, {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+    });
+  };
+
   return (
     <div className="min-h-screen bg-background">
       <Header />
@@ -66,19 +89,14 @@ const Matches = () => {
           <div className="bg-card rounded-2xl p-4 shadow-sm border mb-8 flex flex-wrap items-center gap-4">
             <div className="flex items-center gap-2">
               <span className="text-sm font-medium">Sort by:</span>
-              <select className="text-sm border rounded-lg px-3 py-1.5 bg-background">
-                <option>Match Score</option>
-                <option>Recent</option>
-                <option>Company</option>
-              </select>
-            </div>
-            <div className="flex items-center gap-2">
-              <span className="text-sm font-medium">Filter:</span>
-              <select className="text-sm border rounded-lg px-3 py-1.5 bg-background">
-                <option>All Categories</option>
-                <option>Engineering</option>
-                <option>Design</option>
-                <option>Product</option>
+              <select
+                className="text-sm border rounded-lg px-3 py-1.5 bg-background"
+                value={sortBy}
+                onChange={(e) => setSortBy(e.target.value as typeof sortBy)}
+              >
+                <option value="score">Match Score</option>
+                <option value="recent">Recently Posted</option>
+                <option value="company">Company Name</option>
               </select>
             </div>
             <Button
@@ -118,9 +136,9 @@ const Matches = () => {
           )}
 
           {/* Match Cards */}
-          {!isMatching && matches.length > 0 && (
+          {!isMatching && sortedMatches.length > 0 && (
           <div className="grid md:grid-cols-2 gap-6">
-            {matches.map((match, index) => {
+            {sortedMatches.map((match, index) => {
               const Icon = getIcon(match.title);
               const applyLink = match.applyUrl || match.url;
               return (
@@ -253,6 +271,38 @@ const Matches = () => {
                   ))}
                 </div>
               </div>
+
+              <div>
+                <h3 className="font-semibold mb-2">Role Details</h3>
+                <div className="grid gap-4 sm:grid-cols-2">
+                  <div>
+                    <p className="text-xs uppercase text-muted-foreground tracking-wide mb-1">Location</p>
+                    <p className="font-medium">{selectedJob.location || "Not provided"}</p>
+                  </div>
+                  <div>
+                    <p className="text-xs uppercase text-muted-foreground tracking-wide mb-1">Job Type</p>
+                    <p className="font-medium capitalize">{selectedJob.jobType || "Not provided"}</p>
+                  </div>
+                  <div>
+                    <p className="text-xs uppercase text-muted-foreground tracking-wide mb-1">Posted</p>
+                    <p className="font-medium">{formatDate(selectedJob.postedDate)}</p>
+                  </div>
+                </div>
+              </div>
+
+              {(selectedJob.url || selectedJob.applyUrl) && (
+                <div>
+                  <p className="text-xs uppercase text-muted-foreground tracking-wide mb-1">Job Listing</p>
+                  <a
+                    href={(selectedJob.applyUrl || selectedJob.url) ?? "#"}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-primary font-medium break-all hover:underline"
+                  >
+                    {selectedJob.applyUrl || selectedJob.url}
+                  </a>
+                </div>
+              )}
 
               <div className="flex gap-3 pt-4">
                 <Button 
