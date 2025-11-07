@@ -76,7 +76,7 @@ export async function fetchAdzunaJobs(preferences: JobPreferences): Promise<Matc
       snippet: job.description,
       location: job.location.display_name,
       salary: formatSalaryRange(job.salary_min, job.salary_max, job.salary_is_predicted) ?? "Not provided",
-      jobType: job.contract_type,
+      jobType: job.contract_time || job.contract_type,
       url: job.redirect_url,
       applyUrl: job.redirect_url,
       postedDate: job.created,
