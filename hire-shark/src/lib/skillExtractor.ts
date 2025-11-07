@@ -1,4 +1,4 @@
-import { genAI } from "./gemini_parser";
+import { hasGeminiApiKeyConfigured, runWithGeminiModel } from "./gemini_parser";
 
 const DEFAULT_SKILL_LIMIT = 12;
 const COMMON_SKILL_CANDIDATES = [
@@ -214,25 +214,28 @@ export async function extractJobSkills(input: ExtractJobSkillsInput): Promise<st
     limit: Math.max(limit, DEFAULT_SKILL_LIMIT),
   });
 
-  const shouldUseGemini = !GEMINI_DISABLED && Boolean(import.meta.env.VITE_GEMINI_API_KEY);
+  const shouldUseGemini = !GEMINI_DISABLED && hasGeminiApiKeyConfigured();
   let mergedSkills = fallbackSkills;
 
   if (shouldUseGemini) {
     try {
-      const model = genAI.getGenerativeModel({
-        model: "gemini-2.5-flash",
-        generationConfig: {
-          temperature: 0,
-          topK: 1,
-          topP: 0.1,
-        },
-      });
-
       const prompt = buildPrompt({ title, description: cleanDescription, keywords: keywordHints, limit });
-      const result = await model.generateContent(prompt);
-      const response = await result.response;
-      const text = await response.text();
-      const parsed = parseSkillArray(text);
+      const parsed = await runWithGeminiModel(
+        async model => {
+          const result = await model.generateContent(prompt);
+          const response = await result.response;
+          const text = await response.text();
+          return parseSkillArray(text);
+        },
+        {
+          model: "gemini-2.5-flash",
+          generationConfig: {
+            temperature: 0,
+            topK: 1,
+            topP: 0.1,
+          },
+        },
+      );
 
       if (parsed.length) {
         mergedSkills = mergeSkillLists(fallbackSkills, parsed);

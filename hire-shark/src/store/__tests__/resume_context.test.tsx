@@ -162,9 +162,7 @@ describe("ResumeContext: Generate Roles & Locations", () => {
         response: { text: vi.fn().mockResolvedValue("```json [\"City X\", \"City Y\"] ```") },
       });
 
-    vi.spyOn(gemini.genAI, "getGenerativeModel").mockReturnValue({
-      generateContent,
-    } as any);
+    vi.spyOn(gemini, "runWithGeminiModel").mockImplementation(async executor => executor({ generateContent } as any));
 
     const editedResume: ResumeData = {
       id: "1",

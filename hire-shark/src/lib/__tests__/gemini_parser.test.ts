@@ -1,5 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { parseResumeWithGemini, genAI } from "../../lib/gemini_parser";
+import { parseResumeWithGemini } from "../../lib/gemini_parser";
+import * as gemini from "../../lib/gemini_parser";
 
 beforeEach(() => {
   vi.restoreAllMocks();
@@ -9,7 +10,7 @@ function mockModelWithText(text: string) {
   const generateContent = vi.fn().mockResolvedValue({
     response: { text: vi.fn().mockResolvedValue(text) },
   });
-  vi.spyOn(genAI, "getGenerativeModel").mockReturnValue({ generateContent } as any);
+  vi.spyOn(gemini, "runWithGeminiModel").mockImplementation(async executor => executor({ generateContent } as any));
 }
 
 describe("Gemini JSON Cleaning", () => {

@@ -3,7 +3,7 @@ import React, { createContext, useState, useContext, useCallback, useEffect } fr
 import { ResumeData, MatchResult } from "../types";
 import { getMatches } from "../lib/matcher";
 import { mockJobs } from "../lib/mockJobs";
-import { parseResumeWithGemini, genAI } from "../lib/gemini_parser";
+import { parseResumeWithGemini, runWithGeminiModel } from "../lib/gemini_parser";
 import { usePreferences } from "./PreferencesContext";
 import { matchJobs } from "../lib/jobMatcher";
 
@@ -115,19 +115,22 @@ export const ResumeProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   };
 
   const generateJobRolesFromEditedResume = async (editedResume: ResumeData) => {
-    // @ts-ignore
-    const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
-
     const prompt = `Based on the following resume, generate a list of 5-10 potential job roles that would be a good fit for this person. Return the list as a JSON array of strings. Job title should be concise and simple.
 
 Resume:
 ${JSON.stringify(editedResume.parsed, null, 2)}`;
 
-    const result = await model.generateContent(prompt);
-    const response = await result.response;
-    const text = await response.text();
-    const json = JSON.parse(text.replace(/```json/g, "").replace(/```/g, ""));
-    setGeneratedJobRoles(json);
+    try {
+      const roles = await runWithGeminiModel(async model => {
+        const result = await model.generateContent(prompt);
+        const response = await result.response;
+        const text = await response.text();
+        return JSON.parse(text.replace(/```json/gi, "").replace(/```/g, ""));
+      });
+      setGeneratedJobRoles(Array.isArray(roles) ? roles : []);
+    } catch (error) {
+      console.error("Error generating job roles:", error);
+    }
   };
 
   return (
