@@ -53,3 +53,4 @@ GitHub Actions (`.github/workflows/deploy-gh-pages.yml`) builds on pushes to `ma
 - **LLM disclosure:** The full parsed résumé is sent to Google Gemini for extraction and job-role ideation. The information is not stored by HireShark, but review Google’s data policies for Gemini.
 - **API keys:** `VITE_GEMINI_API_KEY`, `VITE_ADZUNA_APP_ID`, and `VITE_ADZUNA_APP_KEY` are bundled at build time. Treat them as secrets—keep them in `.env`.  
 - **External calls:** Adzuna requests only include preference data (role, salary, job type); we never transmit résumé content to Adzuna.  
+- **Google Gemini usage:** API calls using Gemini may be blocked if quota limits are exceeded.
