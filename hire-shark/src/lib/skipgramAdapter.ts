@@ -5,14 +5,14 @@ import type { SkipGramAdapter } from "./word_match_skipgram";
 
 let adapterPromise: Promise<SkipGramAdapter | null> | null = null;
 
-export function getSkipGramAdapter(): Promise<SkipGramAdapter | null> {
+export function getSkipGramAdapter(corpus?: string[]): Promise<SkipGramAdapter | null> {
   if (adapterPromise) return adapterPromise;
 
   adapterPromise = (async () => {
     try {
       const mod = await import("./word_match_skipgram");
       if (mod && typeof mod.initSkipGram === "function") {
-        const a = await mod.initSkipGram();
+        const a = await mod.initSkipGram(corpus);
         console.info("Skip-gram adapter initialized.");
         return a;
       }
@@ -25,7 +25,7 @@ export function getSkipGramAdapter(): Promise<SkipGramAdapter | null> {
   return adapterPromise;
 }
 
-export async function warmUpSkipGram(): Promise<void> {
+export async function warmUpSkipGram(corpus?: string[]): Promise<void> {
   // Start initialization but don't await here if caller doesn't want to block.
-  getSkipGramAdapter().catch(() => {});
+  getSkipGramAdapter(corpus).catch(() => {});
 }

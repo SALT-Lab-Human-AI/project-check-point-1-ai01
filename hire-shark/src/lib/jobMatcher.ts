@@ -21,18 +21,19 @@ export async function matchJobs(resume: ResumeParsed, preferences: JobPreference
     jobUrl: j.url,
   }));
 
-  // Try to initialize optional skip-gram adapter via shared initializer.
-  let skipAdapter: any = null;
-  try {
-    const { getSkipGramAdapter } = await import("./skipgramAdapter");
-    skipAdapter = await getSkipGramAdapter();
-  } catch (e) {
-    // ignore and fall back
-  }
-
   const resumeText = buildResumeDocument(resume);
   // Include resumeText in the corpus for TF-IDF so resume tokens are part of the vocabulary
   const corpus = jobs.map(j => `${j.title || ""} ${j.description || ""} ${(j.keywords || []).join(" ")}`);
+
+  // Try to initialize optional skip-gram adapter via shared initializer, passing the full corpus
+  // (jobs + resume) so the model trains on relevant tokens.
+  let skipAdapter: any = null;
+  try {
+    const { getSkipGramAdapter } = await import("./skipgramAdapter");
+    skipAdapter = await getSkipGramAdapter([...corpus, resumeText]);
+  } catch (e) {
+    // ignore and fall back
+  }
 
   let jobVectors: number[][] = [];
   let resumeVector: number[] = [];

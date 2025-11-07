@@ -6,27 +6,18 @@ export type SkipGramAdapter = {
   cosineSimilarity(a: number[], b: number[]): number;
 };
 
-export async function initSkipGram(): Promise<SkipGramAdapter> {
-  // Dynamically import tfjs here to avoid build-time resolution errors when
-  // tfjs isn't installed. The dynamic import will only run if initSkipGram is called.
-  // Dynamically import tfjs. Use ts-ignore so type checker doesn't require tfjs types to be installed.
+export async function initSkipGram(corpus?: string[]): Promise<SkipGramAdapter> {
+  // Dynamically import tfjs when needed. Use ts-ignore so type checker doesn't require tfjs types to be installed.
   // @ts-ignore
   const tf: any = await import("@tensorflow/tfjs");
 
-  // -----------------------------
-  // Example corpus (small demo set). In practice you can replace or extend this.
-  // -----------------------------
-  const corpus: string[] = [
-    "data engineer python sql aws",
-    "frontend developer react typescript css",
-    "machine learning engineer python tensorflow",
-    "product manager agile scrum leadership communication",
-  ];
+  // Use only the provided corpus. If none is provided, behave safely (return zero-vector adapter).
+  const usedCorpus: string[] = Array.isArray(corpus) && corpus.length > 0 ? corpus : [];
 
   const tokenize = (text: string): string[] => text.toLowerCase().split(/\s+/).filter(Boolean);
 
-  // Build vocabulary
-  const tokens: string[] = Array.from(new Set(corpus.flatMap(tokenize)));
+  // Build vocabulary from the provided corpus (not a demo corpus)
+  const tokens: string[] = Array.from(new Set(usedCorpus.flatMap(tokenize)));
   const word2idx: Record<string, number> = Object.fromEntries(tokens.map((w, i) => [w, i]));
   const vocabSize = tokens.length;
   const EMBED_DIM = 32;
@@ -35,7 +26,7 @@ export async function initSkipGram(): Promise<SkipGramAdapter> {
   const windowSize = 2;
   const pairs: [number, number][] = [];
 
-  for (const sentence of corpus) {
+  for (const sentence of usedCorpus) {
     const words = tokenize(sentence);
     for (let i = 0; i < words.length; i++) {
       const word = words[i];
@@ -50,6 +41,15 @@ export async function initSkipGram(): Promise<SkipGramAdapter> {
         pairs.push([targetIdx, contextIdx]);
       }
     }
+  }
+
+  // If there is no vocabulary (no corpus provided), return a noop adapter that yields zero vectors.
+  if (vocabSize === 0) {
+    const zeroVec = new Array(EMBED_DIM).fill(0);
+    return {
+      vectorizeText: (_text: string) => zeroVec.slice(),
+      cosineSimilarity: (_a: number[], _b: number[]) => 0,
+    };
   }
 
   // Build model
@@ -67,13 +67,21 @@ export async function initSkipGram(): Promise<SkipGramAdapter> {
   const model = tf.model({ inputs: [inputTarget, inputContext], outputs: output });
   model.compile({ optimizer: "adam", loss: "binaryCrossentropy" });
 
-  // Prepare tensors
-  const targets = tf.tensor2d(pairs.map((p) => [p[0]]), [pairs.length, 1], "int32");
-  const contexts = tf.tensor2d(pairs.map((p) => [p[1]]), [pairs.length, 1], "int32");
-  const labels = tf.tensor2d(new Array(pairs.length).fill([1]), [pairs.length, 1], "float32");
 
-  // Train (small number of epochs for demo)
-  await model.fit([targets, contexts], labels, { epochs: 50, verbose: 0 });
+  // Prepare tensors and train only if we have pairs. If there are no context pairs (very short corpus),
+  // skip training and rely on initialized embedding weights.
+  if (pairs.length > 0) {
+    const targets = tf.tensor2d(pairs.map((p) => [p[0]]), [pairs.length, 1], "int32");
+    const contexts = tf.tensor2d(pairs.map((p) => [p[1]]), [pairs.length, 1], "int32");
+    const labels = tf.tensor2d(new Array(pairs.length).fill([1]), [pairs.length, 1], "float32");
+
+    // Train (small number of epochs for demo)
+    await model.fit([targets, contexts], labels, { epochs: 50, verbose: 0 });
+    // Dispose training tensors
+    targets.dispose();
+    contexts.dispose();
+    labels.dispose();
+  }
 
   // Extract embeddings
   const embeddingLayer = model.layers.find((l: any) => l.getClassName() === "Embedding") as any;
