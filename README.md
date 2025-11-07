@@ -5,6 +5,9 @@
 
 HireShark is an intelligent, AI-powered platform designed to revolutionize the recruitment process by providing a precise, data-driven approach to shortlisting candidates. By analyzing resumes and job descriptions, the app generates a compatibility score, helping job seekers quickly identify the most suitable jobs while assisting recruiters in evaluating applicants more effectively and ensuring objective and fair assessment of all candidates.
 
+## Try it live
+[Github Page Deployment](https://salt-lab-human-ai.github.io/project-check-point-1-ai01/)
+
 ## Table of contents
 - [🔍 Problem Statement](#problem-statement)
 - [👥 Target Users and Core Tasks](#target-users-and-core-tasks)
