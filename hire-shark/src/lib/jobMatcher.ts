@@ -3,14 +3,90 @@ import { fetchAdzunaJobs } from "./adzunaApi";
 import { JobPreferences } from "../types";
 
 export async function matchJobs(resume: ResumeParsed, preferences: JobPreferences, limit = 10): Promise<MatchResult[]> {
-  // For now, we'll just fetch jobs from Adzuna based on preferences.
-  // In a more advanced scenario, we might use the resume to refine the Adzuna query
-  // or to perform post-filtering/scoring of the Adzuna results.
+  // Fetch jobs from Adzuna
   const adzunaResults = await fetchAdzunaJobs(preferences);
 
-  // If we want to implement a scoring mechanism based on the resume and Adzuna results,
-  // it would go here. For now, we return the Adzuna results directly.
-  return adzunaResults.slice(0, limit);
+  if (!adzunaResults.length) return [];
+
+  // Build plain job objects from Adzuna results (they already are MatchResult-shaped,
+  // but ensure we have description text to vectorize)
+  const jobs = adzunaResults.map(j => ({
+    id: j.jobId,
+    title: j.title,
+    company: j.company,
+    description: j.snippet || "",
+    keywords: j.matchedSkills || [],
+    location: j.location,
+    applyUrl: j.applyUrl,
+    jobUrl: j.url,
+  }));
+
+  // Try to initialize optional skip-gram adapter. If unavailable, fall back to TF-IDF.
+  let skipAdapter: any = null;
+  try {
+    const mod = await import("./word_match_skipgram");
+    if (mod && typeof mod.initSkipGram === "function") {
+      skipAdapter = await mod.initSkipGram();
+    }
+  } catch (e) {
+    // ignore and fall back
+  }
+
+  const corpus = jobs.map(j => `${j.title || ""} ${j.description || ""} ${(j.keywords || []).join(" ")}`);
+
+  let jobVectors: number[][] = [];
+  let resumeVector: number[] = [];
+
+  if (skipAdapter) {
+    jobVectors = corpus.map(c => skipAdapter.vectorizeText(c));
+    const resumeText = buildResumeDocument(resume);
+    resumeVector = skipAdapter.vectorizeText(resumeText);
+  } else {
+    const { buildVectorizer } = await import("./embeddings");
+    const vectorizer = buildVectorizer(corpus);
+    jobVectors = corpus.map(c => vectorizer.vectorize(c));
+    const resumeText = buildResumeDocument(resume);
+    resumeVector = vectorizer.vectorize(resumeText);
+  }
+
+  const resumeSkillsOriginal = resume.skills ?? [];
+  const resumeSkillTokens = resumeSkillsOriginal.map(s => s.toLowerCase().trim()).filter(Boolean);
+
+  const results: MatchResult[] = await Promise.all(jobs.map(async (job, idx) => {
+    const jobText = `${job.title} ${job.description} ${(job.keywords || []).join(' ')}`;
+    const jobLowerText = jobText.toLowerCase();
+
+    // compute vector similarity
+    let vecSim = 0;
+    if (skipAdapter) {
+      vecSim = skipAdapter.cosineSimilarity(resumeVector, jobVectors[idx]);
+    } else {
+      const { cosineSimilarity } = await import("./embeddings");
+      vecSim = cosineSimilarity(resumeVector, jobVectors[idx]);
+    }
+
+    const matchedSkills = Array.from(new Set(resumeSkillTokens.filter(skill => jobLowerText.includes(skill)).map(s => toTitleCase(s)))).slice(0, 10);
+    const skillScore = resumeSkillsOriginal.length ? matchedSkills.length / resumeSkillsOriginal.length : 0;
+
+    const score = Math.min(1, 0.75 * vecSim + 0.25 * skillScore);
+
+    return {
+      jobId: job.id,
+      title: job.title,
+      company: job.company ?? "",
+      score,
+      matchedSkills,
+      snippet: job.description ? job.description.slice(0, 300) : undefined,
+      location: job.location,
+      salary: undefined,
+      jobType: undefined,
+      url: job.jobUrl || job.applyUrl,
+      applyUrl: job.applyUrl || job.jobUrl,
+      postedDate: undefined,
+    } as MatchResult;
+  }));
+
+  return results.sort((a, b) => b.score - a.score).slice(0, limit);
 }
 import { buildVectorizer, cosineSimilarity as tfidfCosine } from "./embeddings";
 
