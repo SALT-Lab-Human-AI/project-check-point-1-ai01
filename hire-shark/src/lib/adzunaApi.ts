@@ -4,6 +4,30 @@ const ADZUNA_API_BASE_URL = "https://api.adzuna.com/v1/api/jobs";
 const ADZUNA_APP_ID = import.meta.env.VITE_ADZUNA_APP_ID;
 const ADZUNA_APP_KEY = import.meta.env.VITE_ADZUNA_APP_KEY;
 
+const currencyFormatter = new Intl.NumberFormat("en-US", {
+  style: "currency",
+  currency: "USD",
+  maximumFractionDigits: 0,
+});
+
+const formatSalaryRange = (
+  min?: number,
+  max?: number,
+  isPredicted?: boolean,
+): string | undefined => {
+  const formattedMin = typeof min === "number" ? currencyFormatter.format(min) : undefined;
+  const formattedMax = typeof max === "number" ? currencyFormatter.format(max) : undefined;
+
+  if (!formattedMin && !formattedMax) return undefined;
+  if (formattedMin && formattedMax) {
+    return `${isPredicted ? "Estimated " : ""}${formattedMin} - ${formattedMax}`;
+  }
+  if (formattedMin) {
+    return `${isPredicted ? "Estimated " : ""}${formattedMin}+`;
+  }
+  return `${isPredicted ? "Estimated " : ""}${formattedMax}`;
+};
+
 export async function fetchAdzunaJobs(preferences: JobPreferences): Promise<MatchResult[]> {
   if (!ADZUNA_APP_ID || !ADZUNA_APP_KEY) {
     console.error("Adzuna API keys are not set. Please set VITE_ADZUNA_APP_ID and VITE_ADZUNA_APP_KEY in your .env file.");
@@ -48,7 +72,7 @@ export async function fetchAdzunaJobs(preferences: JobPreferences): Promise<Matc
       matchedSkills: [], // Adzuna API doesn't directly provide matched skills, can be implemented with NLP later
       snippet: job.description,
       location: job.location.display_name,
-      salary: job.salary_is_predicted ? `~${job.salary_min} - ~${job.salary_max}` : `${job.salary_min} - ${job.salary_max}`,
+      salary: formatSalaryRange(job.salary_min, job.salary_max, job.salary_is_predicted) ?? "Not provided",
       jobType: job.contract_type,
       url: job.redirect_url,
       applyUrl: job.redirect_url,
