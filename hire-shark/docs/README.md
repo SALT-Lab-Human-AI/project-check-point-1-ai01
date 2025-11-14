@@ -21,5 +21,5 @@ Outputs will be written next to each .mmd file (e.g., architecture.svg).
 Tips
 - Update these diagrams whenever you change pages, contexts, or parsing/matching flows.
 - If you add new external services (e.g., real job APIs), extend the component and sequence diagrams to reflect those calls.
-- Keep environment usage explicit (e.g., VITE_GEMINI_API_KEY is client-side) and call out security considerations in PRs.
+- Keep environment usage explicit (e.g., Gemini + Adzuna secrets are now bundled inside the encrypted `VITE_ENCODED_SECRET` vault that the browser unlocks at runtime) and call out security considerations in PRs.
 

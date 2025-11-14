@@ -1,8 +1,7 @@
 import { MatchResult, JobPreferences } from "../types";
+import { getSharedSecrets } from "./secretVault";
 
 const ADZUNA_API_BASE_URL = "https://api.adzuna.com/v1/api/jobs";
-const ADZUNA_APP_ID = import.meta.env.VITE_ADZUNA_APP_ID;
-const ADZUNA_APP_KEY = import.meta.env.VITE_ADZUNA_APP_KEY;
 
 const currencyFormatter = new Intl.NumberFormat("en-US", {
   style: "currency",
@@ -29,14 +28,17 @@ const formatSalaryRange = (
 };
 
 export async function fetchAdzunaJobs(preferences: JobPreferences): Promise<MatchResult[]> {
-  if (!ADZUNA_APP_ID || !ADZUNA_APP_KEY) {
-    console.error("Adzuna API keys are not set. Please set VITE_ADZUNA_APP_ID and VITE_ADZUNA_APP_KEY in your .env file.");
+  const secrets = await getSharedSecrets();
+  if (!secrets?.adzunaAppId || !secrets?.adzunaAppKey) {
+    console.error(
+      "Adzuna API keys are not available. Provide them via VITE_ENCODED_SECRET or enter them when prompted.",
+    );
     return [];
   }
 
   const params = new URLSearchParams({
-    app_id: ADZUNA_APP_ID,
-    app_key: ADZUNA_APP_KEY,
+    app_id: secrets.adzunaAppId,
+    app_key: secrets.adzunaAppKey,
     results_per_page: "10", // Fetch a reasonable number of results
     // Add other required parameters as needed based on Adzuna API docs
   });

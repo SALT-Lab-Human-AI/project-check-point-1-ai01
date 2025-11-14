@@ -1,6 +1,7 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { ResumeParsed } from "../types";
 import mammoth from "mammoth";
+import { getSharedSecrets } from "./secretVault";
 
 type GenerativeModel = ReturnType<GoogleGenerativeAI["getGenerativeModel"]>;
 
@@ -30,7 +31,7 @@ export async function runWithGeminiModel<T>(
 
   for (let attempt = 0; attempt < 2; attempt += 1) {
     try {
-      const geminiModel = getGeminiModel(options);
+      const geminiModel = await getGeminiModel(options);
       return await executor(geminiModel);
     } catch (error) {
       lastError = error;
@@ -52,8 +53,8 @@ export async function runWithGeminiModel<T>(
   throw new Error("Gemini request failed.");
 }
 
-function getGeminiModel(options: { model?: string; generationConfig?: Record<string, unknown> }) {
-  const instance = ensureGeminiClient();
+async function getGeminiModel(options: { model?: string; generationConfig?: Record<string, unknown> }) {
+  const instance = await ensureGeminiClient();
   const request: Record<string, unknown> = {
     model: options.model ?? DEFAULT_MODEL,
   };
@@ -63,7 +64,14 @@ function getGeminiModel(options: { model?: string; generationConfig?: Record<str
   return instance.getGenerativeModel(request);
 }
 
-function ensureGeminiClient(): GoogleGenerativeAI {
+async function ensureGeminiClient(): Promise<GoogleGenerativeAI> {
+  if (!configuredApiKey) {
+    const secrets = await getSharedSecrets();
+    if (secrets?.geminiApiKey) {
+      setGeminiApiKey(secrets.geminiApiKey);
+    }
+  }
+
   if (!configuredApiKey) {
     const replacement = promptForGeminiApiKey("missing");
     if (!replacement) {
@@ -131,7 +139,8 @@ async function buildGenerativePart(file: File) {
 }
 
 export const genAI = {
-  getGenerativeModel: (options: { model: string; generationConfig?: Record<string, unknown> }) => getGeminiModel(options),
+  getGenerativeModel: (options: { model: string; generationConfig?: Record<string, unknown> }) =>
+    getGeminiModel(options),
 };
 
 function fileToGenerativePart(file: File) {

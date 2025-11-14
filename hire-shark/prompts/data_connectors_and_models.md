@@ -10,7 +10,7 @@ This reference summarizes every external connector and model configuration that 
   - Job-role ideation (`hire-shark/src/store/ResumeContext.tsx`)
 - **SDK:** `@google/generative-ai`
 - **Model ID:** `gemini-2.5-flash`
-- **Auth:** `VITE_GEMINI_API_KEY` (client-side, set in `.env`)
+- **Auth:** Browser prompts for a shared password, decrypts the `VITE_ENCODED_SECRET` payload via `secretVault.ts`, and loads Gemini + Adzuna credentials entirely in-memory (users can still paste their own key when prompted).
 - **Invocation pattern:**  
   ```ts
   const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
