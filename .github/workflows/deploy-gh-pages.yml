@@ -17,7 +17,7 @@ jobs:
           node-version: "18"
       - name: Create .env file from GitHub Secrets
         run: |
-          echo "VITE_ENCODED_SECRET=${{ secrets.ENCODED_SECRET }}" >> hire-shark/.env
+          echo "VITE_ENCODED_SECRET=${{ secrets.VITE_ENCODED_SECRET }}" >> hire-shark/.env
       - run: npm ci
         working-directory: hire-shark
       - run: npm run build
