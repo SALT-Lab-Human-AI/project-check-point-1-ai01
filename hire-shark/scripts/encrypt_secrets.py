@@ -79,7 +79,7 @@ def main() -> None:
   print("=== HireShark Secret Vault ===")
   print("Password (share securely with trusted testers):")
   print(password)
-  print("\nEncoded secret (store in repo secret ENCODED_SECRET and local .env as VITE_ENCODED_SECRET):")
+  print("\nEncoded secret (store in repo secret VITE_ENCODED_SECRET and local .env as VITE_ENCODED_SECRET):")
   print(encoded_secret)
   print("\nReminder: remove plain-text API keys from .env when you're done.")
 

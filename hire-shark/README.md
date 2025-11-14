@@ -50,7 +50,7 @@ Restart the dev server after editing `.env`.
 Client-side API keys now live in a single encrypted payload:
 1. Populate `.env` with `VITE_GEMINI_API_KEY`, `VITE_ADZUNA_APP_ID`, and `VITE_ADZUNA_APP_KEY`.
 2. Run `python scripts/encrypt_secrets.py`, enter a shared password when prompted, and copy the printed password + encoded string.
-3. Store the encoded value locally as `VITE_ENCODED_SECRET` (and in the GitHub repo secret `ENCODED_SECRET`), then remove the plain-text keys from `.env`.
+3. Store the encoded value locally as `VITE_ENCODED_SECRET` (and in the GitHub repo secret `VITE_ENCODED_SECRET`), then remove the plain-text keys from `.env`.
 4. Share the password only with trusted testers. When the site needs credentials, it prompts for that password, decrypts the blob in-memory, and never writes the plaintext anywhere persistent.
 
 Users without the shared password can still paste their own Gemini/Adzuna keys when prompted.
