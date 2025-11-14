@@ -1,0 +1,1 @@
+function r(o){return console.info("Skip-gram adapter disabled: @tensorflow/tfjs not installed. Falling back to TF-IDF vectors."),Promise.resolve(null)}async function e(o){}export{r as getSkipGramAdapter,e as warmUpSkipGram};
