@@ -1,0 +1,16 @@
+flowchart TD
+  Dev[Dev: Vite dev server :8080] --> Browser
+  Build[Vite Build] --> StaticHost[Static Hosting (e.g., GitHub Pages)]
+  StaticHost --> Browser
+
+  subgraph Browser
+    App[HireShark SPA]
+    Worker[pdf.worker.min.mjs]
+  end
+
+  App --> Gemini[Google Generative AI API]
+  App --> LocalStorage[(localStorage)]
+  App --> Worker
+
+  note right of Build: vite-plugin-static-copy copies pdf.worker.min.mjs
+

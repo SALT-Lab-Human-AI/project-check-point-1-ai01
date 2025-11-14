@@ -1,0 +1,27 @@
+mindmap
+  root((Safety & Privacy Notes))
+    PII Handling
+      "Avoid storing raw resume text"
+      "Hash resume IDs before logging"
+      "Strip emails/phone numbers from analytics"
+      "Use HTTPS for uploads"
+    Data Retention
+      "Temporary in-memory parsing"
+      "Optional encrypted cache with TTL"
+      "User initiated purge"
+    Rate Limits
+      "Throttle API requests per IP"
+      "Backoff when third-party APIs return 429"
+      "Queue resume parsing jobs"
+    Abuse Mitigation
+      "Validate file type & size"
+      "Scan uploads for malware signatures"
+      "Reject prompt injection in AI responses"
+    Access Control
+      "ENV-stored API keys"
+      "Principle of least privilege for DB"
+      "Audit logs for admin actions"
+    Compliance Considerations
+      "GDPR-style export/delete workflows"
+      "Privacy policy surfaced in UI"
+      "Vendor DPAs on record"

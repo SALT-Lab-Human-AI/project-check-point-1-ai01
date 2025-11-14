@@ -1,0 +1,23 @@
+sequenceDiagram
+  actor User
+  participant UploadPage as Upload.tsx
+  participant ResumeCtx as ResumeContext.tsx
+  participant Gemini as Google Generative AI
+  participant Parser as gemini_parser.ts
+
+  User->>UploadPage: Select resume file
+  UploadPage->>ResumeCtx: uploadFile(file)
+  User->>UploadPage: Continue
+  UploadPage->>ResumeCtx: parseResume()
+  ResumeCtx->>Parser: parseResumeWithGemini(file)
+  alt DOCX/TXT
+    Parser->>Parser: extract raw text (mammoth/file.text)
+  else PDF/other
+    Parser->>Parser: fileToGenerativePart(dataURL)
+  end
+  Parser->>Gemini: generateContent(prompt, part)
+  Gemini-->>Parser: JSON resume fields
+  Parser-->>ResumeCtx: ResumeParsed
+  ResumeCtx-->>UploadPage: set resume.parsed
+  UploadPage->>Review: navigate(/review)
+
