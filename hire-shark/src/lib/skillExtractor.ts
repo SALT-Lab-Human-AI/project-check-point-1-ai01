@@ -1,6 +1,6 @@
 import { hasGeminiApiKeyConfigured, runWithGeminiModel } from "./gemini_parser";
 
-const DEFAULT_SKILL_LIMIT = 12;
+const DEFAULT_SKILL_LIMIT = 10;
 const COMMON_SKILL_CANDIDATES = [
   "python",
   "java",
@@ -184,9 +184,8 @@ type ExtractJobSkillsInput = {
 
 /**
  * Extracts a concise set of skills required for a job posting.
- * 1. Deterministic fallback extraction (keyword + heuristic parsing).
- * 2. Optional Gemini enrichment with low-temperature settings.
- * 3. Stable ordering + caching guarded by a hash of the JD content.
+ * Uses Gemini (deterministic settings) only; no heuristic fallback parsing.
+ * Stable ordering + caching guarded by a hash of the JD content.
  */
 export async function extractJobSkills(input: ExtractJobSkillsInput): Promise<string[]> {
   const {
@@ -196,7 +195,7 @@ export async function extractJobSkills(input: ExtractJobSkillsInput): Promise<st
     limit = DEFAULT_SKILL_LIMIT,
   } = input;
 
-  const cleanDescription = stripHtml(description).slice(0, 2500);
+  const cleanDescription = stripHtml(description).slice(0, 3500);
   const keywordHints = keywords.filter(Boolean);
   if (!cleanDescription.trim() && !title.trim() && !keywordHints.length) {
     return [];
@@ -207,20 +206,13 @@ export async function extractJobSkills(input: ExtractJobSkillsInput): Promise<st
     return SKILL_CACHE.get(cacheKey)!;
   }
 
-  const fallbackSkills = fallbackSkillExtraction({
-    title,
-    description: cleanDescription,
-    keywords: keywordHints,
-    limit: Math.max(limit, DEFAULT_SKILL_LIMIT),
-  });
-
   const shouldUseGemini = !GEMINI_DISABLED && hasGeminiApiKeyConfigured();
-  let mergedSkills = fallbackSkills;
+  let rawSkills: string[] = [];
 
   if (shouldUseGemini) {
     try {
       const prompt = buildPrompt({ title, description: cleanDescription, keywords: keywordHints, limit });
-      const parsed = await runWithGeminiModel(
+      rawSkills = await runWithGeminiModel(
         async model => {
           const result = await model.generateContent(prompt);
           const response = await result.response;
@@ -236,16 +228,20 @@ export async function extractJobSkills(input: ExtractJobSkillsInput): Promise<st
           },
         },
       );
-
-      if (parsed.length) {
-        mergedSkills = mergeSkillLists(fallbackSkills, parsed);
-      }
     } catch (error) {
-      console.warn("Gemini skill extraction failed, using fallback skills.", error);
+      console.warn("Gemini skill extraction failed, returning keywords only.", error);
+      rawSkills = [];
     }
+  } else {
+    console.warn("Gemini disabled or not configured; returning keywords only.");
   }
 
-  const finalSkills = finalizeSkillList(mergedSkills, cleanDescription, limit);
+  // If LLM unavailable or empty, at least return any provided keywords.
+  if (!rawSkills.length && keywordHints.length) {
+    rawSkills = keywordHints;
+  }
+
+  const finalSkills = finalizeSkillList(rawSkills, cleanDescription, limit);
   SKILL_CACHE.set(cacheKey, finalSkills);
   return finalSkills;
 }
@@ -253,10 +249,11 @@ export async function extractJobSkills(input: ExtractJobSkillsInput): Promise<st
 function buildPrompt(args: { title: string; description: string; keywords: string[]; limit: number }): string {
   const { title, description, keywords, limit } = args;
   return `
-You are identifying the most important skills required for a job posting.
-- Read the provided job title and description.
-- Return ONLY a JSON array (no additional commentary) listing up to ${limit} unique skill phrases.
-- Each skill should be 1-4 words, concrete, and deduplicated (e.g., "React", "Stakeholder Management", "AWS Cloud").
+You extract the most important skills a candidate needs for this job. Infer required skills even if only implied by responsibilities.
+- Focus on technologies, tools, frameworks, domain skills, certifications, and relevant soft skills.
+- Exclude locations, schedules (hours/week), pay/benefits, employment type, headcount, and generic nouns.
+- Return ONLY a JSON array (no commentary) of up to ${limit} unique skill phrases, each 1-4 words, title-cased when appropriate.
+- Prioritize the top ${limit} most critical skills; avoid long tail/overly specific variants.
 
 Job Title: ${title || "(missing)"}
 
@@ -282,65 +279,9 @@ function parseSkillArray(payload: string): string[] {
   return [];
 }
 
-function fallbackSkillExtraction(args: { title: string; description: string; keywords: string[]; limit: number }): string[] {
-  const { title, description, keywords, limit } = args;
-  const haystack = `${title}\n${description}`.toLowerCase();
-
-  const addSkill = (acc: string[], value?: string) => {
-    const sanitized = sanitizeSkill(value);
-    if (!sanitized) return;
-    if (acc.some(skill => skill.toLowerCase() === sanitized.toLowerCase())) return;
-    acc.push(sanitized);
-  };
-
-  const collected: string[] = [];
-  for (const keyword of keywords) {
-    if (collected.length >= limit) break;
-    addSkill(collected, keyword);
-  }
-
-  for (const candidate of COMMON_SKILL_CANDIDATES) {
-    if (collected.length >= limit) break;
-    if (haystack.includes(candidate)) {
-      addSkill(collected, candidate);
-    }
-  }
-
-  if (collected.length < limit) {
-    const quickPhrases = description
-      .split(/[\n,;•\.]/)
-      .map(chunk => chunk.trim())
-      .filter(chunk => chunk && chunk.length <= 40 && chunk.split(/\s+/).length <= 4);
-    for (const phrase of quickPhrases) {
-      if (collected.length >= limit) break;
-      addSkill(collected, phrase);
-    }
-  }
-
-  if (!collected.length && title) {
-    addSkill(collected, title);
-  }
-
-  return collected.slice(0, limit);
-}
-
 function stripHtml(value?: string): string {
   if (!value) return "";
   return value.replace(/<[^>]+>/g, " ");
-}
-
-function mergeSkillLists(base: string[], extras: string[]): string[] {
-  const seen = new Set(base.map(s => s.toLowerCase()));
-  const result = [...base];
-  for (const skill of extras) {
-    const sanitized = sanitizeSkill(skill);
-    if (!sanitized) continue;
-    const normalized = sanitized.toLowerCase();
-    if (seen.has(normalized)) continue;
-    seen.add(normalized);
-    result.push(sanitized);
-  }
-  return result;
 }
 
 function finalizeSkillList(skills: string[], description: string, limit: number): string[] {

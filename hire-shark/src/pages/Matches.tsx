@@ -182,7 +182,7 @@ const Matches = () => {
 
                 {match.missingSkills?.length ? (
                   <div className="mb-4">
-                    <p className="text-sm font-medium mb-2">Missing Skills:</p>
+                    <p className="text-sm font-medium mb-2">Skills To Improve:</p>
                     <div className="flex flex-wrap gap-2">
                       {match.missingSkills.map((skill) => (
                         <Badge key={`${match.jobId}-${skill}`} variant="outline" className="text-xs border-destructive/40 text-destructive">
@@ -428,14 +428,12 @@ const WhyMatchDetails = ({ match }: WhyMatchProps) => {
           {coveragePct}% Skill Coverage
         </Badge>
         <p className="text-xs uppercase text-muted-foreground tracking-wide">
-          Coverage = Matched JD Skills ÷ Total JD Skills
+          Coverage = Sum of match scores ÷ Total JD Skills
         </p>
       </div>
 
       <p className="text-sm text-muted-foreground">
-        A skill counts as matched when it overlaps with your edited resume skills directly or when the semantic similarity
-        (cosine &gt;= 0.75) between skill embeddings exceeds the threshold. Missing skills highlight JD expectations you can
-        focus on to raise the score.
+        Each JD skill is paired to your closest resume skill; their similarity (0–1) is summed and divided by total JD skills. Similarity ≥ 0.5 shows as matched; lower scores appear under “Skills To Improve” but still add partial credit.
       </p>
 
       <div className="grid gap-4 sm:grid-cols-3">
@@ -486,11 +484,9 @@ const WhyMatchDetails = ({ match }: WhyMatchProps) => {
       <div className="rounded-xl border bg-muted/40 p-4">
         <p className="text-sm font-medium mb-1">Matching rule</p>
         <p className="text-sm text-muted-foreground">
-          • JD → skills extracted via LLM/fallback heuristics.
-          <br />
-          • Resume → uses your edited top skills.
-          <br />
-          • Embedding cosine similarity ≥ 0.75 counts as a match; otherwise listed under Missing.
+          • JD: top 10 key skills extracted by LLM.<br />
+          • Resume: your edited skill list.<br />
+          • Matching: cosine similarity ≥ 0.5 counts as matched; below that shows in “Skills To Improve,” but similarity still contributes partial credit to coverage.
         </p>
       </div>
     </div>

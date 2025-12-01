@@ -64,10 +64,10 @@ ${JSON.stringify(editedResume.parsed, null, 2)}
 
 ## JD Skill Extraction (hire-shark/src/lib/skillExtractor.ts)
 ```
-You are identifying the most important skills required for a job posting.
-- Read the provided job title and description.
-- Return ONLY a JSON array (no additional commentary) listing up to ${limit} unique skill phrases.
-- Each skill should be 1-4 words, concrete, and deduplicated (e.g., "React", "Stakeholder Management", "AWS Cloud").
+You extract the most important skills a candidate needs for this job. Infer required skills even if only implied by responsibilities.
+- Focus on technologies, tools, frameworks, domain skills, certifications, and relevant soft skills.
+- Exclude locations, schedules (hours/week), pay/benefits, employment type, headcount, and generic nouns.
+- Return ONLY a JSON array (no commentary) of up to ${limit} unique skill phrases, each 1-4 words, title-cased when appropriate.
 
 Job Title: ${title || "(missing)"}
 
@@ -78,4 +78,4 @@ Existing keywords: ${keywords.length ? keywords.join(", ") : "none"}
 ```
 Notes:
 - Called with `temperature: 0`, `topK: 1`, `topP: 0.1` for deterministic output.
-- Response is merged with the heuristic fallback list only when new skills are returned.
+- LLM-only: no heuristic fallback; if Gemini unavailable, it falls back to provided keywords.

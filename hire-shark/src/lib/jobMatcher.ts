@@ -2,7 +2,7 @@ import type { ResumeParsed, MatchResult, JobPreferences } from "../types";
 import { fetchAdzunaJobs } from "./adzunaApi";
 import { extractJobSkills } from "./skillExtractor";
 
-const MATCH_THRESHOLD = 0.75;
+const MATCH_THRESHOLD = 0.5;
 const MAX_SKILL_BADGES = 10;
 
 type SkillVector = {
@@ -57,7 +57,7 @@ export async function matchJobs(resume: ResumeParsed, preferences: JobPreference
   const embeddingEngine = skillCorpus.length ? await buildSkillEmbeddingEngine(skillCorpus) : null;
   const vectorCache = new Map<string, number[]>();
   const getVector = (text: string): number[] => {
-    const key = text.toLowerCase();
+    const key = normalizeSkill(text);
     if (vectorCache.has(key)) {
       return vectorCache.get(key)!;
     }
@@ -84,12 +84,14 @@ export async function matchJobs(resume: ResumeParsed, preferences: JobPreference
 
     const matchedSkills: string[] = [];
     const missingSkills: string[] = [];
+    let coverageSum = 0;
 
     for (const jobSkill of jobSkillVectors) {
       if (!jobSkill.normalized) continue;
 
       if (resumeSkillMap.has(jobSkill.normalized)) {
         matchedSkills.push(jobSkill.raw);
+        coverageSum += 1;
         continue;
       }
 
@@ -104,9 +106,11 @@ export async function matchJobs(resume: ResumeParsed, preferences: JobPreference
         }
       }
 
+      const contribution = Math.max(0, Math.min(1, bestScore));
+      coverageSum += contribution;
       if (bestScore >= MATCH_THRESHOLD) {
         matchedSkills.push(jobSkill.raw);
-      } else {
+      } else if (contribution < 1) {
         missingSkills.push(jobSkill.raw);
       }
     }
@@ -114,7 +118,7 @@ export async function matchJobs(resume: ResumeParsed, preferences: JobPreference
     const totalRequired = jobSkills.length;
     const matchedCount = matchedSkills.length;
     const missingCount = missingSkills.length;
-    const coverage = totalRequired ? matchedCount / totalRequired : 0;
+    const coverage = totalRequired ? coverageSum / totalRequired : 0;
 
     return {
       jobId: job.id,
@@ -140,7 +144,26 @@ export async function matchJobs(resume: ResumeParsed, preferences: JobPreference
 }
 
 function normalizeSkill(value: string): string {
-  return value.toLowerCase().replace(/\s+/g, " ").trim();
+  const lowered = (value || "")
+    .toLowerCase()
+    .replace(/[^\w\s#+/./-]/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+  return stemSkill(lowered);
+}
+
+function stemSkill(value: string): string {
+  let result = value;
+  result = result.replace(/\b(development|developing)\b/g, "develop");
+  result = result.replace(/\b(engineering|engineer|engineers)\b/g, "engineer");
+  result = result.replace(/\b(programming|programmer|programmers)\b/g, "program");
+  result = result.replace(/\b(designer|designers|designing)\b/g, "design");
+  result = result.replace(/\b(optimization|optimisation|optimizing)\b/g, "optimize");
+  result = result.replace(/\b(maintenance|maintaining)\b/g, "maintain");
+  result = result.replace(/\b(problem solving|problem-solving)\b/g, "problem solving");
+  // Drop simple plurals.
+  result = result.replace(/\b(\w+?)s\b/g, "$1");
+  return result.trim();
 }
 
 function dedupeSkills(list: string[]): string[] {
@@ -165,7 +188,7 @@ async function buildSkillEmbeddingEngine(corpus: string[]): Promise<SkillEmbeddi
     const adapter = await getSkipGramAdapter(corpus);
     if (adapter) {
       return {
-        vectorize: (text: string) => adapter.vectorizeText(text),
+        vectorize: (text: string) => adapter.vectorizeText(normalizeSkill(text)),
         cosine: (a: number[], b: number[]) => adapter.cosineSimilarity(a, b),
       };
     }
@@ -174,9 +197,9 @@ async function buildSkillEmbeddingEngine(corpus: string[]): Promise<SkillEmbeddi
   }
 
   const { buildVectorizer, cosineSimilarity } = await import("./embeddings");
-  const vectorizer = buildVectorizer(corpus);
+  const vectorizer = buildVectorizer(corpus.map(normalizeSkill));
   return {
-    vectorize: (text: string) => vectorizer.vectorize(text),
+    vectorize: (text: string) => vectorizer.vectorize(normalizeSkill(text)),
     cosine: (a: number[], b: number[]) => cosineSimilarity(a, b),
   };
 }

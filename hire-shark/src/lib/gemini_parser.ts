@@ -197,11 +197,14 @@ export async function parseResumeWithGemini(file: File): Promise<ResumeParsed> {
           }
         }
         
-        Important: Extract all education entries including degrees, certifications, and educational qualifications. 
-        Include the degree type (e.g., Bachelor's, Master's, PhD), field of study, institution name, location, dates, GPA (if available), and any honors or distinctions.
-        If you cannot find any information for a field, leave it as an empty string or an empty array.
-        If the uploaded file is not a resume, try your best and you should still return a JSON object.
-        When nothing is found for a section, The confidence for that section should be low.
+        Important:
+        - Skills must be exhaustive: include hard skills, tools, frameworks, domains, certifications, and relevant soft skills.
+        - Infer skills from projects/responsibilities even if not in a "Skills" section.
+        - Include common aliases where helpful (e.g., ["C++", "C Plus Plus"]), keep items 1-4 words, deduplicated and normalized.
+        - Extract all education entries including degrees, certifications, and educational qualifications with degree, field, institution, location, dates, GPA (if available), and honors.
+        - If you cannot find any information for a field, leave it as an empty string or an empty array.
+        - If the uploaded file is not a resume, try your best and you should still return a JSON object.
+        - When nothing is found for a section, the confidence for that section should be low.
       `;
 
     const generativePart = await buildGenerativePart(file);
