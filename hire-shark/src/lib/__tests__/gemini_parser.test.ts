@@ -1,16 +1,32 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { parseResumeWithGemini } from "../../lib/gemini_parser";
-import * as gemini from "../../lib/gemini_parser";
+import { parseResumeWithGemini, setGeminiApiKey } from "../../lib/gemini_parser";
+import { GoogleGenerativeAI } from "@google/generative-ai";
+
+// Create a mock client instance that will be reused
+const mockClient = {
+  getGenerativeModel: vi.fn(),
+};
+
+// Mock the Google Generative AI client
+vi.mock("@google/generative-ai", () => {
+  return {
+    GoogleGenerativeAI: vi.fn(function() { return mockClient; }),
+  };
+});
 
 beforeEach(() => {
-  vi.restoreAllMocks();
+  vi.clearAllMocks();
+  // Set a dummy API key to bypass the key check
+  setGeminiApiKey("test-api-key");
 });
 
 function mockModelWithText(text: string) {
   const generateContent = vi.fn().mockResolvedValue({
     response: { text: vi.fn().mockResolvedValue(text) },
   });
-  vi.spyOn(gemini, "runWithGeminiModel").mockImplementation(async executor => executor({ generateContent } as any));
+
+  const mockModel = { generateContent };
+  mockClient.getGenerativeModel.mockReturnValue(mockModel);
 }
 
 describe("Gemini JSON Cleaning", () => {
