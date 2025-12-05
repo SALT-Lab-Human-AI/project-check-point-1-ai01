@@ -1,0 +1,494 @@
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { Button } from "@/components/ui/button";
+import { Header } from "@/components/Header";
+import { ProgressSteps } from "@/components/ProgressSteps";
+import { Badge } from "@/components/ui/badge";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import { Code, TrendingUp, Paintbrush, Megaphone, Info, ArrowLeft, Loader2, AlertCircle } from "lucide-react";
+import { useResume } from "@/store/ResumeContext";
+import { MatchResult } from "@/types";
+import { toast } from "@/hooks/use-toast";
+
+const Matches = () => {
+  const navigate = useNavigate();
+  const { matches, isMatching, resume, runMatching } = useResume();
+  const [selectedJob, setSelectedJob] = useState<MatchResult | null>(null);
+  const [modalView, setModalView] = useState<"why" | "details">("details");
+  const [hasSearched, setHasSearched] = useState(false);
+  const [sortBy, setSortBy] = useState<"score" | "recent" | "company">("score");
+
+  useEffect(() => {
+    if (!resume?.parsed) {
+      navigate("/upload");
+    }
+  }, [resume, navigate]);
+
+  // Trigger matching when page loads if we have a parsed resume but no matches yet
+  useEffect(() => {
+    if (resume?.parsed && !isMatching && !hasSearched) {
+      setHasSearched(true);
+      runMatching().catch((error) => {
+        console.error("Error running matching:", error);
+        toast({
+          title: "Error fetching matches",
+          description: "Failed to fetch jobs. Please try again.",
+          variant: "destructive",
+        });
+      });
+    }
+  }, [resume?.parsed, matches.length, isMatching, hasSearched, runMatching]);
+
+  const getIcon = (title: string) => {
+    if (title.toLowerCase().includes("frontend")) return Code;
+    if (title.toLowerCase().includes("backend")) return Code;
+    if (title.toLowerCase().includes("manager")) return TrendingUp;
+    if (title.toLowerCase().includes("design")) return Paintbrush;
+    if (title.toLowerCase().includes("marketing")) return Megaphone;
+    return Code;
+  }
+
+  const sortedMatches = [...matches].sort((a, b) => {
+    if (sortBy === "recent") {
+      const aDate = a.postedDate ? new Date(a.postedDate).getTime() : 0;
+      const bDate = b.postedDate ? new Date(b.postedDate).getTime() : 0;
+      return bDate - aDate;
+    }
+    if (sortBy === "company") {
+      return (a.company || "").localeCompare(b.company || "");
+    }
+    return (b.score ?? 0) - (a.score ?? 0);
+  });
+
+  const formatDate = (dateString?: string) => {
+    if (!dateString) return "Not provided";
+    const date = new Date(dateString);
+    if (Number.isNaN(date.getTime())) return "Not provided";
+    return date.toLocaleDateString(undefined, {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+    });
+  };
+
+  return (
+    <div className="min-h-screen bg-background">
+      <Header />
+      
+      <main className="container px-4 py-12">
+        <ProgressSteps currentStep={4} />
+        
+        <div className="max-w-6xl mx-auto">
+          <div className="mb-8 text-center animate-fade-in">
+            <h2 className="text-3xl font-bold mb-2">Your Best Matches</h2>
+            <p className="text-muted-foreground">
+              We've analyzed your profile and found these top opportunities that align with your skills and experience.
+            </p>
+          </div>
+
+          {/* Filters */}
+          <div className="bg-card rounded-2xl p-4 shadow-sm border mb-8 flex flex-wrap items-center gap-4">
+            <div className="flex items-center gap-2">
+              <span className="text-sm font-medium">Sort by:</span>
+              <select
+                className="text-sm border rounded-lg px-3 py-1.5 bg-background"
+                value={sortBy}
+                onChange={(e) => setSortBy(e.target.value as typeof sortBy)}
+              >
+                <option value="score">Match Score</option>
+                <option value="recent">Recently Posted</option>
+                <option value="company">Company Name</option>
+              </select>
+            </div>
+            <Button
+              variant="outline"
+              size="sm"
+              className="ml-auto"
+              onClick={() => navigate("/preferences")}
+            >
+              <ArrowLeft className="h-4 w-4 mr-2" />
+              Edit Preferences
+            </Button>
+          </div>
+
+          {/* Loading State */}
+          {isMatching && (
+            <div className="flex flex-col items-center justify-center py-12">
+              <Loader2 className="h-12 w-12 animate-spin text-primary mb-4" />
+              <p className="text-lg font-medium">Finding your perfect matches...</p>
+              <p className="text-sm text-muted-foreground mt-2">
+                Finding the best job matches for you
+              </p>
+            </div>
+          )}
+
+          {/* No Matches State */}
+          {!isMatching && matches.length === 0 && hasSearched && (
+            <div className="flex flex-col items-center justify-center py-12 bg-card rounded-2xl border">
+              <AlertCircle className="h-12 w-12 text-muted-foreground mb-4" />
+              <p className="text-lg font-medium mb-2">No matches found</p>
+              <p className="text-sm text-muted-foreground text-center max-w-md mb-4">
+                We couldn't find any jobs matching your preferences. Try adjusting your preferences or search again.
+              </p>
+              <Button onClick={() => navigate("/preferences")}>
+                Edit Preferences
+              </Button>
+            </div>
+          )}
+
+          {/* Match Cards */}
+          {!isMatching && sortedMatches.length > 0 && (
+          <div className="grid md:grid-cols-2 gap-6">
+            {sortedMatches.map((match, index) => {
+              const Icon = getIcon(match.title);
+              const applyLink = match.applyUrl || match.url;
+              return (
+              <div
+                key={match.jobId}
+                className="bg-card rounded-2xl p-6 shadow-lg border hover:shadow-xl transition-all animate-slide-up"
+                style={{ animationDelay: `${index * 0.1}s` }}
+              >
+                <div className="flex items-start gap-4 mb-4">
+                  <div className={`h-12 w-12 rounded-xl flex items-center justify-center bg-primary/20 text-primary`}>
+                    <Icon className="h-6 w-6" />
+                  </div>
+                  <div className="flex-1">
+                    <h3 className="text-xl font-semibold mb-1">{match.title}</h3>
+                    <p className="text-sm text-muted-foreground">{match.company}</p>
+                  </div>
+                  <Badge
+                    className={`${
+                      match.score >= 0.9
+                        ? "bg-success/10 text-success border-success/20"
+                        : match.score >= 0.8
+                        ? "bg-accent/10 text-accent border-accent/20"
+                        : "bg-warning/10 text-warning border-warning/20"
+                    }`}
+                  >
+                    {Math.round(match.score * 100)}% Skill Coverage
+                  </Badge>
+                </div>
+
+                <div className="mb-4">
+                  <p className="text-sm font-medium mb-2">Key Skills Matched:</p>
+                  <div className="flex flex-wrap gap-2">
+                    {match.matchedSkills.map((skill) => (
+                      <Badge key={skill} variant="secondary" className="text-xs">
+                        {skill}
+                      </Badge>
+                    ))}
+                  </div>
+                </div>
+
+                {match.missingSkills?.length ? (
+                  <div className="mb-4">
+                    <p className="text-sm font-medium mb-2">Skills To Improve:</p>
+                    <div className="flex flex-wrap gap-2">
+                      {match.missingSkills.map((skill) => (
+                        <Badge key={`${match.jobId}-${skill}`} variant="outline" className="text-xs border-destructive/40 text-destructive">
+                          {skill}
+                        </Badge>
+                      ))}
+                    </div>
+                  </div>
+                ) : null}
+
+                <div className="flex gap-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="flex-1"
+                    onClick={() => {
+                      setSelectedJob(match);
+                      setModalView("why");
+                    }}
+                  >
+                    <Info className="h-4 w-4 mr-1" />
+                    Why this match?
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="flex-1"
+                    onClick={() => {
+                      setSelectedJob(match);
+                      setModalView("details");
+                    }}
+                  >
+                    View Details
+                  </Button>
+                  {applyLink ? (
+                    <Button size="sm" className="flex-1" asChild>
+                      <a
+                        href={applyLink}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        Apply
+                      </a>
+                    </Button>
+                  ) : (
+                    <Button size="sm" className="flex-1" disabled>
+                      Apply
+                    </Button>
+                  )}
+                </div>
+              </div>
+            )})
+          }
+          </div>
+          )}
+
+          {/* Actions */}
+          <div className="flex justify-center gap-4 mt-12">
+            <Button variant="outline" size="lg" onClick={() => navigate("/upload")}>
+              Try Again
+            </Button>
+            <Button variant="outline" size="lg" onClick={() => navigate("/")}>
+              Home
+            </Button>
+          </div>
+        </div>
+      </main>
+
+      {/* Job Details Modal */}
+      <Dialog
+        open={!!selectedJob}
+        onOpenChange={(open) => {
+          if (!open) {
+            setSelectedJob(null);
+            setModalView("details");
+          }
+        }}
+      >
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle className="text-2xl">{selectedJob?.title}</DialogTitle>
+            <DialogDescription className="text-base">{selectedJob?.company}</DialogDescription>
+          </DialogHeader>
+          
+          {selectedJob && (
+            <div className="space-y-6 mt-4">
+              <div className="flex gap-2">
+                <Button
+                  variant={modalView === "details" ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => setModalView("details")}
+                >
+                  View Details
+                </Button>
+                <Button
+                  variant={modalView === "why" ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => setModalView("why")}
+                >
+                  Why This Match
+                </Button>
+              </div>
+
+              {modalView === "details" ? (
+                <>
+                  <div>
+                    <div className="flex items-center justify-between mb-4">
+                      <Badge className="bg-success/10 text-success border-success/20 text-base px-4 py-1">
+                        {Math.round(selectedJob.score * 100)}% Skill Coverage
+                      </Badge>
+                    </div>
+                    
+                    <h3 className="font-semibold mb-2">About This Role</h3>
+                    <p className="text-muted-foreground">{selectedJob.snippet}</p>
+                  </div>
+
+                  <div>
+                    <h3 className="font-semibold mb-2">Matched Skills</h3>
+                    {selectedJob.matchedSkills.length ? (
+                      <div className="flex flex-wrap gap-2">
+                        {selectedJob.matchedSkills.map((skill) => (
+                          <Badge key={skill} variant="secondary">
+                            {skill}
+                          </Badge>
+                        ))}
+                      </div>
+                    ) : (
+                      <p className="text-sm text-muted-foreground">No overlapping skills detected yet.</p>
+                    )}
+                  </div>
+
+                  {selectedJob.missingSkills?.length ? (
+                    <div>
+                      <h3 className="font-semibold mb-2">Missing Skills</h3>
+                      <div className="flex flex-wrap gap-2">
+                        {selectedJob.missingSkills.map((skill) => (
+                          <Badge key={`${selectedJob.jobId}-${skill}`} variant="outline" className="border-destructive/40 text-destructive">
+                            {skill}
+                          </Badge>
+                        ))}
+                      </div>
+                    </div>
+                  ) : null}
+
+                  <div>
+                    <h3 className="font-semibold mb-2">Role Details</h3>
+                    <div className="grid gap-4 sm:grid-cols-2">
+                      <div>
+                        <p className="text-xs uppercase text-muted-foreground tracking-wide mb-1">Location</p>
+                        <p className="font-medium">{selectedJob.location || "Not provided"}</p>
+                      </div>
+                      <div>
+                        <p className="text-xs uppercase text-muted-foreground tracking-wide mb-1">Job Type</p>
+                        <p className="font-medium capitalize">{selectedJob.jobType || "Not provided"}</p>
+                      </div>
+                      <div>
+                        <p className="text-xs uppercase text-muted-foreground tracking-wide mb-1">Posted</p>
+                        <p className="font-medium">{formatDate(selectedJob.postedDate)}</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {(selectedJob.url || selectedJob.applyUrl) && (
+                    <div>
+                      <p className="text-xs uppercase text-muted-foreground tracking-wide mb-1">Job Listing</p>
+                      <a
+                        href={(selectedJob.applyUrl || selectedJob.url) ?? "#"}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-primary font-medium break-all hover:underline"
+                      >
+                        {selectedJob.applyUrl || selectedJob.url}
+                      </a>
+                    </div>
+                  )}
+                </>
+              ) : (
+                <WhyMatchDetails match={selectedJob} />
+              )}
+
+              <div className="flex gap-3 pt-4">
+                {selectedJob.applyUrl || selectedJob.url ? (
+                  <Button className="flex-1" size="lg" asChild>
+                    <a
+                      href={(selectedJob.applyUrl || selectedJob.url)!}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      Apply
+                    </a>
+                  </Button>
+                ) : (
+                  <Button className="flex-1" size="lg" disabled>
+                    Apply
+                  </Button>
+                )}
+                <Button
+                  variant="outline"
+                  className="flex-1"
+                  size="lg"
+                  onClick={() => {
+                    setSelectedJob(null);
+                    setModalView("details");
+                  }}
+                >
+                  Close
+                </Button>
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
+    </div>
+  );
+};
+
+export default Matches;
+
+type WhyMatchProps = {
+  match: MatchResult;
+};
+
+const WhyMatchDetails = ({ match }: WhyMatchProps) => {
+  const matchedCount = match.matchedSkillCount ?? match.matchedSkills.length;
+  const totalSkillsFromCounts =
+    match.totalJobSkills ??
+    (match.matchedSkillCount !== undefined && match.missingSkillCount !== undefined
+      ? match.matchedSkillCount + match.missingSkillCount
+      : undefined);
+  const inferredTotal =
+    totalSkillsFromCounts ??
+    (match.missingSkillCount !== undefined ? matchedCount + match.missingSkillCount : undefined);
+  const totalSkills = inferredTotal ?? (matchedCount || match.missingSkills?.length ? matchedCount + (match.missingSkills?.length || 0) : undefined);
+  const missingCount =
+    match.missingSkillCount ??
+    (totalSkills !== undefined ? Math.max(totalSkills - matchedCount, 0) : match.missingSkills?.length ?? 0);
+  const coveragePct = Math.round((match.score ?? 0) * 100);
+
+  return (
+    <div className="space-y-4">
+      <div className="flex items-center justify-between">
+        <Badge className="bg-success/10 text-success border-success/20 text-base px-4 py-1">
+          {coveragePct}% Skill Coverage
+        </Badge>
+        <p className="text-xs uppercase text-muted-foreground tracking-wide">
+          Coverage = Sum of match scores ÷ Total JD Skills
+        </p>
+      </div>
+
+      <p className="text-sm text-muted-foreground">
+        Each JD skill is paired to your closest resume skill; their similarity (0–1) is summed and divided by total JD skills. Similarity ≥ 0.5 shows as matched; lower scores appear under “Skills To Improve” but still add partial credit.
+      </p>
+
+      <div className="grid gap-4 sm:grid-cols-3">
+        <div className="rounded-xl border p-4">
+          <p className="text-xs uppercase text-muted-foreground mb-1">JD Skills</p>
+          <p className="text-2xl font-semibold">{totalSkills ?? "—"}</p>
+        </div>
+        <div className="rounded-xl border p-4">
+          <p className="text-xs uppercase text-muted-foreground mb-1">Matched</p>
+          <p className="text-2xl font-semibold">{matchedCount}</p>
+        </div>
+        <div className="rounded-xl border p-4">
+          <p className="text-xs uppercase text-muted-foreground mb-1">Missing</p>
+          <p className="text-2xl font-semibold">{missingCount}</p>
+        </div>
+      </div>
+
+      <div>
+        <h3 className="font-semibold mb-2">Matched Skills</h3>
+        {match.matchedSkills.length ? (
+          <div className="flex flex-wrap gap-2">
+            {match.matchedSkills.map((skill) => (
+              <Badge key={`why-matched-${match.jobId}-${skill}`} variant="secondary">
+                {skill}
+              </Badge>
+            ))}
+          </div>
+        ) : (
+          <p className="text-sm text-muted-foreground">No overlapping skills detected.</p>
+        )}
+      </div>
+
+      <div>
+        <h3 className="font-semibold mb-2">Skills To Improve</h3>
+        {match.missingSkills?.length ? (
+          <div className="flex flex-wrap gap-2">
+            {match.missingSkills.map((skill) => (
+              <Badge key={`why-missing-${match.jobId}-${skill}`} variant="outline" className="border-destructive/40 text-destructive">
+                {skill}
+              </Badge>
+            ))}
+          </div>
+        ) : (
+          <p className="text-sm text-muted-foreground">No missing skills were detected.</p>
+        )}
+      </div>
+
+      <div className="rounded-xl border bg-muted/40 p-4">
+        <p className="text-sm font-medium mb-1">Matching rule</p>
+        <p className="text-sm text-muted-foreground">
+          • JD: top 10 key skills extracted by LLM.<br />
+          • Resume: your edited skill list.<br />
+          • Matching: cosine similarity ≥ 0.5 counts as matched; below that shows in “Skills To Improve,” but similarity still contributes partial credit to coverage.
+        </p>
+      </div>
+    </div>
+  );
+};
