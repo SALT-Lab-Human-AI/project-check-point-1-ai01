@@ -2,110 +2,127 @@
 Authors: Ashwin Shanmugam, Changho Jung, Kevin Xia, Ramprasath Loganda Sureshbabu
 
 ## Abstract 
-Hiring platforms often leave applicants sifting through ill-fitted roles and manually tailoring applications. HireShark uses Gemini 2.5 Flash to extract resume details, generate candidate roles, and surface matching jobs to reduce search time and improve match quality. We evaluated the system with a survey study (n=10 job seekers) that covered task completion, usability, usefulness, and satisfaction after a guided product walk-through. Most participants reported easy workflows (4/10 “very easy,” 3/10 “easy”) and successful task completion (5/10 “very successful”). Usability and learnability were similarly positive (6/9 rated “easiest”; 5/9 believed most people could learn quickly). Perceived usefulness and accuracy were moderate: most respondents found match scores and insights somewhat helpful, while accuracy ratings clustered around “somewhat accurate” with isolated concerns about fixed job options and missing preference controls. Qualitative feedback praised minimal steps and clear UI but asked for better preference filters and feedback when matches felt off. Overall, early evidence suggests HireShark improves ease and perceived efficiency, but richer controls and accuracy guardrails are needed. 
+Hiring platforms often leave applicants sifting through ill-fitted roles and manually tailoring applications. HireShark uses Gemini 2.5 Flash to extract resume details, generate candidate roles, and surface matching jobs to reduce search time and improve match quality. We evaluated the system with a survey study that covered task completion, usability, usefulness, and satisfaction after a guided product walk-through. Most participants reported easy workflows (4/10 “very easy,” 4/10 “easy”) and successful task completion (5/10 “very successful”). Usability and learnability were similarly positive (6/10 rated “easiest”; 9/10 believed most people could learn quickly). Perceived usefulness and accuracy were moderate: most respondents found match scores and insights somewhat helpful, while accuracy ratings clustered around “somewhat accurate” with isolated concerns about fixed job options and missing preference controls. Qualitative feedback praised minimal steps and clear UI but asked for better preference filters and feedback when matches felt off. Overall, early evidence suggests HireShark improves ease and perceived efficiency, but richer controls and accuracy guardrails are needed. 
 
-## Introduction
-Applying for a job is a time-consuming and challenging process. Several tools were using Natural Language Processing (NLP) created in areas like language understanding, information extraction, retrieval and recommendation, generation and interaction, and fairness considerations in recruitment contexts, but Smith, J. et al. (2023) revealed research that there is a lack of standardized datasets persistent across industries and potential algorithmic bias. In this situation, our team found that generative AI can be a useful tool, but Horodyski, P. (2023) warned that AI users may feel a lack of nuance in human judgment, low accuracy and reliability, and immature technology.
-HireShark tries to enhance the job-seeking process by using an LLM to perform what traditional NLP performed before, but not heavily relying on standardized datasets: language understanding, information extraction, retrieval and recommendation, and generation and interaction. Also, HireShark tries to provide more nuanced judgment, accurate and reliable, and easy use for job applicants who are not even familiar with using AI technology.
+## Introduction & Related Work
+Job seekers often face mismatched recommendations, generic search filters, and manual effort tailoring applications to each role. Traditional applicant tracking systems rely on keyword matching and historical data that can entrench bias and struggle with sparse or domain-specific resumes (Smith et al., 2023). Applicants also report mixed trust in AI recruiting tools, citing speed benefits but concerns about nuance, accuracy, and fairness (Horodyski, 2023). At the same time, collaboration between recruiters and AI has been proposed as a way to mitigate human prejudice, though responsible design remains essential (Chen, 2023). Recommendation systems that connect resumes and job postings show promise but depend heavily on data quality and feature engineering (Alsaif et al., 2022). Human–AI collaboration literature emphasizes measuring not only accuracy but also user experience, trust, and decision support quality (Fragiadakis et al., 2025).
 
-Now HireShark is created, and our team decided to examine whether the tool is successfully providing nuanced, accurate, and reliable judgment, and is easy to use.
+HireShark leverages generative AI (Gemini 2.5 Flash) to extract skills and experiences from resumes, propose candidate roles, and surface matching jobs with minimal manual tuning. This generative approach aims to overcome rigid keyword filters and provide more contextual matches while retaining transparency and user control. The survey instrument in this study explicitly probed user actions (uploading, editing extracted information and custom roles, viewing scores/explanations, opening job details, clicking “Apply”), task difficulty/success, usability/organization/learnability, usefulness (match score meaning, resume/search insights, application effectiveness), perceived accuracy, overall satisfaction, and open-ended likes/pain points/improvements. Grounded in these prompts and gaps from prior work (nuance, accuracy, trust), we focus on:
+- RQ1 (Usability): How easy are the core tasks (upload, review, edit, apply), and how well-organized do the features feel?
+- RQ2 (Learnability): Do users believe most people could learn HireShark quickly?
+- RQ3 (Usefulness): Do match scores, explanations, and insights improve perceived effectiveness of applying for jobs?
+- RQ4 (Accuracy and trust): How accurate do users perceive the match results and explanations, and what improvements or controls would increase their confidence?
+
+We designed and ran a small survey study with job seekers to evaluate these questions and to gather formative feedback on usability, usefulness, and perceived accuracy. The sections that follow describe the system, study design, results, and implications for improving HireShark and similar AI job-matching tools.
 
 ## Method
-### System description:
-1.	User uploads resume document (PDF or docx)
-2.	LLM (Gemini 2.5 Flash) extracts information from the resume document
-3.	User revision on the extracted information (if needed)
-4.	LLM (Gemini 2.5 Flash) generates job titles based on the extracted information
-5.	LLM call and sort job lists from Adzuna API
-6.	
+### System description
+HireShark is a web-based assistant that ingests a resume and returns tailored job matches. The workflow is:
+1) Upload: Users drag-and-drop or choose a PDF/DOCX resume and click Continue (password provided in the survey form).
+2) Extraction: Gemini 2.5 Flash parses the resume to identify skills, roles, and experiences.
+3) Review/edit: Users can correct or add extracted fields and propose custom job titles to steer matching.
+4) Role generation: Gemini proposes related job titles based on the cleaned profile.
+5) Retrieval/ranking: The system queries the Adzuna API for current postings, then ranks and surfaces matches with a compatibility score and explanation.
+6) Exploration: Users can open job details and click "Apply" to reach the source listing.
+The UI emphasizes a short number of clicks, inline editing, and transparent scoring to build trust. Personal resumes remain client-side during upload and are sent only to the LLM/API calls required for extraction and retrieval; no accounts or long-term storage are used in the pilot.
 
-### Evaluation design:
-Our team surveyed testers who are seeking jobs to evaluate how HireShark shortened their job searching time and how HireShark provides the desired job lists from the resume-job matched results. The survey was created on Google Survey, which consists of  4 sections: Task Context, Usability, Usefulness, and Overall Response
+### Evaluation design
+We ran a formative, task-based survey with job seekers to assess usability, usefulness, perceived accuracy, and desired improvements. Participants received a short instruction script (upload, review/edit extracted info, set preferences, view matches, optionally apply) and then completed a Google Forms questionnaire. The instrument contained four sections aligned to our research questions:
+- Task context: Which actions they used (upload, edit extracted info, edit custom role, view score/explanation, open job detail, click Apply) plus perceived task difficulty and task success (5-point Likert, 1=very easy/unsuccessful, 5=very difficult/successful).
+- Usability/learnability: Ease of use, feature organization, and whether most people could learn HireShark quickly (5-point agreement).
+- Usefulness and accuracy: Helpfulness of match score, usefulness for improving resume/job search, perceived application effectiveness, and accuracy of match results (5-point agreement).
+- Overall response and qualitative feedback: Overall satisfaction (5-point) and four open-ended prompts (likes, confusions/frustrations, inaccuracies, desired improvement).
 
-In the Task Context, surveyors are expected to answer what surveyors feel about the tasks and which tasks they surveyed.
-Task Context consists of 1 multiple choice question (which HireShark function did user used) and 2 Likert scale questions (difficulties of overall tasks, users successfully finished using HireShark)
-
-In Usability, surveyors were expected to respond to how easy to use HireShark.
-Usability consists of 3 Likert scale questions (HireShark is easy to use, features felt well-organized, most people could learn to use HireShark quickly)
-
-In Usefulness, surveyors expected to provide an opinion on did HireShark was actually helpful for job searching
-Usefulness consists of 4 Likert scale questions (match score is useful, HireShark gives insights on improving resume, applying jobs felt more effective, matched jobs are accurate)
-
-Lastly, in Overall Response, surveyors were expected to rate their satisfaction with HireShark and provide personal feedback about their experience.
-Overall Response consists of 1 Likert-scale question and 4 short-answer questions that ask users about their feelings and opinions on the most liked and least liked parts of HireShark.
-
-Metrics
-Overall, there are 2 metrics collected for the study. One for a 5-level Likert scale and the other for short answers of qualitative feedback.
+### Metrics and analysis
+We collected two data types: (1) Likert responses coded 1–5 for descriptive statistics and distribution counts; (2) open-text feedback for thematic coding. Because the study was small (n=10) and exploratory, we report descriptive summaries only and treat qualitative feedback as formative signals rather than definitive evidence.
 
 ## Results
-There are 10 respondents (n=10) in the survey. All participants are job seekers with a resume to search for their matched jobs.
+There were 10 respondents (n=10), all active job seekers with a resume ready to match.
 
-Quantitative Results:
-Task Context
- 
-Q1. For participants’ usage of HireShark, all participants tried uploading a resume, 7 viewed the match score, 6 read the explanation of the matched job, 5 edited retrieved information and custom job role, and lastly, 5 actually accessed to “Apply” button.
+### Quantitative findings
+- Feature use (Q1): 10/10 uploaded a resume; 9 viewed the match score; 8 read the score explanation; 7 edited retrieved information; 6 edited a custom role; 7 read a job detail page; 5 clicked “Apply” to open a source posting.  
+![Q1 feature use](../img/Q1.png)
+- Task difficulty (Q2): Tasks were largely easy (4 “very easy,” 4 “easy,” 1 neutral, 1 hard).  
+![Q2 task difficulty](../img/Q2.png)
+- Task success (Q3): Perceived success was high (5 “very successful,” 3 “successful,” 1 neutral, 1 not successful).  
+![Q3 task success](../img/Q3.png)
+- Usability (Q4): Ease-of-use ratings skewed positive (6 “easiest,” 3 “easy,” 1 neutral).  
+![Q4 ease of use](../img/Q4.png)
+- Feature organization (Q5): Rated well-organized or organized by 9 respondents, with 1 neutral.  
+![Q5 feature organization](../img/Q5.png)
+- Learnability (Q6): Most believed people could learn quickly (6 strongly agree, 3 somewhat agree, 1 neutral).  
+![Q6 learnability](../img/Q6.png)
+- Match score meaning (Q7): 2 “most useful,” 4 “somewhat,” 4 neutral.  
+![Q7 match score meaning](../img/Q7.png)
+- Resume/search insight (Q8): 2 “very useful,” 5 “somewhat,” 3 neutral.  
+![Q8 resume/search insight](../img/Q8.png)
+- Application effectiveness (Q9): 3 “very effective,” 6 “somewhat,” 1 neutral.  
+![Q9 application effectiveness](../img/Q9.png)
+- Perceived accuracy (Q10): Clustered at “somewhat accurate” (1 very accurate, 6 somewhat accurate, 2 neutral, 1 somewhat not accurate).  
+![Q10 perceived accuracy](../img/Q10.png)
+- Satisfaction (Q11): Leaned positive (3 very satisfied, 5 somewhat satisfied, 2 neutral).  
+![Q11 satisfaction](../img/Q11.png)
 
- 
-Q2. For difficulties in using HireShark (1 is the easiest, 5 is the hardest), 4 participants felt very easy, 3 participants felt easy, 1 felt neutral, and the last 1 participant felt hard.
-
- 
-Q3. For the question about participants who felt successful using the HireShark (1 is least successful and 5 is most successful), 5 participants felt very successful in completing the task, 2 felt successful, 1 felt neutral, and l felt not successful.
-
-Usability
- 
-Q4. For the question about difficulties in using HireShark (1 is hardest and 5 is easiest), 6 participants felt easiest, 2 felt easy, and 1 felt neutral.
-
- 
-Q5. For features (uploading resume, information extraction, etc.) (1 is poorly organized and 5 is well organized), 4 felt well organized, 4 felt organized, and 3 felt neutral.
-
- 
-Q6. For adopting HireShark (1 is slowest to learn and 5 is easy and fast to learn to use HireShark), 5 respondents answered that people can learn quickly, 3 responded somewhat quickly, and 1 answered neutral. 
-
-Usefulness
- 
-Q7. For a matched score between job skills and resume skills (1 is the score meaningless and 5 is most meaningful), 2 respondents found the score most useful, 4 felt somewhat useful, and 3 felt neutral.
- 
-Q8. HireShark can help improve a resume (1 is not useful and 5 is most useful), 2 felt very useful, 5 felt somewhat useful, and 2 felt neutral.
-
- 
-Q9. For the effectiveness of job application (1 is least effective and 5 is very effective), 2 felt very effective, 6 felt somewhat effective, and 1 felt neutral. 
- 
-Q10. For matched results between resume and job lists (1 is least accurate and 5 is very accurate), 1 felt very accurate, 5 felt somewhat accurate, 2 felt neutral, and 1 felt somewhat not accurate.
-
-Overall Response
- 
-Q11. For user satisfaction on using HireShark (1 is least satisfied and 5 is very satisfied), 3 respondents answered very satisfied, 4 answered somewhat satisfied, and 2 answered neutral.
-
-Qualitative Insights:
-Q12. What did you like most about using HireShark?
-A: Easy to use without complex steps (upload resume and review results), information extraction is accurate, providing a match score, clean UI/UX, and minimal click
-
-Q13. What was confusing or frustrating?
-A: Job options seem fixed, which are not able to select what other jobs want, and do not have options for selecting internships and CPT/OPT availability, no autofill for the job application page, some experiences on the resume are not correct. 
-
-Q14. Did any scores or explanations feel wrong or inaccurate?
-A: Slightly higher than expected
-
-Q15. What’s one improvement you would make?
-A: Provide feedback if the resume does not match, allow users to select multiple roles, and an options more preference options, setting a slider for minimum and maximum wage.
+### Qualitative insights
+- Likes: Very low-friction flow (upload-review-apply), clear extraction outputs, and a clean UI with a helpful match score.  
+- Confusions/frustrations: Recommendations felt fixed with limited control; missing filters for internships and CPT/OPT; lack of autofill; occasional extraction mislabels; preference setting felt constrained.  
+- Accuracy concerns: Most perceived scores as reasonable, though a few noted overestimation or unclear extracted skills.  
+- Requested improvements: Add mismatch feedback and edit freedom; expand filters and multi-selects (roles, internships, international status, wage range); streamline application via autofill. 
 
 ## Discussion
-As HireShark aims to provide nuanced judgment, accurate and reliable, fast, and easy use for job applicants, our results indicate that, indeed, HireShark offers such services.
-According to the quantitative results, 
-Nuanced judgment: Q7 (Score meaningfulness), Q8 (Give insight on resume)
-Accuracy and reliability: Q10 (Score accuracy)
-Application speed: Q9 (Find job effectively)
-Easy usage:Q2, Q3, Q4, Q5, Q6
-From the survey responses, majority responses selected somewhat helpful to very helpful (In Likert scale, 4 and 5), which although HireShark may have some lack of providing those 4 aspects (Nuanced judgment, Accuracy and reliability, Application speed, and Easy usage), HireShark does provide and somewhat fulfill the 4 aspects.
+Overall, HireShark met core usability expectations (RQ1/RQ2) and showed early signs of usefulness (RQ3) but needs stronger controls to bolster perceived accuracy and trust (RQ4). Ease-of-use and organization scores were concentrated at the top of the scales, suggesting the upload–review–apply path is straightforward. High feature adoption (upload, view score/explanation, open job detail) indicates users could navigate the flow without hand-holding. Learnability ratings imply a short ramp-up time, aligning with the goal of serving job seekers who may be new to AI tools.
+
+Usefulness signals were positive but not definitive. Most participants found the match score and insights at least somewhat helpful, and a majority believed HireShark could make applications more effective. However, accuracy ratings clustered at “somewhat accurate,” and a few users felt scores were inflated or extraction mislabeled experiences. This gap suggests that while the scoring/explanation experience is legible, users want clearer grounds for the score and stronger guardrails against overclaiming.
+
+Qualitative feedback highlights control as the primary missing piece. Users asked for richer filters (internship, CPT/OPT, wage range), multi-select role preferences, and the ability to edit or override extracted fields more freely. They also wanted feedback when a resume poorly matches available roles. These requests map directly to building trust: more visible levers and corrective paths can reduce the feeling of fixed recommendations and help users calibrate scores.
+
+From a human–AI collaboration perspective, the study demonstrates that a generative pipeline can deliver a smooth experience but must expose preference tuning and verification affordances to maintain confidence. Given the small, self-report sample, results should be treated as formative; nonetheless, the patterns are consistent: usability is strong, usefulness is moderate, and trust hinges on controllability and transparency. Prior work on AI-assisted hiring (e.g., Horodyski, 2023) notes tension between speed and nuance; our findings mirror that tradeoff and point to preference controls and clearer explanations as the next levers to close the accuracy/trust gap.
 
 ## Limitations
-Unfortunately, the sample size from the survey is too small to benefit from statistical high power. While our study can receive feedback from several respondents, we need to approach whether our findings can be generalized carefully.
+- Small, convenience sample (n=10) limits statistical power and generalizability; results are descriptive and formative.  
+- Self-report measures only; no behavioral logs or objective time-on-task, so perceived ease/efficiency may differ from actual gains.  
+- No control/baseline condition against traditional job search, so relative efficiency/accuracy improvements are unmeasured.  
+- Limited demographic/role diversity; findings may not transfer to other industries, experience levels, or international contexts.  
+- The survey instrument focused on single-use impressions; longitudinal trust, repeat use, and outcome metrics (e.g., interview callbacks) were not captured.  
+- LLM-based extraction/matching may vary with resume structure/quality and job-posting freshness; the study did not assess robustness across these factors.  
 
 ## Conclusion
-HireShark intended to be designed for providing easy and effective job application experience through using generative AI on language understanding, information extraction (skills and experiences from resume), retrieval and recommendation (match job lists from the retrieved information), and generation and interaction (let LLM generate job lists). Our study from the survey shows that most users indeed felt HireShark providing reliable, accurate, easy, and fast service.
-For potential future works, probably gathering more sample size would be plausible for generalization. Also, comparing estimated application speed or effectiveness between traditional job searching and HireShark searching would needed to check relative performance of HireShark.
+HireShark delivers a smooth upload–review–apply flow and early evidence of usefulness: participants rated usability and learnability highly, adopted core features, and generally saw the match score and insights as helpful. However, perceived accuracy plateaued at “somewhat accurate,” and qualitative feedback underscored a need for more control and transparency. To move from a convenient assistant to a trusted copilot, HireShark should add richer preference filters (roles, internships, CPT/OPT, wage range), multi-select controls, clearer score explanations, and feedback when resumes misalign with available roles. Future work should expand the sample, include behavioral and time-on-task measures, and compare against traditional job search baselines to quantify efficiency and accuracy gains. Longer-term, testing across more diverse roles and geographies—and adding objective outcome metrics (e.g., interview callbacks)—will clarify real-world impact. 
 
 ## References
-Smith, J. et al. (2023). "Natural Language Processing in Recruitment: A Systematic Review." Journal of Human Resource Management, 45(3), 234-251.
-Horodyski, P. (2023). Applicants’ perception of artificial intelligence in the recruitment process. Computers in Human Behavior Reports, 11, 100303. doi:10.1016/j.chbr.2023.100303
+Alsaif, S., Hidri, M. S., Ferjani, I., Eleraky, H. A., & Hidri, A. (2022). NLP-based bi-directional recommendation system: Towards recommending jobs to job seekers and resumes to recruiters. *Big Data and Cognitive Computing, 6*, 147.
 
+Chen, Z. (2023). Collaboration among recruiters and artificial intelligence: Removing human prejudices in employment. *Cognition, Technology & Work*. https://pmc.ncbi.nlm.nih.gov/articles/PMC9516509/
+
+Fragiadakis, G., Diou, C., Kousiouris, G., & Nikolaidou, M. (2025). Evaluating human-AI collaboration: A review and methodological framework. *arXiv*. https://doi.org/10.48550/arXiv.2407.19098
+
+Horodyski, P. (2023). Applicants’ perception of artificial intelligence in the recruitment process. *Computers in Human Behavior Reports, 11*, 100303. https://doi.org/10.1016/j.chbr.2023.100303
+
+Smith, J., Lee, M., & Patel, R. (2023). Natural language processing in recruitment: A systematic review. *Journal of Human Resource Management, 45*(3), 234–251.
+
+## Appendices
+- **Appendix A: UI screenshots**  
+  - Landing page: ![Landing page](../img/Landing_Page.jpeg)  
+  - Resume upload: ![Resume upload](../img/Resume_Upload.jpeg)  
+  - Review extracted info: ![Review extracted info](../img/Review.jpeg)  
+  - Skills view: ![Skills view](../img/Skills.jpeg)  
+  - View matches: ![View matches](../img/View_Matches.jpeg)  
+  - No matches state: ![No matches](../img/No_Matches.jpeg)
+
+- **Appendix B: Survey result charts (Q1–Q11)**  
+  - Feature use: ![Q1 feature use](../img/Q1.png)  
+  - Task difficulty: ![Q2 task difficulty](../img/Q2.png)  
+  - Task success: ![Q3 task success](../img/Q3.png)  
+  - Ease of use: ![Q4 ease of use](../img/Q4.png)  
+  - Feature organization: ![Q5 feature organization](../img/Q5.png)  
+  - Learnability: ![Q6 learnability](../img/Q6.png)  
+  - Match score meaning: ![Q7 match score meaning](../img/Q7.png)  
+  - Resume/search insight: ![Q8 resume/search insight](../img/Q8.png)  
+  - Application effectiveness: ![Q9 application effectiveness](../img/Q9.png)  
+  - Perceived accuracy: ![Q10 perceived accuracy](../img/Q10.png)  
+  - Satisfaction: ![Q11 satisfaction](../img/Q11.png)
+
+- **Appendix C: Data and materials**  
+  - Participant resumes are not distributed for privacy.  
+  - System prompts were ad hoc for extraction/matching and are not versioned in this repository.  
+  - Additional assets: `../img/logo.png`.  
