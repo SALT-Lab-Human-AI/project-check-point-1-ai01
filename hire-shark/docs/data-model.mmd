@@ -1,0 +1,67 @@
+classDiagram
+  class ResumeParsed {
+    string name
+    string email
+    string phone
+    string location
+    string summary
+    string[] skills
+    Experience[] experiences
+    Education[] education
+    Confidence confidence
+    string rawText
+    string fileName
+  }
+  class Experience {
+    string company
+    string title
+    string start
+    string end
+    string[] bullets
+  }
+  class Education {
+    string degree
+    string field
+    string institution
+    string location
+    string start
+    string end
+    string gpa
+    string[] honors
+  }
+  class Confidence {
+    number personalInfo
+    number experience
+    number skills
+    number education
+  }
+  class ResumeData {
+    string id
+    File file
+    ResumeParsed parsed
+    string uploadedAt
+  }
+  class JobPosting {
+    string jobId
+    string title
+    string company
+    string description
+    string[] skills
+  }
+  class MatchResult {
+    string jobId
+    string title
+    string company
+    number score
+    string[] matchedSkills
+    string snippet
+    string location
+    string salary
+    string jobType
+    string url
+    string postedDate
+  }
+  ResumeData --> ResumeParsed
+  ResumeParsed o--> Experience
+  ResumeParsed o--> Education
+

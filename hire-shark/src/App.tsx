@@ -1,0 +1,44 @@
+import { Toaster } from "@/components/ui/toaster";
+import { Toaster as Sonner } from "@/components/ui/sonner";
+import { TooltipProvider } from "@/components/ui/tooltip";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { PreferencesProvider } from "./store/PreferencesContext";
+import { ResumeProvider } from "./store/ResumeContext";
+import { ThemeProvider } from "./components/ThemeProvider";
+import Landing from "./pages/Landing";
+import Upload from "./pages/Upload";
+import Review from "./pages/Review";
+import Preferences from "./pages/Preferences";
+import Matches from "./pages/Matches";
+import NotFound from "./pages/NotFound";
+
+const queryClient = new QueryClient();
+
+const App = () => (
+  <QueryClientProvider client={queryClient}>
+    <TooltipProvider>
+      <ThemeProvider>
+        <PreferencesProvider>
+          <ResumeProvider>
+            <Toaster />
+            <Sonner />
+            <BrowserRouter basename={import.meta.env.MODE === "production" ? "/project-check-point-1-ai01/" : "/"}>
+              <Routes>
+                <Route path="/" element={<Landing />} />
+                <Route path="/upload" element={<Upload />} />
+                <Route path="/review" element={<Review />} />
+                <Route path="/preferences" element={<Preferences />} />
+                <Route path="/matches" element={<Matches />} />
+                {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+            </BrowserRouter>
+          </ResumeProvider>
+        </PreferencesProvider>
+      </ThemeProvider>
+    </TooltipProvider>
+  </QueryClientProvider>
+);
+
+export default App;

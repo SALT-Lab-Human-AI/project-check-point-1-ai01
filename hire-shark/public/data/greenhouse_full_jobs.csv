@@ -1,0 +1,6 @@
+id,title,company,location,employment_type,description,keywords,apply_url
+1,Senior Data Analyst,Greenhouse,Remote,Full-time,"Analyze recruiting data to drive insights into talent pipelines.","data analysis;sql;python;business intelligence","https://example.com/jobs/1"
+2,Frontend Engineer,Acme Corp,San Francisco CA,Full-time,"Build React applications that power the customer experience.","react;javascript;css;ui","https://example.com/jobs/2"
+3,Machine Learning Engineer,Open ML,New York NY,Full-time,"Develop machine learning models for hiring recommendations.","machine learning;python;tensorflow;data science","https://example.com/jobs/3"
+4,Product Manager,TalentWorks,Remote,Full-time,"Define product strategy for hiring tools and lead cross-functional teams.","product management;roadmap;stakeholder communication","https://example.com/jobs/4"
+5,Data Scientist,Analytics Hub,Boston MA,Contract,"Partner with stakeholders to design experiments and deliver insights.","data science;r;python;statistics","https://example.com/jobs/5"
