@@ -131,7 +131,75 @@ HireShark delivers a smooth upload–review–apply flow and early evidence of u
 ## Reproducibility & Artifacts
 - Deployed prototype: https://salt-lab-human-ai.github.io/project-check-point-1-ai01/ (used in the study).  
 - Codebase: see `hire-shark/` in the repository for implementation details.  
-- Data: participant resumes are private; survey instrument summarized in the report; prompts were ad hoc and not versioned.  
+- Data: participant resumes are private; survey instrument summarized in the report.  
+- Prompts (Gemini, used during the study; also stored in `hire-shark/prompts/prompts.md`):  
+  - Resume parsing:  
+    ```
+    Extract the following information from the resume and return it as a JSON object.
+    The JSON object should have the following structure:
+    {
+      "name": "",
+      "email": "",
+      "phone": "",
+      "location": "",
+      "summary": "",
+      "skills": [],
+      "education": [
+        {
+          "degree": "",
+          "field": "",
+          "institution": "",
+          "location": "",
+          "start": "",
+          "end": "",
+          "gpa": "",
+          "honors": []
+        }
+      ],
+      "experiences": [
+        {
+          "company": "",
+          "title": "",
+          "start": "",
+          "end": "",
+          "bullets": []
+        }
+      ],
+      "confidence": {
+        "personalInfo": 0.0,
+        "experience": 0.0,
+        "skills": 0.0,
+        "education": 0.0
+      }
+    }
+
+    Important: Extract all education entries including degrees, certifications, and educational qualifications. 
+    Include the degree type (e.g., Bachelor's, Master's, PhD), field of study, institution name, location, dates, GPA (if available), and any honors or distinctions.
+    If you cannot find any information for a field, leave it as an empty string or an empty array.
+    If the uploaded file is not a resume, try your best and you should still return a JSON object.
+    When nothing is found for a section, The confidence for that section should be low.
+    ```
+  - Job role suggestions:  
+    ```
+    Based on the following resume, generate a list of 5-10 potential job roles that would be a good fit for this person. Return the list as a JSON array of strings. Job title should be concise and simple.
+
+    Resume:
+    ${JSON.stringify(editedResume.parsed, null, 2)}
+    ```
+  - JD skill extraction:  
+    ```
+    You extract the most important skills a candidate needs for this job. Infer required skills even if only implied by responsibilities.
+    - Focus on technologies, tools, frameworks, domain skills, certifications, and relevant soft skills.
+    - Exclude locations, schedules (hours/week), pay/benefits, employment type, headcount, and generic nouns.
+    - Return ONLY a JSON array (no commentary) of up to ${limit} unique skill phrases, each 1-4 words, title-cased when appropriate.
+
+    Job Title: ${title || "(missing)"}
+
+    Job Description:
+    ${description || "(missing)"}
+
+    Existing keywords: ${keywords.length ? keywords.join(", ") : "none"}
+    ```  
 - Figures: UI screenshots and survey charts are bundled in `img/` and embedded in the appendices.  
 
 ## References
